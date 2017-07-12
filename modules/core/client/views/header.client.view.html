@@ -1,0 +1,48 @@
+ <header class="top-header clearfix" ng-controller="HeaderController as vm">       
+       
+    <ul class="nav nav-pills nav-justified">
+      <li ui-sref-active="active"><a ui-sref="bookings">Bookings</a></li>
+      <li ui-sref-active="active"><a ui-sref="reports">Reports</a></li>
+      <li><a><img src="/modules/core/client/img/logo-small.png"></a></li>
+      <li ui-sref-active="active"><a ui-sref="settings">Settings</a></li>
+      <li>
+          <!-- <center>            
+            <li class="dropdown text-normal nav-profile" dropdown is-open="status.isopenProfile">
+                <a href="javascript:;" class="dropdown-toggle" dropdown-toggle ng-disabled="disabled">
+                    <img style="height: 30px; width: 30px" ng-src="{{imageUrl ? imageUrl : '/modules/core/client/img/g1.jpg'}}" err-src="/modules/core/client/img/g1.jpg" alt="" class="img-circle img30_30">
+                    <span class="hidden-xs">
+                        <span style="font-weight: bold; color: #000">{{name}}</span>
+                    </span>
+                </a>
+                <ul class="dropdown-menu with-arrow pull-right">                                       
+                    <li>
+                        <a href="javascript:;" data-ng-click="logout()">
+                            <i class="fa fa-sign-out"></i>
+                            <span data-i18n="Log Out"></span>
+                        </a>
+                    </li>
+                </ul>
+            </li>            
+        </center> -->
+        <center>
+         <md-menu-bar>
+            <md-menu>
+              <div ng-click="$mdMenu.open()">
+              <img style="height: 30px; width: 30px" ng-src="{{imageUrl ? imageUrl : '/modules/core/client/img/g1.jpg'}}" err-src="/modules/core/client/img/g1.jpg" alt="" class="img-circle img30_30">
+              <span class="hidden-xs">
+              <button class="md-button md-primary md-default" >
+                {{name}}
+              </button>
+              </div>
+              <md-menu-content>           
+                <md-menu-item>
+                    <md-button ng-click="logout()">Log Out</md-button>
+                </md-menu-item>    
+              </md-menu-content>
+            </md-menu>   
+          </md-menu-bar>
+        </center>
+       </li>
+    </ul>
+
+</header>
