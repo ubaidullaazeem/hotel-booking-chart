@@ -2,7 +2,7 @@
   'use strict';
 
   angular
-    .module('users')
+    .module('core')
     .controller('BookingsController', BookingsController);
 
   BookingsController.$inject = ['$scope', '$state', '$rootScope', 'UsersService', '$location', '$window', 'Authentication', 'PasswordValidator', 'Notification'];

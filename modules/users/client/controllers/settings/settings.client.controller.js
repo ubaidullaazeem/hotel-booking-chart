@@ -1,4 +1,4 @@
-(function () {
+/*(function () {
   'use strict';
 
   angular
@@ -13,3 +13,4 @@
     vm.user = Authentication.user;
   }
 }());
+*/

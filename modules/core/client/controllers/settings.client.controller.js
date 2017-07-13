@@ -2,18 +2,22 @@
   'use strict';
 
   angular
-    .module('users')
+    .module('core')
     .controller('SettingsController', SettingsController);
 
-  SettingsController.$inject = ['$scope', '$state', 'UsersService', '$location', '$window', 'Authentication', 'PasswordValidator', 'Notification'];
+  SettingsController.$inject = ['$scope', '$state'];
 
-  function SettingsController($scope, $state, UsersService, $location, $window, Authentication, PasswordValidator, Notification) {
+  function SettingsController($scope, $state) {
     var vm = this;
 
-    
     console.log("SettingsController");
-    
-    
 
+    $scope.mShowAddHallPopup = function() 
+    {
+      console.log("mShowAddHallPopup");
+
+    	alert(1);
+    }  
+    
   }
 }());

@@ -2,7 +2,7 @@
   'use strict';
 
   angular
-    .module('users')
+    .module('core')
     .controller('ReportsController', ReportsController);
 
   ReportsController.$inject = ['$scope', '$state', 'UsersService', '$location', '$window', 'Authentication', 'PasswordValidator', 'Notification'];
