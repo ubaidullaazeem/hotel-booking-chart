@@ -35,7 +35,7 @@
       })
       .state('bookings', {
         url: '/bookings',
-        templateUrl: '/modules/core/client/views/home.client.bookings.html',
+        templateUrl: '/modules/core/client/views/bookings.client.view.html',
         controller: 'BookingsController',
         controllerAs: 'vm',
         data: {
@@ -44,7 +44,7 @@
       })
       .state('reports', {
         url: '/reports',
-        templateUrl: '/modules/core/client/views/home.client.reports.html',
+        templateUrl: '/modules/core/client/views/reports.client.view.html',
         controller: 'ReportsController',
         controllerAs: 'vm',
         data: {
@@ -53,7 +53,7 @@
       })
       .state('settings', {
         url: '/settings',
-        templateUrl: '/modules/core/client/views/home.client.settings.html',
+        templateUrl: '/modules/core/client/views/settings.client.view.html',
         controller: 'SettingsController',
         controllerAs: 'vm',
         data: {
