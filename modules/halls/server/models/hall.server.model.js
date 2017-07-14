@@ -12,18 +12,17 @@ var mongoose = require('mongoose'),
 var HallSchema = new Schema({
   name: {
     type: String,
-    default: '',
+    unique: true,
     required: 'Please fill Hall name',
     trim: true
   },
-  created: {
-    type: Date,
-    default: Date.now
-  },
-  user: {
-    type: Schema.ObjectId,
-    ref: 'User'
+  rate:{
+    type: Number,
+    required: 'Please fill Hall rate'
   }
+},
+{
+    timestamps: true
 });
 
 mongoose.model('Hall', HallSchema);

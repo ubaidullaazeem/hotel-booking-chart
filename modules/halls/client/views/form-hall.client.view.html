@@ -1,4 +1,4 @@
-<section>
+<!-- <section>
   <div class="page-header">
     <h1>{{vm.hall._id ? 'Edit Hall' : 'New Hall'}}</h1>
   </div>
@@ -21,4 +21,53 @@
       </fieldset>
     </form>
   </div>
-</section>
+</section> -->
+
+ <md-dialog flex>
+  <form name="hallForm">
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        
+        <span flex="100" align="center"><h2>{{hall._id ? 'Edit Hall' : 'Add Hall'}}</h2></span>
+        <md-button class="md-icon-button" ng-click="cancel()">
+          <md-icon md-svg-src="modules/core/client/img/icons/ic_close_24px.svg" aria-label="Close dialog"></md-icon>
+        </md-button>
+      </div>
+    </md-toolbar>
+
+    <md-dialog-content>
+      <div class="md-dialog-content">
+
+        <div layout="column" flex>
+
+          <md-input-container flex>
+            <label>Name</label>
+            <input required name="name" ng-model="hall.name"/>
+            <div ng-messages="hallForm.name.$error">
+              <div ng-message="required">Hall name is required.</div>
+            </div>
+          </md-input-container>  
+
+          <md-input-container flex>
+            <label>Rate</label>
+            <input required name="rate" ng-model="hall.rate" min="0" ng-pattern="mNumberPattern"/>
+            <div ng-messages="hallForm.rate.$error">
+              <div ng-message="required">Hall rate is required.</div>
+            </div>
+          </md-input-container>  
+
+        </div>
+        
+      </div>
+    </md-dialog-content>
+    
+    <md-dialog-actions layout="row">  
+      <span flex></span>
+      <md-button flex ng-click="save(hallForm)" type="submit">Submit</md-button>
+      <span flex></span>
+      <md-button flex ng-click="cancel()">Cancel</md-button>
+      <span flex></span>
+    </md-dialog-actions>
+  </form>
+</md-dialog>
+

@@ -1,0 +1,22 @@
+<section>
+  <div class="page-header">
+    <h1>Eventtypes</h1>
+  </div>
+  <div class="list-group">
+    <a ng-repeat="eventtype in vm.eventtypes"
+       ui-sref="eventtypes.view({ eventtypeId: eventtype._id })"
+       class="list-group-item">
+      <small class="list-group-item-text">
+        Posted on
+        <span ng-bind="eventtype.created | date:'mediumDate'"></span>
+        by
+        <span ng-if="eventtype.user" ng-bind="eventtype.user.displayName"></span>
+        <span ng-if="!eventtype.user">Deleted User</span>
+      </small>
+      <h4 class="list-group-item-heading" ng-bind="eventtype.name"></h4>
+    </a>
+  </div>
+  <div class="alert alert-warning text-center" ng-if="vm.eventtypes.$resolved && !vm.eventtypes.length">
+    No Eventtypes yet, why don't you <a ui-sref="eventtypes.create">create one</a>?
+  </div>
+</section>

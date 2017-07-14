@@ -27,25 +27,84 @@
 		<div layout="row">
 			<p flex=70 style="color:#7f7f7f;font-size: 17px; margin-top:10px"><b>Halls:</b></p>
 			<div flex=30 style="text-align: center;">
-				<md-button class="md-raised md-primary nonecase" ng-click="mShowAddHallPopup()">Add</md-button>
+				<md-button class="md-raised md-primary nonecase" ng-click="mShowAddHallPopup($event)">Add</md-button>
 			</div>
 		</div>
 
-		<table>
+		<h3 ng-hide="halls.length">No halls found.</h3>
+
+		<table ng-show="halls.length">
 		  <tr>
-		    <th width="30%">Hall Name</th>
+		    <th width="30%">Hall name</th>
 		    <th width="40%">Rate</th> 
 		    <th width="30%">Action</th>
 		  </tr>
+		  <tr ng-repeat = "hall in halls">
+	        <td>{{ hall.name }}</td>
+	        <td>{{ hall.rate }}</td>
+
+	        <td style="text-align: center;">
+	        	<md-button class="md-raised md-primary nonecase" ng-click="mShowEditHallPopup($event, hall)">Edit</md-button>
+	        	<md-button class="md-raised md-primary nonecase" ng-click="mDeleteHall($event, hall)">Delete</md-button>
+	        </td>
+	     </tr>		  
+		</table>
+	</div>
+
+	<div layout="column" style="margin-top: 10px">
+		<p style="color:#7f7f7f;font-size: 17px;"><b>Payment:</b></p>
+
+		<table>
 		  <tr>
-		    <td>CGST(%)</td>
+		    <th width="30%">Payment status</th>
+		    <th width="40%">Color</th> 
+		    <th width="30%">Action</th>
+		  </tr>
+		  <tr>
+		    <td></td>
+		    <td></td> 
+		    <td style="text-align: center;"><md-button class="md-raised md-primary nonecase">Edit</md-button></td>
+		  </tr>
+		  <tr>
+		    <td></td>
+		    <td></td> 
+		    <td style="text-align: center;"><md-button class="md-raised md-primary nonecase">Edit</md-button></td>
+		  </tr>
+		  <tr>
+		    <td></td>
 		    <td></td> 
 		    <td style="text-align: center;"><md-button class="md-raised md-primary nonecase">Edit</md-button></td>
 		  </tr>
 		</table>
 	</div>
 
-	
+	<div layout="column" style="margin-top: 10px">
+		<div layout="row">
+			<p flex=70 style="color:#7f7f7f;font-size: 17px; margin-top:10px"><b>Event:</b></p>
+			<div flex=30 style="text-align: center;">
+				<md-button class="md-raised md-primary nonecase" ng-click="">Add</md-button>
+			</div>
+		</div>
+
+		<h3 ng-hide="eventTypes.length">No event found.</h3>
+
+		<table ng-show="eventTypes.length">
+		  <tr>
+		    <th width="30%">Event name</th>
+		    <th width="40%">Colour</th> 
+		    <th width="30%">Action</th>
+		  </tr>
+		  <tr ng-repeat = "eventType in eventTypes">
+	        <td>{{ eventType.name }}</td>
+	        <td>{{ eventType.colour }}</td>
+
+	        <td style="text-align: center;">
+	        	<md-button class="md-raised md-primary nonecase" ng-click="">Edit</md-button>
+	        	<md-button class="md-raised md-primary nonecase" ng-click="">Delete</md-button>
+	        </td>
+	     </tr>		  
+		</table>
+	</div>
 
 
 </div>

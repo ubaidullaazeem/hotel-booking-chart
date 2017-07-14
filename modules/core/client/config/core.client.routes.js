@@ -60,7 +60,7 @@
           pageTitle: 'Settings'
         }
       })
-      .state('not-found', {
+      /*.state('not-found', {
         url: '/not-found',
         templateUrl: '/modules/core/client/views/404.client.view.html',
         controller: 'ErrorController',
@@ -74,8 +74,8 @@
           ignoreState: true,
           pageTitle: 'Not Found'
         }
-      })
-      .state('bad-request', {
+      })*/
+      /*.state('bad-request', {
         url: '/bad-request',
         templateUrl: '/modules/core/client/views/400.client.view.html',
         controller: 'ErrorController',
@@ -89,14 +89,14 @@
           ignoreState: true,
           pageTitle: 'Bad Request'
         }
-      })
-      .state('forbidden', {
+      })*/
+      /*.state('forbidden', {
         url: '/forbidden',
         templateUrl: '/modules/core/client/views/403.client.view.html',
         data: {
           ignoreState: true,
           pageTitle: 'Forbidden'
         }
-      });
+      })*/;
   }
 }());
