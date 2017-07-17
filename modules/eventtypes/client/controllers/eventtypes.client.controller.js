@@ -11,16 +11,22 @@
   function EventtypesController ($scope, $state, $rootScope, $window, $mdDialog, $mdToast, eventtype, EventtypesService, COLOURS) 
   {
     $scope.colours = COLOURS;
-    $scope.eventType = eventtype;
+    $scope.model = {
+      eventType: {
+        name: eventtype ? eventtype.name : undefined,
+        colour: eventtype ? eventtype.colour : undefined,
+        _id: eventtype ? eventtype._id : undefined
+      }
+    }
 
-    if (eventtype.colour) 
+    if (eventtype) 
     { 
-      $scope.eventType.colour = $scope.colours[_.findIndex($scope.colours, eventtype.colour)];
+      $scope.model.eventType.colour = $scope.colours[_.findIndex($scope.colours, eventtype.colour)];
     }
     
     $scope.onEventTypeColourSelected = function()
     {
-      console.log("eventType "+JSON.stringify($scope.eventType));
+      console.log("eventType "+JSON.stringify($scope.model.eventType));
     }
     
     // Save Eventtype
@@ -31,21 +37,18 @@
 
       if (eventtypeForm.$valid) 
       { 
-        if ($scope.eventType._id) 
+        if ($scope.model.eventType._id) 
         {
-          $scope.eventType.$update(successCallback, errorCallback);
+          EventtypesService.update($scope.model.eventType, successCallback, errorCallback);
         } 
         else 
         {
-          //$scope.eventType.$save(successCallback, errorCallback);
-
-          EventtypesService.save($scope.eventType, successCallback, errorCallback);
+          EventtypesService.save($scope.model.eventType, successCallback, errorCallback);
         }
 
         function successCallback(res) 
         {
-          $scope.cancel();
-          $rootScope.$broadcast('refreshEventsTypes');
+          $mdDialog.hide(res);
         }
 
         function errorCallback(res) 

@@ -6,31 +6,39 @@
     .module('halls')
     .controller('HallsController', HallsController);
 
-  HallsController.$inject = ['$scope', '$state', '$rootScope', '$mdDialog', '$mdToast', 'hallResolve'];
+  HallsController.$inject = ['$scope', '$state', '$rootScope', '$mdDialog', '$mdToast', 'hallResolve', 'HallsService'];
 
-  function HallsController ($scope, $state, $rootScope, $mdDialog, $mdToast, hall) 
+  function HallsController ($scope, $state, $rootScope, $mdDialog, $mdToast, hall, HallsService) 
   {   
-    $scope.hall = hall;
-    $scope.mNumberPattern = /^[0-9]*$/;//only numbers    
+    $scope.model = {
+      hall: {
+        name: hall ? hall.name : undefined,
+        rate: hall ? hall.rate : undefined,
+        _id: hall ? hall._id : undefined
+      }
+    };
+
+    $scope.ui = {
+      mNumberPattern: /^[0-9]*$/
+    }
     
     $scope.save = function(hallForm)
     { 
       $scope.hallForm = hallForm;
       if (hallForm.$valid) 
       {     
-        if ($scope.hall._id) 
+        if ($scope.model.hall._id) 
         {
-          $scope.hall.$update(successCallback, errorCallback);
+          HallsService.update($scope.model.hall, successCallback, errorCallback);          
         } 
         else 
         {
-          $scope.hall.$save(successCallback, errorCallback);
+          HallsService.save($scope.model.hall, successCallback, errorCallback);          
         }        
 
         function successCallback(res) 
         {          
-          $scope.cancel();
-          $rootScope.$broadcast('refreshHalls');//sending broadcast to update the settings page.
+          $mdDialog.hide(res);
         }
 
         function errorCallback(res) 

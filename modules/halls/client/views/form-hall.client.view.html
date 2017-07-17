@@ -17,7 +17,7 @@
 
           <md-input-container flex>
             <label>Name</label>
-            <input required name="name" ng-model="hall.name"/>
+            <input required name="name" ng-model="model.hall.name"/>
             <div ng-messages="hallForm.name.$error">
               <div ng-message="required">Hall name is required.</div>
             </div>
@@ -25,7 +25,7 @@
 
           <md-input-container flex>
             <label>Rate</label>
-            <input required name="rate" ng-model="hall.rate" min="0" ng-pattern="mNumberPattern"/>
+            <input required name="rate" ng-model="model.hall.rate" min="0" ng-pattern="ui.mNumberPattern"/>
             <div ng-messages="hallForm.rate.$error">
               <div ng-message="required">Hall rate is required.</div>
             </div>

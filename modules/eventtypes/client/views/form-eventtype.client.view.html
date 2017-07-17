@@ -17,17 +17,17 @@
 
           <md-input-container flex>
             <label>Name</label>
-            <input required name="name" ng-model="eventType.name"/>
+            <input required name="name" ng-model="model.eventType.name"/>
             <div ng-messages="eventtypeForm.name.$error">
               <div ng-message="required">Event type name is required.</div>
             </div>
           </md-input-container>  
-
+{{model.eventType.colour}}
           <md-input-container flex>
               <label>Colour</label>
               <md-select  required
                           name="colour"
-                          ng-model="eventType.colour"
+                          ng-model="model.eventType.colour"
                           ng-change="onEventTypeColourSelected()">                
                 <md-optgroup label="Colour">
                   <md-option ng-value="colour" ng-repeat="colour in colours">{{colour.name}}</md-option>
