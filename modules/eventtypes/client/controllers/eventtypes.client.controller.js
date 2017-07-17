@@ -6,48 +6,58 @@
     .module('eventtypes')
     .controller('EventtypesController', EventtypesController);
 
-  EventtypesController.$inject = ['$scope', '$state', '$window', 'Authentication', 'eventtypeResolve'];
+  EventtypesController.$inject = ['$scope', '$state', '$rootScope', '$window', '$mdDialog', '$mdToast', 'eventtypeResolve', 'EventtypesService', 'COLOURS'];
 
-  function EventtypesController ($scope, $state, $window, Authentication, eventtype) {
-    var vm = this;
+  function EventtypesController ($scope, $state, $rootScope, $window, $mdDialog, $mdToast, eventtype, EventtypesService, COLOURS) 
+  {
+    $scope.colours = COLOURS;
+    $scope.eventType = eventtype;
 
-    vm.authentication = Authentication;
-    vm.eventtype = eventtype;
-    vm.error = null;
-    vm.form = {};
-    vm.remove = remove;
-    vm.save = save;
-
-    // Remove existing Eventtype
-    function remove() {
-      if ($window.confirm('Are you sure you want to delete?')) {
-        vm.eventtype.$remove($state.go('eventtypes.list'));
-      }
+    if (eventtype.colour) 
+    { 
+      $scope.eventType.colour = $scope.colours[_.findIndex($scope.colours, eventtype.colour)];
     }
-
+    
+    $scope.onEventTypeColourSelected = function()
+    {
+      console.log("eventType "+JSON.stringify($scope.eventType));
+    }
+    
     // Save Eventtype
-    function save(isValid) {
-      if (!isValid) {
-        $scope.$broadcast('show-errors-check-validity', 'vm.form.eventtypeForm');
-        return false;
-      }
+    $scope.save = function(eventtypeForm) 
+    {
+      $scope.eventtypeForm = eventtypeForm;
+      $scope.submitted = true;
 
-      // TODO: move create/update logic to service
-      if (vm.eventtype._id) {
-        vm.eventtype.$update(successCallback, errorCallback);
-      } else {
-        vm.eventtype.$save(successCallback, errorCallback);
-      }
+      if (eventtypeForm.$valid) 
+      { 
+        if ($scope.eventType._id) 
+        {
+          $scope.eventType.$update(successCallback, errorCallback);
+        } 
+        else 
+        {
+          //$scope.eventType.$save(successCallback, errorCallback);
 
-      function successCallback(res) {
-        $state.go('eventtypes.view', {
-          eventtypeId: res._id
-        });
-      }
+          EventtypesService.save($scope.eventType, successCallback, errorCallback);
+        }
 
-      function errorCallback(res) {
-        vm.error = res.data.message;
+        function successCallback(res) 
+        {
+          $scope.cancel();
+          $rootScope.$broadcast('refreshEventsTypes');
+        }
+
+        function errorCallback(res) 
+        {
+          $mdToast.show($mdToast.simple().textContent(res.data.message).position('bottom right').hideDelay(3000));
+        }
       }
     }
+
+    $scope.cancel = function()
+    {
+      $mdDialog.cancel();
+    }  
   }
 }());

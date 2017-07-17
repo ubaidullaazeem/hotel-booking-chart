@@ -6,17 +6,17 @@
     .module('halls')
     .controller('HallsController', HallsController);
 
-  HallsController.$inject = ['$scope', '$state', '$rootScope', '$window', 'Authentication', '$mdDialog', '$mdToast', 'hallResolve'];
+  HallsController.$inject = ['$scope', '$state', '$rootScope', '$mdDialog', '$mdToast', 'hallResolve'];
 
-  function HallsController ($scope, $state, $rootScope, $window, Authentication, $mdDialog, $mdToast, hall) 
+  function HallsController ($scope, $state, $rootScope, $mdDialog, $mdToast, hall) 
   {   
     $scope.hall = hall;
     $scope.mNumberPattern = /^[0-9]*$/;//only numbers    
     
-    $scope.save = function(createHallForm)
+    $scope.save = function(hallForm)
     { 
-      $scope.createHallForm = createHallForm;
-      if (createHallForm.$valid) 
+      $scope.hallForm = hallForm;
+      if (hallForm.$valid) 
       {     
         if ($scope.hall._id) 
         {

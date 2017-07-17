@@ -30,6 +30,7 @@ module.exports = {
         'public/lib/angular-material/angular-material.js',
         'public/lib/angular-cookies/angular-cookies.js',
         'public/lib/angular-bootstrap/ui-bootstrap-tpls.min.js',
+        'public/lib/lodash/lodash.js'
         // endbower
       ],
       tests: ['public/lib/angular-mocks/angular-mocks.js']

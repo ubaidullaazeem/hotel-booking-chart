@@ -1,24 +1,55 @@
-<section>
-  <div class="page-header">
-    <h1>{{vm.eventtype._id ? 'Edit Eventtype' : 'New Eventtype'}}</h1>
-  </div>
-  <div class="col-md-12">
-    <form name="vm.form.eventtypeForm" class="form-horizontal" ng-submit="vm.save(vm.form.eventtypeForm.$valid)" novalidate>
-      <fieldset>
-        <div class="form-group" show-errors>
-          <label class="control-label" for="name">Name</label>
-          <input name="name" type="text" ng-model="vm.eventtype.name" id="name" class="form-control" placeholder="Name" required>
-          <div ng-messages="vm.form.eventtypeForm.name.$error" role="alert">
-            <p class="help-block error-text" ng-message="required">Eventtype name is required.</p>
-          </div>
+<md-dialog flex>
+  <form name="eventtypeForm" autocomplete="off">
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        
+        <span flex="100" align="center"><h2>{{eventType._id ? 'Edit Event Type' : 'Add Event Type'}}</h2></span>
+        <md-button class="md-icon-button" ng-click="cancel()">
+          <md-icon md-svg-src="modules/core/client/img/icons/ic_close_24px.svg" aria-label="Close dialog"></md-icon>
+        </md-button>
+      </div>
+    </md-toolbar>
+
+    <md-dialog-content>
+      <div class="md-dialog-content">
+
+        <div layout="column" flex>
+
+          <md-input-container flex>
+            <label>Name</label>
+            <input required name="name" ng-model="eventType.name"/>
+            <div ng-messages="eventtypeForm.name.$error">
+              <div ng-message="required">Event type name is required.</div>
+            </div>
+          </md-input-container>  
+
+          <md-input-container flex>
+              <label>Colour</label>
+              <md-select  required
+                          name="colour"
+                          ng-model="eventType.colour"
+                          ng-change="onEventTypeColourSelected()">                
+                <md-optgroup label="Colour">
+                  <md-option ng-value="colour" ng-repeat="colour in colours">{{colour.name}}</md-option>
+                </md-optgroup>
+              </md-select>    
+              <div ng-messages="eventtypeForm.colour.$error" ng-show="eventtypeForm.colour.$invalid && submitted">
+                <div ng-message="required">Event colour is required.</div>
+              </div>
+          </md-input-container>
+
         </div>
-        <div class="form-group">
-          <button type="submit" class="btn btn-default">{{vm.eventtype._id ? 'Update' : 'Create'}}</button>
-        </div>
-        <div ng-show="vm.error" class="text-danger">
-          <strong ng-bind="vm.error"></strong>
-        </div>
-      </fieldset>
-    </form>
-  </div>
-</section>
+        
+      </div>
+    </md-dialog-content>
+    
+    <md-dialog-actions layout="row">  
+      <span flex></span>
+      <md-button flex ng-click="save(eventtypeForm)" type="submit">Submit</md-button>
+      <span flex></span>
+      <md-button flex ng-click="cancel()">Cancel</md-button>
+      <span flex></span>
+    </md-dialog-actions>
+  </form>
+</md-dialog>
+

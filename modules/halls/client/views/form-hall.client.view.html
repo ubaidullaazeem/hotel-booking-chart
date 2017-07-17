@@ -1,30 +1,5 @@
-<!-- <section>
-  <div class="page-header">
-    <h1>{{vm.hall._id ? 'Edit Hall' : 'New Hall'}}</h1>
-  </div>
-  <div class="col-md-12">
-    <form name="vm.form.hallForm" class="form-horizontal" ng-submit="vm.save(vm.form.hallForm.$valid)" novalidate>
-      <fieldset>
-        <div class="form-group" show-errors>
-          <label class="control-label" for="name">Name</label>
-          <input name="name" type="text" ng-model="vm.hall.name" id="name" class="form-control" placeholder="Name" required>
-          <div ng-messages="vm.form.hallForm.name.$error" role="alert">
-            <p class="help-block error-text" ng-message="required">Hall name is required.</p>
-          </div>
-        </div>
-        <div class="form-group">
-          <button type="submit" class="btn btn-default">{{vm.hall._id ? 'Update' : 'Create'}}</button>
-        </div>
-        <div ng-show="vm.error" class="text-danger">
-          <strong ng-bind="vm.error"></strong>
-        </div>
-      </fieldset>
-    </form>
-  </div>
-</section> -->
-
- <md-dialog flex>
-  <form name="hallForm">
+<md-dialog flex>
+  <form name="hallForm" autocomplete="off">
     <md-toolbar>
       <div class="md-toolbar-tools">
         

@@ -82,7 +82,7 @@
 		<div layout="row">
 			<p flex=70 style="color:#7f7f7f;font-size: 17px; margin-top:10px"><b>Event:</b></p>
 			<div flex=30 style="text-align: center;">
-				<md-button class="md-raised md-primary nonecase" ng-click="">Add</md-button>
+				<md-button class="md-raised md-primary nonecase" ng-click="mShowAddEventTypePopup($event)">Add</md-button>
 			</div>
 		</div>
 
@@ -96,11 +96,11 @@
 		  </tr>
 		  <tr ng-repeat = "eventType in eventTypes">
 	        <td>{{ eventType.name }}</td>
-	        <td>{{ eventType.colour }}</td>
+	        <td>{{ eventType.colour.name }}</td>
 
 	        <td style="text-align: center;">
-	        	<md-button class="md-raised md-primary nonecase" ng-click="">Edit</md-button>
-	        	<md-button class="md-raised md-primary nonecase" ng-click="">Delete</md-button>
+	        	<md-button class="md-raised md-primary nonecase" ng-click="mShowEditEventTypePopup($event, eventType)">Edit</md-button>
+	        	<md-button class="md-raised md-primary nonecase" ng-click="mDeleteEventType($event, eventType)">Delete</md-button>
 	        </td>
 	     </tr>		  
 		</table>
