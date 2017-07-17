@@ -43,12 +43,12 @@
 		    <th width="30%">Action</th>
 		  </tr>
 		  <tr ng-repeat = "hall in halls">
-	        <td>{{ hall.name }}</td>
+	        <td style="text-transform: capitalize;">{{ hall.name }}</td>
 	        <td>{{ hall.rate | currency:"₹":0 }}</td>
 
 	        <td style="text-align: center;">
 	        	<md-button class="md-raised md-primary nonecase" style="min-width: 50px" ng-click="mShowHallPopup($event, $index, hall)"><span class="glyphicon glyphicon-pencil"></span></md-button>
-	        	<md-button class="md-raised md-warn nonecase" style="min-width: 50px" ng-click="mDeleteHall($event, hall)"><span class="glyphicon glyphicon-trash"></span></md-button>
+	        	<md-button class="md-raised md-warn nonecase" style="min-width: 50px" ng-click="mDeleteHall($event, $index, hall)"><span class="glyphicon glyphicon-trash"></span></md-button>
 	        </td>
 	     </tr>		  
 		</table>
@@ -98,12 +98,12 @@
 		    <th width="30%">Action</th>
 		  </tr>
 		  <tr ng-repeat = "eventType in eventTypes">
-	        <td>{{ eventType.name }}</td>
+	        <td style="text-transform: capitalize;">{{ eventType.name }}</td>
 	        <td>{{ eventType.colour.name }}</td>
 
 	        <td style="text-align: center;">
 	        	<md-button class="md-raised md-primary nonecase md-mini" style="min-width: 50px" ng-click="mShowEventTypePopup($event, $index, eventType)"><span class="glyphicon glyphicon-pencil"></span></md-button>
-	        	<md-button class="md-raised md-warn nonecase" style="min-width: 50px" ng-click="mDeleteEventType($event, eventType)"><span class="glyphicon glyphicon-trash"></span></md-button>
+	        	<md-button class="md-raised md-warn nonecase" style="min-width: 50px" ng-click="mDeleteEventType($event, $index, eventType)"><span class="glyphicon glyphicon-trash"></span></md-button>
 	        </td>
 	     </tr>		  
 		</table>

@@ -13,7 +13,8 @@
     $scope.model = {
       tax: {
         name: tax ? tax.name : undefined,
-        percentage: tax ? tax.percentage : undefined
+        percentage: tax ? tax.percentage : undefined,        
+        _id: tax ? tax._id : undefined
       }
     };
 

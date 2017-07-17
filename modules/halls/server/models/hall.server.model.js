@@ -14,7 +14,8 @@ var HallSchema = new Schema({
     type: String,
     unique: true,
     required: 'Please fill Hall name',
-    trim: true
+    trim: true,
+    lowercase: true
   },
   rate:{
     type: Number,

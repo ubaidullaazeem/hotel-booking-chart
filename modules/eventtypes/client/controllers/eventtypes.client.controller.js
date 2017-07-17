@@ -6,11 +6,11 @@
     .module('eventtypes')
     .controller('EventtypesController', EventtypesController);
 
-  EventtypesController.$inject = ['$scope', '$state', '$rootScope', '$window', '$mdDialog', '$mdToast', 'eventtypeResolve', 'EventtypesService', 'COLOURS'];
+  EventtypesController.$inject = ['$scope', '$state', '$rootScope', '$window', '$mdDialog', '$mdToast', 'eventtypeResolve', 'EventtypesService', 'COLOURS', 'colorsResolve'];
 
-  function EventtypesController ($scope, $state, $rootScope, $window, $mdDialog, $mdToast, eventtype, EventtypesService, COLOURS) 
+  function EventtypesController ($scope, $state, $rootScope, $window, $mdDialog, $mdToast, eventtype, EventtypesService, COLOURS, colorsResolve) 
   {
-    $scope.colours = COLOURS;
+    $scope.colours = colorsResolve;
     $scope.model = {
       eventType: {
         name: eventtype ? eventtype.name : undefined,

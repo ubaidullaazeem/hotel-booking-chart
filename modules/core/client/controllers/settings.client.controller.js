@@ -5,9 +5,9 @@
     .module('core')
     .controller('SettingsController', SettingsController);
 
-  SettingsController.$inject = ['$scope', '$state', '$rootScope', '$mdDialog', '$mdToast', 'HallsService', 'EventtypesService', 'TaxesService'];
+  SettingsController.$inject = ['COLOURS', '$scope', '$state', '$rootScope', '$mdDialog', '$mdToast', 'HallsService', 'EventtypesService', 'TaxesService'];
 
-  function SettingsController($scope, $state, $rootScope, $mdDialog, $mdToast, HallsService, EventtypesService, TaxesService) {
+  function SettingsController(COLOURS, $scope, $state, $rootScope, $mdDialog, $mdToast, HallsService, EventtypesService, TaxesService) {
     
     
     $scope.loadInitial = function() {
@@ -43,7 +43,7 @@
         });
     }
 
-    $scope.mDeleteHall = function(ev, hall) {
+    $scope.mDeleteHall = function(ev, index, hall) {
       var confirm = $mdDialog.confirm()
         .title('Do you want to delete the ' + hall.name + ' hall?')
         .textContent('Hall will be deleted permanently.')
@@ -55,7 +55,7 @@
           hall.$remove(successCallback, errorCallback);
 
           function successCallback(res) {
-           $scope.halls.pop(hall);
+           $scope.halls.splice(index, 1);
           }
 
           function errorCallback(res) {
@@ -98,6 +98,20 @@
      /** CRUD Functionality for EventType **/
 
     $scope.mShowEventTypePopup = function(ev, index = null, eventType = null) {
+      var savedColors = _.map($scope.eventTypes, 'colour');
+      var colours = [];
+      var colors = _.map(COLOURS, function(o) {
+        return _.pick(o, ['name', 'code']);
+      });
+      if (eventType) {
+        var eventColors = _.reject(savedColors, function(savedColor) {
+          return savedColor.name === eventType.colour.name;
+        });
+        colours = _.pullAllBy(colors, eventColors, 'name');
+      } else {
+        colours = _.pullAllBy(colors, savedColors, 'name');
+      }
+
       $mdDialog.show({
           controller: 'EventtypesController',
           templateUrl: 'modules/eventtypes/client/views/form-eventtype.client.view.html',
@@ -108,6 +122,9 @@
           resolve: {
             eventtypeResolve: function() {
               return eventType;
+            },
+            colorsResolve: function() {
+              return colours
             }
           },
         })
@@ -123,7 +140,7 @@
 
     }
 
-    $scope.mDeleteEventType = function(ev, eventType) {
+    $scope.mDeleteEventType = function(ev, index, eventType) {
       var confirm = $mdDialog.confirm()
         .title('Do you want to delete "' + eventType.name + '"?')
         .textContent('Event type will be deleted permanently.')
@@ -135,7 +152,7 @@
           eventType.$remove(successCallback, errorCallback);
 
           function successCallback(res) {
-            $scope.eventTypes.pop(eventType);
+            $scope.eventTypes.splice(index, 1);
           }
 
           function errorCallback(res) {
