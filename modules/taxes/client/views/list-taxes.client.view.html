@@ -1,0 +1,22 @@
+<section>
+  <div class="page-header">
+    <h1>Taxes</h1>
+  </div>
+  <div class="list-group">
+    <a ng-repeat="tax in vm.taxes"
+       ui-sref="taxes.view({ taxId: tax._id })"
+       class="list-group-item">
+      <small class="list-group-item-text">
+        Posted on
+        <span ng-bind="tax.created | date:'mediumDate'"></span>
+        by
+        <span ng-if="tax.user" ng-bind="tax.user.displayName"></span>
+        <span ng-if="!tax.user">Deleted User</span>
+      </small>
+      <h4 class="list-group-item-heading" ng-bind="tax.name"></h4>
+    </a>
+  </div>
+  <div class="alert alert-warning text-center" ng-if="vm.taxes.$resolved && !vm.taxes.length">
+    No Taxes yet, why don't you <a ui-sref="taxes.create">create one</a>?
+  </div>
+</section>
