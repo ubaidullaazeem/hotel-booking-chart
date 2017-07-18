@@ -1,0 +1,58 @@
+<div ng-controller="HeaderController as vm">
+    <div class="user">
+        <div class="photo">
+            <img ng-src="{{imageUrl ? imageUrl.replace('?sz=50', '?sz=100') : 'modules/core/client/img/user-default.png'}}" err-src="modules/core/client/img/user-default.png" />
+        </div>
+        <div class="info">
+            <a data-toggle="collapse" href="#collapseExample" class="collapsed">
+            {{name}}
+                <b class="caret"></b>
+            </a>
+            <div class="collapse" id="collapseExample">
+                <ul class="nav">
+                <li class="col-md-6" style="margin-left: 12%">
+                    <a href="#" ng-click="logout()"><i class="material-icons">settings_power</i> Logout</a>
+                </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <ul class="nav">
+        <li ui-sref-active="active">
+            <a ui-sref="bookings">
+                <i class="material-icons">content_paste</i>
+                <p>Bookings</p>
+            </a>
+        </li>
+        <li ui-sref-active="active">
+            <a ui-sref="reports">
+                <i class="material-icons">dashboard</i>
+                <p>Reports</p>
+            </a>
+        </li>
+        <li ui-sref-active="active">
+            <a data-toggle="collapse" href="#pagesExamples">
+                <i class="material-icons">settings</i>
+                <p>Settings
+                <b class="caret"></b>
+                </p>
+            </a>
+            <div class="collapse" id="pagesExamples">
+                <ul class="nav">
+                    <li ui-sref-active="active">
+                        <a ui-sref="tax">Tax</a>
+                    </li>
+                    <li ui-sref-active="active">
+                        <a ui-sref="hall">Hall</a>
+                    </li>
+                    <li ui-sref-active="active">
+                        <a ui-sref="payment">Payment</a>
+                    </li>
+                    <li ui-sref-active="active">
+                        <a ui-sref="event">Event</a>
+                    </li>
+                </ul>
+            </div>
+        </li> 
+    </ul>
+</div>  

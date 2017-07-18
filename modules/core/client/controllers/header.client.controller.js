@@ -5,9 +5,9 @@
     .module('core')
     .controller('HeaderController', HeaderController);
 
-  HeaderController.$inject = ['$scope', '$state', '$rootScope', 'Authentication', 'menuService', 'AuthenticationService'];
+  HeaderController.$inject = ['DATA_BACKGROUND_COLOR', '$scope', '$state', '$rootScope', 'Authentication', 'menuService', 'AuthenticationService'];
 
-  function HeaderController($scope, $state, $rootScope, Authentication, menuService, AuthenticationService) 
+  function HeaderController(DATA_BACKGROUND_COLOR, $scope, $state, $rootScope, Authentication, menuService, AuthenticationService) 
   {
     var vm = this;
 
@@ -15,6 +15,7 @@
     vm.authentication = Authentication;
     vm.isCollapsed = false;
     vm.menu = menuService.getMenu('topbar');
+    vm.DATA_BACKGROUND_COLOR = DATA_BACKGROUND_COLOR;
 
     $scope.$on('$stateChangeSuccess', stateChangeSuccess);
 

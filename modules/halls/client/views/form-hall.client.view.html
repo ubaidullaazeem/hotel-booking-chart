@@ -1,48 +1,50 @@
 <md-dialog flex>
-  <form name="hallForm" autocomplete="off">
-    <md-toolbar>
-      <div class="md-toolbar-tools">
-        
-        <span flex align="center" style="text-align: center;"><h2>{{model.hall._id ? 'Edit Hall' : 'Add Hall'}}</h2></span>
-        <md-button class="md-icon-button" ng-click="cancel()">
-          <md-icon md-svg-src="modules/core/client/img/icons/ic_close_24px.svg" aria-label="Close dialog"></md-icon>
-        </md-button>
-      </div>
-    </md-toolbar>
-
-    <md-dialog-content>
-      <div class="md-dialog-content">
-
-        <div layout="column" flex>
-
-          <md-input-container flex>
-            <label>Name</label>
-            <input style="text-transform: capitalize" required name="name" ng-model="model.hall.name"/>
-            <div ng-messages="hallForm.name.$error">
-              <div ng-message="required">Hall name is required.</div>
-            </div>
-          </md-input-container>  
-
-          <md-input-container flex>
-            <label>Rate</label>
-            <input required name="rate" ng-model="model.hall.rate" min="0" ng-pattern="ui.mNumberPattern"/>
-            <div ng-messages="hallForm.rate.$error">
-              <div ng-message="required">Hall rate is required.</div>
-            </div>
-          </md-input-container>  
-
+  <form name="hallForm" autocomplete="off">    
+    <div class="card">
+        <div class="card-header" data-background-color="{{DATA_BACKGROUND_COLOR}}">
+          <div class="md-toolbar-tools">        
+            <span flex align="center"><h1>{{model.hall._id ? 'Edit Hall' : 'Add Hall'}}</h1></span>
+            <md-button class="md-icon-button" ng-click="cancel()">
+              <md-icon md-svg-src="modules/core/client/img/icons/ic_close_24px.svg" aria-label="Close dialog"></md-icon>
+            </md-button>
+          </div>
         </div>
-        
+      <div class="card-content table-responsive">
+        <md-dialog-content>
+          <div class="md-dialog-content">
+
+            <div layout="column" flex>
+
+              <md-input-container flex>
+                <label>Name</label>
+                <input style="text-transform: capitalize" required name="name" ng-model="model.hall.name"/>
+                <div ng-messages="hallForm.name.$error">
+                  <div ng-message="required">Hall name is required.</div>
+                </div>
+              </md-input-container>  
+
+              <md-input-container flex>
+                <label>Rate</label>
+                <input required name="rate" ng-model="model.hall.rate" min="0" ng-pattern="ui.mNumberPattern"/>
+                <div ng-messages="hallForm.rate.$error">
+                  <div ng-message="required">Hall rate is required.</div>
+                </div>
+              </md-input-container>  
+
+            </div>
+            
+          </div>
+        </md-dialog-content>
       </div>
-    </md-dialog-content>
-    
-    <md-dialog-actions layout="row">  
-      <span flex></span>
-      <md-button flex ng-click="save(hallForm)" type="submit">Submit</md-button>
-      <span flex></span>
-      <md-button flex ng-click="cancel()">Cancel</md-button>
-      <span flex></span>
-    </md-dialog-actions>
+      
+      <md-dialog-actions layout="row">  
+        <span flex></span>
+        <input class="btn btn-next btn-fill btn-rose btn-wd" name="submit" value="Submit" ng-click="save(hallForm)" ng-disabled="hallForm.$invalid" type="button">
+        <span flex></span>
+        <input class="btn btn-next btn-fill btn-rose btn-wd" name="cancel" value="Cancel" ng-click="cancel()" type="button">
+        <span flex></span>
+      </md-dialog-actions>
+    </div>
   </form>
 </md-dialog>
 

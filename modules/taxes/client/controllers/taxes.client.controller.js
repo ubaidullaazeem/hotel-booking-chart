@@ -6,9 +6,9 @@
     .module('taxes')
     .controller('TaxesController', TaxesController);
 
-  TaxesController.$inject = ['$scope', '$state', '$rootScope', '$window', 'Authentication', '$mdDialog', '$mdToast', 'taxResolve', 'TaxesService'];
+  TaxesController.$inject = ['DATA_BACKGROUND_COLOR', '$scope', '$state', '$rootScope', '$window', 'Authentication', '$mdDialog', '$mdToast', 'taxResolve', 'TaxesService'];
 
-  function TaxesController ($scope, $state, $rootScope, $window, Authentication, $mdDialog, $mdToast, tax, TaxesService) 
+  function TaxesController (DATA_BACKGROUND_COLOR, $scope, $state, $rootScope, $window, Authentication, $mdDialog, $mdToast, tax, TaxesService) 
   {   
     $scope.model = {
       tax: {
@@ -20,7 +20,9 @@
 
     $scope.ui = {
       mNumberPattern: /^[0-9]*$/
-    }
+    };
+
+    $scope.DATA_BACKGROUND_COLOR = DATA_BACKGROUND_COLOR;
     
     $scope.save = function(createTaxForm)
     {       

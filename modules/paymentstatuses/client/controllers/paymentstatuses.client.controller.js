@@ -6,9 +6,9 @@
     .module('paymentstatuses')
     .controller('PaymentstatusesController', PaymentstatusesController);
 
-  PaymentstatusesController.$inject = ['$scope', '$state', 'paymentstatusResolve', '$mdDialog', '$mdToast', 'PaymentstatusesService', 'colorsResolve'];
+  PaymentstatusesController.$inject = ['DATA_BACKGROUND_COLOR', '$scope', '$state', 'paymentstatusResolve', '$mdDialog', '$mdToast', 'PaymentstatusesService', 'colorsResolve'];
 
-  function PaymentstatusesController ($scope, $state, paymentstatus, $mdDialog, $mdToast, PaymentstatusesService, colorsResolve) 
+  function PaymentstatusesController (DATA_BACKGROUND_COLOR, $scope, $state, paymentstatus, $mdDialog, $mdToast, PaymentstatusesService, colorsResolve) 
   {
     $scope.colours = colorsResolve;
     $scope.model = {
@@ -18,6 +18,8 @@
         _id: paymentstatus ? paymentstatus._id : undefined
       }
     }
+
+    $scope.DATA_BACKGROUND_COLOR = DATA_BACKGROUND_COLOR;
 
     if (paymentstatus) 
     { 

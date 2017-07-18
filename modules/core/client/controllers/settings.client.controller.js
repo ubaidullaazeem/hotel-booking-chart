@@ -5,11 +5,12 @@
     .module('core')
     .controller('SettingsController', SettingsController);
 
-  SettingsController.$inject = ['COLOURS', '$scope', '$state', '$rootScope', '$mdDialog', '$mdToast', 'HallsService', 'EventtypesService', 'TaxesService', 'PaymentstatusesService'];
+  SettingsController.$inject = ['COLOURS', 'DATA_BACKGROUND_COLOR', '$scope', '$state', '$rootScope', '$mdDialog', '$mdToast', 'HallsService', 'EventtypesService', 'TaxesService', 'PaymentstatusesService'];
 
-  function SettingsController(COLOURS, $scope, $state, $rootScope, $mdDialog, $mdToast, HallsService, EventtypesService, TaxesService, PaymentstatusesService) 
+  function SettingsController(COLOURS, DATA_BACKGROUND_COLOR, $scope, $state, $rootScope, $mdDialog, $mdToast, HallsService, EventtypesService, TaxesService, PaymentstatusesService) 
   {
     
+    $scope.DATA_BACKGROUND_COLOR = DATA_BACKGROUND_COLOR;
     
     $scope.loadInitial = function() {
       $scope.halls = HallsService.query();

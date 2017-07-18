@@ -33,18 +33,46 @@
 
   <!-- Application CSS Files -->
   {{#each cssFiles}}<link rel="stylesheet" href="/{{this}}">{{/each}}
+    <!--  Material Dashboard CSS    -->
+    <link href="/modules/core/client/css/material-dashboard/material-dashboard.css" rel="stylesheet" />
+    <!--     Fonts and icons     -->
+    <link href="http://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons" />
 </head>
 
 <body class="ng-cloak">
-
-  <header ng-include="'/modules/core/client/views/header.client.view.html'" class="navbar navbar-fixed-top navbar-inverse" ng-show="isUserLoggedIn"></header>
-  
-  <section class="content">
-    <section class="container">
-      {{{block "content"}}}
-    </section>
-  </section>
-
+  <div class="wrapper"> 
+    <div class="sidebar" ng-if="isUserLoggedIn" data-active-color="rose" data-background-color="white" data-image="/modules/core/client/img/sidebar-1.jpg">
+    <!--
+    Tip 1: You can change the color of active element of the sidebar using: data-active-color="purple | blue | green | orange | red | rose"
+    Tip 2: you can also add an image using data-image tag
+    Tip 3: you can change the color of the sidebar with data-background-color="white | black"
+    -->
+        <div class="logo">
+            <a href="#" class="simple-text">
+            <img src="/modules/core/client/img/logo.png" style="width: 170px; height: 65px">
+            </a>
+        </div>    
+       <div class="sidebar-wrapper">
+         <div ng-include="'/modules/core/client/views/sidebar.client.view.html'"></div>
+       </div>
+      </div>
+      <div class="main-panel" ng-if="isUserLoggedIn">
+        <nav class="navbar navbar-transparent navbar-absolute">
+           <div ng-include="'/modules/core/client/views/navbar.client.view.html'"></div>
+          </nav>
+        <div class="content">
+          <div class="container-fluid">
+            <div class="row">
+              {{{block "content"}}}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div ng-if="!isUserLoggedIn">
+        <div ng-include="'/modules/core/client/views/login.client.view.html'"></div>
+      </div>
+  </div>
   <noscript>
     <style>
       [ng\:cloak], [ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
@@ -69,6 +97,13 @@
 
   <!--Application JavaScript Files-->
     {{#each jsFiles}}<script type="text/javascript" src="/{{this}}"></script>{{/each}}
+    <script src="/modules/core/client/js/bootstrap.min.js" type="text/javascript"></script>
+    <script src="/modules/core/client/js/material.min.js" type="text/javascript"></script>
+    <script src="/modules/core/client/js/perfect-scrollbar.jquery.min.js" type="text/javascript"></script>
+    <!--  Google Maps Plugin    -->
+    <script src="https://maps.googleapis.com/maps/api/js"></script>
+    <!-- Material Dashboard javascript methods -->
+    <script src="/modules/core/client/js/material-dashboard.js"></script>
   
   <!--owasp config sync-->
   <script type="text/javascript">

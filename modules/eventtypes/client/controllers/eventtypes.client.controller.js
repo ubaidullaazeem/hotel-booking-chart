@@ -6,9 +6,9 @@
     .module('eventtypes')
     .controller('EventtypesController', EventtypesController);
 
-  EventtypesController.$inject = ['$scope', '$state', '$rootScope', '$window', '$mdDialog', '$mdToast', 'eventtypeResolve', 'EventtypesService', 'COLOURS', 'colorsResolve'];
+  EventtypesController.$inject = ['DATA_BACKGROUND_COLOR', '$scope', '$state', '$rootScope', '$window', '$mdDialog', '$mdToast', 'eventtypeResolve', 'EventtypesService', 'COLOURS', 'colorsResolve'];
 
-  function EventtypesController ($scope, $state, $rootScope, $window, $mdDialog, $mdToast, eventtype, EventtypesService, COLOURS, colorsResolve) 
+  function EventtypesController (DATA_BACKGROUND_COLOR, $scope, $state, $rootScope, $window, $mdDialog, $mdToast, eventtype, EventtypesService, COLOURS, colorsResolve) 
   {
     $scope.colours = colorsResolve;
     $scope.model = {
@@ -18,6 +18,8 @@
         _id: eventtype ? eventtype._id : undefined
       }
     }
+
+    $scope.DATA_BACKGROUND_COLOR = DATA_BACKGROUND_COLOR;
 
     if (eventtype) 
     { 

@@ -1,0 +1,38 @@
+<div layout="column" style="margin-top: 15px" ng-init="loadInitial()">
+
+	<div class="row">
+	   <div class="col-md-12">
+			<div class="card">
+				<div class="card-header" data-background-color="{{DATA_BACKGROUND_COLOR}}">
+					<h4 class="title">Payment</h4>
+					<p class="category">To set payment type</p>
+					<div flex=30 style="float: right; margin-top: -35px" ng-hide="paymentStatuses.length >= 3">
+						<md-button class="md-raised md-primary nonecase" ng-click="mShowPaymentStatusPopup($event)">Add</md-button>
+					</div>
+				</div>
+				<div class="card-content">
+					<h4 class="card-title" ng-hide="paymentStatuses.length">No payment status found.</h4>
+				</div>
+				
+				<div class="card-content table-responsive">
+					<table class="table table-bordered" ng-show="paymentStatuses.length">
+						<tr>
+							<th width="30%">Field</th>
+							<th width="40%">Colour</th> 
+							<th width="30%">Action</th>
+						</tr>
+						<tr ng-repeat = "paymentStatus in paymentStatuses" style="text-align: center">
+							<td style="text-transform: capitalize; vertical-align:middle">{{ paymentStatus.name }}</td>
+							<td style="vertical-align:middle">{{ paymentStatus.colour.name }}</td>
+
+							<td style="text-align: center;">
+							<md-button class="md-raised md-primary nonecase" style="min-width: 50px" ng-click="mShowPaymentStatusPopup($event, $index, paymentStatus)"><span class="glyphicon glyphicon-pencil"></span></md-button>
+							</td>
+						</tr>		  
+					</table>
+				</div>
+			</div>
+	   </div>
+	</div>
+
+</div>

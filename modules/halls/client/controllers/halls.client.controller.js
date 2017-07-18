@@ -6,9 +6,9 @@
     .module('halls')
     .controller('HallsController', HallsController);
 
-  HallsController.$inject = ['$scope', '$state', '$rootScope', '$mdDialog', '$mdToast', 'hallResolve', 'HallsService'];
+  HallsController.$inject = ['DATA_BACKGROUND_COLOR', '$scope', '$state', '$rootScope', '$mdDialog', '$mdToast', 'hallResolve', 'HallsService'];
 
-  function HallsController ($scope, $state, $rootScope, $mdDialog, $mdToast, hall, HallsService) 
+  function HallsController (DATA_BACKGROUND_COLOR, $scope, $state, $rootScope, $mdDialog, $mdToast, hall, HallsService) 
   {   
     $scope.model = {
       hall: {
@@ -21,6 +21,8 @@
     $scope.ui = {
       mNumberPattern: /^[0-9]*$/
     }
+
+    $scope.DATA_BACKGROUND_COLOR = DATA_BACKGROUND_COLOR;
     
     $scope.save = function(hallForm)
     { 

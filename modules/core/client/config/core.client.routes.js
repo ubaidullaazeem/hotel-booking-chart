@@ -51,13 +51,40 @@
           pageTitle: 'Reports'
         }
       })
-      .state('settings', {
-        url: '/settings',
-        templateUrl: '/modules/core/client/views/settings.client.view.html',
+      .state('tax', {
+        url: '/tax',
+        templateUrl: '/modules/core/client/views/settings/tax.client.view.html',
         controller: 'SettingsController',
         controllerAs: 'vm',
         data: {
-          pageTitle: 'Settings'
+          pageTitle: 'Taxes'
+        }
+      })
+      .state('hall', {
+        url: '/hall',
+        templateUrl: '/modules/core/client/views/settings/hall.client.view.html',
+        controller: 'SettingsController',
+        controllerAs: 'vm',
+        data: {
+          pageTitle: 'Halls'
+        }
+      })
+      .state('payment', {
+        url: '/payment',
+        templateUrl: '/modules/core/client/views/settings/payment.client.view.html',
+        controller: 'SettingsController',
+        controllerAs: 'vm',
+        data: {
+          pageTitle: 'Payments'
+        }
+      })
+      .state('event', {
+        url: '/event',
+        templateUrl: '/modules/core/client/views/settings/event.client.view.html',
+        controller: 'SettingsController',
+        controllerAs: 'vm',
+        data: {
+          pageTitle: 'Events'
         }
       })
       /*.state('not-found', {
