@@ -5,15 +5,17 @@
     .module('core')
     .controller('SettingsController', SettingsController);
 
-  SettingsController.$inject = ['COLOURS', '$scope', '$state', '$rootScope', '$mdDialog', '$mdToast', 'HallsService', 'EventtypesService', 'TaxesService'];
+  SettingsController.$inject = ['COLOURS', '$scope', '$state', '$rootScope', '$mdDialog', '$mdToast', 'HallsService', 'EventtypesService', 'TaxesService', 'PaymentstatusesService'];
 
-  function SettingsController(COLOURS, $scope, $state, $rootScope, $mdDialog, $mdToast, HallsService, EventtypesService, TaxesService) {
+  function SettingsController(COLOURS, $scope, $state, $rootScope, $mdDialog, $mdToast, HallsService, EventtypesService, TaxesService, PaymentstatusesService) 
+  {
     
     
     $scope.loadInitial = function() {
       $scope.halls = HallsService.query();
       $scope.taxes = TaxesService.query();
       $scope.eventTypes = EventtypesService.query();
+      $scope.paymentStatuses = PaymentstatusesService.query();
     };
 
     /** CRUD Functionality for Hall **/
@@ -164,7 +166,50 @@
         });
     }
 
+     /** CRUD Functionality for Payment status **/
 
+    $scope.mShowPaymentStatusPopup = function(ev, index = null, paymentStatus = null) {
+
+      var savedColors = _.map($scope.paymentStatuses, 'colour');
+      var colours = [];
+      var colors = _.map(COLOURS, function(o) {
+        return _.pick(o, ['name', 'code']);
+      });
+      if (paymentStatus) {
+        var paymentColors = _.reject(savedColors, function(savedColor) {
+          return savedColor.name === paymentStatus.colour.name;
+        });
+        colours = _.pullAllBy(colors, paymentColors, 'name');
+      } else {
+        colours = _.pullAllBy(colors, savedColors, 'name');
+      }
+
+      $mdDialog.show({
+          controller: 'PaymentstatusesController',
+          templateUrl: 'modules/paymentstatuses/client/views/form-paymentstatus.client.view.html',
+          parent: angular.element(document.body),
+          targetEvent: ev,
+          clickOutsideToClose: false,
+          fullscreen: true,
+          resolve: {
+            paymentstatusResolve: function() {
+              return paymentStatus;
+            },
+            colorsResolve: function() {
+              return colours
+            }
+          },
+        })
+        .then(function(updatedItem) {
+          if (paymentStatus) {
+            $scope.paymentStatuses[index] = updatedItem
+          } else {
+            $scope.paymentStatuses.push(updatedItem);
+          }
+        }, function() {
+          console.log('You cancelled the dialog.');
+        });
+    }
 
     $scope.$on('$stateChangeSuccess', stateChangeSuccess);
 

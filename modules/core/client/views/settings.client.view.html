@@ -15,8 +15,8 @@
 		    <th width="30%">Action</th>
 		  </tr>
 		  <tr ng-repeat = "tax in taxes">
-	        <td>{{ tax.name | uppercase}}(%)</td>
-	        <td>{{ tax.percentage }}</td>
+	        <td style="vertical-align:middle">{{ tax.name | uppercase}}(%)</td>
+	        <td style="vertical-align:middle">{{ tax.percentage }}</td>
 
 	        <td style="text-align: center;">
 	        	<md-button class="md-raised md-primary nonecase" style="min-width: 50px" ng-click="mShowTaxPopup($event, $index, tax)"><span class="glyphicon glyphicon-pencil"></span></md-button>
@@ -43,8 +43,8 @@
 		    <th width="30%">Action</th>
 		  </tr>
 		  <tr ng-repeat = "hall in halls">
-	        <td style="text-transform: capitalize;">{{ hall.name }}</td>
-	        <td>{{ hall.rate | currency:"₹":0 }}</td>
+	        <td style="text-transform: capitalize; vertical-align:middle">{{ hall.name }}</td>
+	        <td style="vertical-align:middle">{{ hall.rate | currency:"₹":0 }}</td>
 
 	        <td style="text-align: center;">
 	        	<md-button class="md-raised md-primary nonecase" style="min-width: 50px" ng-click="mShowHallPopup($event, $index, hall)"><span class="glyphicon glyphicon-pencil"></span></md-button>
@@ -55,30 +55,28 @@
 	</div>
 
 	<div layout="column" style="margin-top: 10px">
-		<p style="color:#7f7f7f;font-size: 17px;"><b>Payment:</b></p>
-
-		<table class="table table-bordered table-striped table-hover">
+		<div layout="row">
+			<p flex=70 style="color:#7f7f7f;font-size: 17px; margin-top:10px"><b>Payment:</b></p>
+			<div flex=30 style="text-align: center;"  ng-hide="paymentStatuses.length >= 3">
+				<md-button class="md-raised md-primary nonecase" ng-click="mShowPaymentStatusPopup($event)">Add</md-button>
+			</div>
+		</div>
+		<h3 ng-hide="paymentStatuses.length">No payment status found.</h3>
+		<table class="table table-bordered table-striped table-hover" ng-show="paymentStatuses.length">
 		  <tr>
-		    <th width="30%">Payment status</th>
-		    <th width="40%">Color</th> 
+		    <th width="30%">Field</th>
+		    <th width="40%">Value</th> 
 		    <th width="30%">Action</th>
 		  </tr>
-		  <tr>
-		    <td></td>
-		    <td></td> 
-		    <td style="text-align: center;"><md-button class="md-raised md-primary nonecase">Edit</md-button></td>
-		  </tr>
-		  <tr>
-		    <td></td>
-		    <td></td> 
-		    <td style="text-align: center;"><md-button class="md-raised md-primary nonecase">Edit</md-button></td>
-		  </tr>
-		  <tr>
-		    <td></td>
-		    <td></td> 
-		    <td style="text-align: center;"><md-button class="md-raised md-primary nonecase">Edit</md-button></td>
-		  </tr>
-		</table>
+		  <tr ng-repeat = "paymentStatus in paymentStatuses">
+	        <td style="text-transform: capitalize; vertical-align:middle">{{ paymentStatus.name }}</td>
+	        <td style="vertical-align:middle">{{ paymentStatus.colour.name }}</td>
+
+	        <td style="text-align: center;">
+	        	<md-button class="md-raised md-primary nonecase" style="min-width: 50px" ng-click="mShowPaymentStatusPopup($event, $index, paymentStatus)"><span class="glyphicon glyphicon-pencil"></span></md-button>
+	        </td>
+	     </tr>
+		</table>		
 	</div>
 
 	<div layout="column" style="margin-top: 10px">
@@ -98,12 +96,12 @@
 		    <th width="30%">Action</th>
 		  </tr>
 		  <tr ng-repeat = "eventType in eventTypes">
-	        <td style="text-transform: capitalize;">{{ eventType.name }}</td>
-	        <td>{{ eventType.colour.name }}</td>
+	        <td style="text-transform: capitalize; vertical-align:middle">{{ eventType.name }}</td>
+	        <td style="vertical-align:middle">{{ eventType.colour.name }}</td>
 
 	        <td style="text-align: center;">
 	        	<md-button class="md-raised md-primary nonecase md-mini" style="min-width: 50px" ng-click="mShowEventTypePopup($event, $index, eventType)"><span class="glyphicon glyphicon-pencil"></span></md-button>
-	        	<md-button class="md-raised md-warn nonecase" style="min-width: 50px" ng-click="mDeleteEventType($event, $index, eventType)"><span class="glyphicon glyphicon-trash"></span></md-button>
+	        	<md-button class="md-raised md-warn nonecase" style="min-width: 50px" ng-click="mDeleteEventType($event, $index, eventType)" ng-disabled="eventType.name === 'others'"><span class="glyphicon glyphicon-trash"></span></md-button>
 	        </td>
 	     </tr>		  
 		</table>

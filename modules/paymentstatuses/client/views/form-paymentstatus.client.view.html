@@ -1,9 +1,9 @@
 <md-dialog flex>
-  <form name="eventtypeForm" autocomplete="off">
+  <form name="paymentStatusForm" autocomplete="off">
     <md-toolbar>
       <div class="md-toolbar-tools">
         
-        <span flex="100" align="center" style="text-align: center;"><h2>{{eventType._id ? 'Edit Event Type' : 'Add Event Type'}}</h2></span>
+        <span flex="100" align="center" style="text-align: center;"><h2>{{model.paymentStatus._id ? 'Edit Payment Status' : 'Add Payment Status'}}</h2></span>
         <md-button class="md-icon-button" ng-click="cancel()">
           <md-icon md-svg-src="modules/core/client/img/icons/ic_close_24px.svg" aria-label="Close dialog"></md-icon>
         </md-button>
@@ -17,23 +17,23 @@
 
           <md-input-container flex>
             <label>Name</label>
-            <input style="text-transform: capitalize" required name="name" ng-model="model.eventType.name" ng-disabled="model.eventType.name === 'others'"/>
-            <div ng-messages="eventtypeForm.name.$error">
-              <div ng-message="required">Event type name is required.</div>
+            <input style="text-transform: capitalize" required name="name" ng-model="model.paymentStatus.name" ng-disabled="model.paymentStatus._id"/>
+            <div ng-messages="paymentStatusForm.name.$error">
+              <div ng-message="required">Payment status name is required.</div>
             </div>
-          </md-input-container> 
+          </md-input-container>  
           <md-input-container flex>
               <label>Colour</label>
               <md-select  required
                           name="colour"
-                          ng-model="model.eventType.colour"
-                          ng-change="onEventTypeColourSelected()">                
+                          ng-model="model.paymentStatus.colour"
+                          ng-change="onPaymentStatusColourSelected()">                
                 <md-optgroup label="Colour">
                   <md-option ng-value="colour" ng-repeat="colour in colours">{{colour.name}}</md-option>
                 </md-optgroup>
               </md-select>    
-              <div ng-messages="eventtypeForm.colour.$error">
-                <div ng-message="required">Event colour is required.</div>
+              <div ng-messages="paymentStatusForm.colour.$error" ng-show="paymentStatusForm.colour.$invalid && submitted">
+                <div ng-message="required">Payment status colour is required.</div>
               </div>
           </md-input-container>
 
@@ -44,11 +44,10 @@
     
     <md-dialog-actions layout="row">  
       <span flex></span>
-      <md-button flex ng-click="save(eventtypeForm)" type="submit">Submit</md-button>
+      <md-button flex ng-click="save(paymentStatusForm)" type="submit">Submit</md-button>
       <span flex></span>
       <md-button flex ng-click="cancel()">Cancel</md-button>
       <span flex></span>
     </md-dialog-actions>
   </form>
 </md-dialog>
-

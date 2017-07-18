@@ -1,9 +1,9 @@
  <md-dialog flex>
-  <form name="taxForm">
+  <form name="taxForm" autocomplete="off">
     <md-toolbar>
       <div class="md-toolbar-tools">
         
-        <span flex="100" align="center"><h2>{{tax._id ? 'Edit Tax' : 'Add Tax'}}</h2></span>
+        <span flex="100" align="center" style="text-align: center;"><h2>{{model.tax._id ? 'Edit Tax' : 'Add Tax'}}</h2></span>
         <md-button class="md-icon-button" ng-click="cancel()">
           <md-icon md-svg-src="modules/core/client/img/icons/ic_close_24px.svg" aria-label="Close dialog"></md-icon>
         </md-button>
@@ -16,7 +16,7 @@
 
           <md-input-container flex>
             <label>Name</label>
-            <input required name="name" ng-model="model.tax.name"/>
+            <input style="text-transform: uppercase" required name="name" ng-model="model.tax.name" ng-disabled="model.tax._id"/>
             <div ng-messages="taxForm.name.$error">
               <div ng-message="required">Tax name is required.</div>
             </div>

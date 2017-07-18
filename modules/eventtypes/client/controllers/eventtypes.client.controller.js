@@ -33,7 +33,6 @@
     $scope.save = function(eventtypeForm) 
     {
       $scope.eventtypeForm = eventtypeForm;
-      $scope.submitted = true;
 
       if (eventtypeForm.$valid) 
       { 
