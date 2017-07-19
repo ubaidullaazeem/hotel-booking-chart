@@ -7,7 +7,7 @@ module.exports = {
     lib: {
       css: [
         // bower:css
-        'public/lib/bootstrap/dist/css/bootstrap.css',
+        'public/lib/bootstrap/dist/css/bootstrap.min.css',
         'public/lib/bootstrap/dist/css/bootstrap-theme.css',
         'public/lib/angular-ui-notification/dist/angular-ui-notification.css',
         'public/lib/angular-material/angular-material.css',
@@ -16,6 +16,7 @@ module.exports = {
       ],
       js: [
         // bower:js
+       // 'public/lib/jquery/dist/jquery.min.js',
         'public/lib/angular/angular.js',
         'public/lib/angular-animate/angular-animate.js',
         'public/lib/angular-aria/angular-aria.js',
@@ -30,7 +31,13 @@ module.exports = {
         'public/lib/angular-material/angular-material.js',
         'public/lib/angular-cookies/angular-cookies.js',
         'public/lib/angular-bootstrap/ui-bootstrap-tpls.min.js',
-        'public/lib/lodash/lodash.js'
+        'public/lib/lodash/lodash.js',
+        'public/lib/moment/min/moment.min.js',
+        'public/lib/angular-ui-calendar/src/calendar.js',
+        'public/lib/fullcalendar/dist/fullcalendar.min.js',
+        'public/lib/fullcalendar/dist/gcal.js',
+        'public/lib/chart.js/dist/Chart.min.js',
+        'public/lib/angular-chart.js/dist/angular-chart.min.js'
         // endbower
       ],
       tests: ['public/lib/angular-mocks/angular-mocks.js']
