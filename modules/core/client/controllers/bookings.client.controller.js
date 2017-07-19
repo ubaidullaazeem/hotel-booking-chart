@@ -1,4 +1,4 @@
-(function () {
+(function() {
   'use strict';
 
   angular
@@ -7,147 +7,189 @@
 
   BookingsController.$inject = ['$scope', '$state', '$rootScope', '$mdDialog', '$mdToast', '$timeout', 'HallsService', 'MESSAGES', 'Notification'];
 
-  function BookingsController($scope, $state, $rootScope, $mdDialog, $mdToast, $timeout, HallsService, MESSAGES, Notification) 
-  {    
+  function BookingsController($scope, $state, $rootScope, $mdDialog, $mdToast, $timeout, HallsService, MESSAGES, Notification) {
     $rootScope.isUserLoggedIn = true;
 
     $scope.model = {
-                events: [
-                          {title: 'Long Event0',start: new Date('Jul 17 2017 10:00:00 GMT+0530 (IST)'),end: new Date('Jul 17 2017 17:00:00 GMT+0530 (IST)')},
-                          {title: 'Long Event1',start: new Date('Jul 17 2017 10:00:00 GMT+0530 (IST)'),end: new Date('Jul 17 2017 17:00:00 GMT+0530 (IST)')},
-                          {title: 'Long Event2',start: new Date('Jul 17 2017 10:00:00 GMT+0530 (IST)'),end: new Date('Jul 17 2017 17:00:00 GMT+0530 (IST)')},
-                          {title: 'Long Event3',start: new Date('Jul 17 2017 10:00:00 GMT+0530 (IST)'),end: new Date('Jul 17 2017 17:00:00 GMT+0530 (IST)')},
-                          {title: 'Long Event4',start: new Date('Jul 17 2017 10:00:00 GMT+0530 (IST)'),end: new Date('Jul 17 2017 17:00:00 GMT+0530 (IST)')},
-                          {title: 'Long Event5',start: new Date('Jul 17 2017 10:00:00 GMT+0530 (IST)'),end: new Date('Jul 17 2017 17:00:00 GMT+0530 (IST)')},
-                          {title: 'Long Event',start: new Date('Jul 19 2017 10:00:00 GMT+0530 (IST)'),end: new Date('Jul 19 2017 17:00:00 GMT+0530 (IST)')},
-                          {title: 'Long Event',start: new Date('Jul 21 2017 10:00:00 GMT+0530 (IST)'),end: new Date('Jul 21 2017 17:00:00 GMT+0530 (IST)')},
-                          {title: 'Long Event',start: new Date('Jul 23 2017 10:00:00 GMT+0530 (IST)'),end: new Date('Jul 23 2017 17:00:00 GMT+0530 (IST)')},
-                          {title: 'Long Event',start: new Date('Jul 25 2017 10:00:00 GMT+0530 (IST)'),end: new Date('Jul 25 2017 17:00:00 GMT+0530 (IST)')},
-                          {title: 'Long Event',start: new Date('Jul 27 2017 10:00:00 GMT+0530 (IST)'),end: new Date('Jul 27 2017 17:00:00 GMT+0530 (IST)')},
-                          {title: 'Long Event',start: new Date('Jul 29 2017 10:00:00 GMT+0530 (IST)'),end: new Date('Jul 29 2017 17:00:00 GMT+0530 (IST)')},
-                        ]
-          };
+      events: [{
+        title: 'Long Event0',
+        start: new Date('Jul 17 2017 10:00:00 GMT+0530 (IST)'),
+        end: new Date('Jul 17 2017 17:00:00 GMT+0530 (IST)')
+      }, {
+        title: 'Long Event1',
+        start: new Date('Jul 17 2017 10:00:00 GMT+0530 (IST)'),
+        end: new Date('Jul 17 2017 17:00:00 GMT+0530 (IST)')
+      }, {
+        title: 'Long Event2',
+        start: new Date('Jul 17 2017 10:00:00 GMT+0530 (IST)'),
+        end: new Date('Jul 17 2017 17:00:00 GMT+0530 (IST)')
+      }, {
+        title: 'Long Event3',
+        start: new Date('Jul 17 2017 10:00:00 GMT+0530 (IST)'),
+        end: new Date('Jul 17 2017 17:00:00 GMT+0530 (IST)')
+      }, {
+        title: 'Long Event4',
+        start: new Date('Jul 17 2017 10:00:00 GMT+0530 (IST)'),
+        end: new Date('Jul 17 2017 17:00:00 GMT+0530 (IST)')
+      }, {
+        title: 'Long Event5',
+        start: new Date('Jul 17 2017 10:00:00 GMT+0530 (IST)'),
+        end: new Date('Jul 17 2017 17:00:00 GMT+0530 (IST)')
+      }, {
+        title: 'Long Event',
+        start: new Date('Jul 19 2017 10:00:00 GMT+0530 (IST)'),
+        end: new Date('Jul 19 2017 17:00:00 GMT+0530 (IST)')
+      }, {
+        title: 'Long Event',
+        start: new Date('Jul 21 2017 10:00:00 GMT+0530 (IST)'),
+        end: new Date('Jul 21 2017 17:00:00 GMT+0530 (IST)')
+      }, {
+        title: 'Long Event',
+        start: new Date('Jul 23 2017 10:00:00 GMT+0530 (IST)'),
+        end: new Date('Jul 23 2017 17:00:00 GMT+0530 (IST)')
+      }, {
+        title: 'Long Event',
+        start: new Date('Jul 25 2017 10:00:00 GMT+0530 (IST)'),
+        end: new Date('Jul 25 2017 17:00:00 GMT+0530 (IST)')
+      }, {
+        title: 'Long Event',
+        start: new Date('Jul 27 2017 10:00:00 GMT+0530 (IST)'),
+        end: new Date('Jul 27 2017 17:00:00 GMT+0530 (IST)')
+      }, {
+        title: 'Long Event',
+        start: new Date('Jul 29 2017 10:00:00 GMT+0530 (IST)'),
+        end: new Date('Jul 29 2017 17:00:00 GMT+0530 (IST)')
+      }, ]
+    };
 
     $scope.ui = {
-                  mCalendarTitle: '',
-                  mColorFilter : 'payment'
-                };
+      mCalendarTitle: '',
+      mColorFilter: 'payment'
+    };
 
 
     $scope.halls = {
-                    mAllHalls : HallsService.query()
-                  };
+      mAllHalls: HallsService.query()
+    };
 
     $scope.chart = {
-              labels : ["Query", "Advance paid", "Fully paid"],
-              data : [45, 55, 30],
-              colors : ["rgb(159,204,0)","rgb(250,109,33)","rgb(200,100,63)"],
-              options : { title: { display: true, fontSize:15, text: 'Payment summary for '+$scope.ui.mCalendarTitle},
-                      legend: {display: true, position:"bottom"} }
-          };
-
-
-
-    var currentView = "month";    
-     
-      
-    //with this you can handle the events that generated by clicking the day(empty spot) in the calendar
-    $scope.dayClick = function( date, allDay, jsEvent, view )
-    {         
-      console.log("day click date "+date);
-
-      if (moment(date) < moment(new Date().setHours(0,0,0,0)))
-      {
-        Notification.error({ message: MESSAGES.PAST_DATE, title: '<i class="glyphicon glyphicon-remove"></i> Past Date Error !!!' });
+      labels: ["Query", "Advance paid", "Fully paid"],
+      data: [45, 55, 30],
+      colors: ["rgb(159,204,0)", "rgb(250,109,33)", "rgb(200,100,63)"],
+      options: {
+        title: {
+          display: true,
+          fontSize: 15,
+          text: 'Payment summary for ' + $scope.ui.mCalendarTitle
+        },
+        legend: {
+          display: true,
+          position: "bottom"
+        }
       }
-      else
-      {
+    };
+
+
+
+    var currentView = "month";
+
+
+    //with this you can handle the events that generated by clicking the day(empty spot) in the calendar
+    $scope.dayClick = function(date, allDay, jsEvent, view) {
+      console.log("day click date " + date);
+
+      if (moment(date) < moment(new Date().setHours(0, 0, 0, 0))) {
+        Notification.error({
+          message: MESSAGES.PAST_DATE,
+          title: '<i class="glyphicon glyphicon-remove"></i> Past Date Error !!!'
+        });
+      } else {
         var confirm = $mdDialog.confirm().title('Do you want to create new booking?').ok('Yes').cancel('No');
 
-        $mdDialog.show(confirm).then(function() 
-        {
-          $mdDialog.show({
+        var oldShow = $mdDialog.show;
+        $mdDialog.show = function(options) {
+          if (options.hasOwnProperty("skipHide")) {
+            options.multiple = options.skipHide;
+          }
+          return oldShow(options);
+        };
+
+        $mdDialog.show(confirm).then(function() {
+            $mdDialog.show({
                 controller: 'NewbookingsController',
                 templateUrl: 'modules/newbookings/client/views/form-newbooking.client.view.html',
                 parent: angular.element(document.body),
-                clickOutsideToClose:false,
+                clickOutsideToClose: false,
                 fullscreen: true,
                 resolve: {
-                  selectedDate: function() 
-                                  {
-                                    return date;
-                                  },
-                  newbookingResolve: function() 
-                                  {
-                                    return null;
-                                  }
+                  selectedDate: function() {
+                    return date;
+                  },
+                  newbookingResolve: function() {
+                    return null;
+                  }
                 },
               })
-              .then(function(answer) 
-              {
+              .then(function(answer) {
                 console.log('You said the information was "' + answer + '".');
               }, function() {
-               console.log('You cancelled the dialog.');
+                console.log('You cancelled the dialog.');
               });
-        }, 
-        function() 
-        {
-          console.log("no");
-        });              
-      }     
-    };
-                    
-           
-    //with this you can handle the events that generated by droping any event to different position in the calendar
-    $scope.alertOnDrop = function(event, dayDelta, minuteDelta, allDay, revertFunc, jsEvent, ui, view)
-    {
-        $scope.$apply();
-    };
-           
-           
-    //with this you can handle the events that generated by resizing any event to different position in the calendar
-    $scope.alertOnResize = function(event, dayDelta, minuteDelta, revertFunc, jsEvent, ui, view )
-    {
-        $scope.$apply();
-    };
-                               
-           
-    //with this you can handle the click on the events
-    $scope.eventClick = function(event)
-    {            
-      console.log("eventClick "+event);
+          },
+          function() {
+            console.log("no");
+          });
 
-        /*$mdDialog.show({
-                controller: BookingDetailsController,
-                templateUrl: 'views/events/booking-details.html',
-                parent: angular.element(document.body),
-                clickOutsideToClose:false,
-                fullscreen: false, 
-                resolve: {
-                            selectedEvent: function() 
-                            {
-                              return event;
-                            }
-                          },
-              })
-              .then(function(answer) 
-              {
-                console.log('You said the information was "' + answer + '".');
-              }, function() {
-               console.log('You cancelled the dialog.');
-              });
-            */
+
+      }
     };
-           
-           
+
+
+    //with this you can handle the events that generated by droping any event to different position in the calendar
+    $scope.alertOnDrop = function(event, dayDelta, minuteDelta, allDay, revertFunc, jsEvent, ui, view) {
+      $scope.$apply();
+    };
+
+
+    //with this you can handle the events that generated by resizing any event to different position in the calendar
+    $scope.alertOnResize = function(event, dayDelta, minuteDelta, revertFunc, jsEvent, ui, view) {
+      $scope.$apply();
+    };
+
+
+    //with this you can handle the click on the events
+    $scope.eventClick = function(event) {
+      console.log("eventClick " + event);
+
+      /*$mdDialog.show({
+              controller: BookingDetailsController,
+              templateUrl: 'views/events/booking-details.html',
+              parent: angular.element(document.body),
+              clickOutsideToClose:false,
+              fullscreen: false, 
+              resolve: {
+                          selectedEvent: function() 
+                          {
+                            return event;
+                          }
+                        },
+            })
+            .then(function(answer) 
+            {
+              console.log('You said the information was "' + answer + '".');
+            }, function() {
+             console.log('You cancelled the dialog.');
+            });
+          */
+    };
+
+
     //with this you can handle the events that generated by each page render process
-    $scope.renderView = function(view)
-    {
+    $scope.renderView = function(view) {
       var date = new Date(view.calendar.getDate());
       $scope.currentDate = date.toDateString();
 
-      $timeout(function() 
-      {              
+      $timeout(function() {
         $scope.$apply();
       });
 
@@ -155,44 +197,41 @@
 
       //$scope.loadinitial(date);
     };
-           
-       
+
+
     //with this you can handle the events that generated when we change the view i.e. Month, Week and Day
-    $scope.changeView = function(view,calendar) 
-    {
-        currentView = view;
+    $scope.changeView = function(view, calendar) {
+      currentView = view;
 
-        $timeout(function() {//calendar is coming undefined, so i am using 'angular.element('#calendar')' with timeout
-            angular.element('#calendar').fullCalendar('changeView',view);                  
+      $timeout(function() { //calendar is coming undefined, so i am using 'angular.element('#calendar')' with timeout
+        angular.element('#calendar').fullCalendar('changeView', view);
 
-            $scope.$apply();
-        });         
+        $scope.$apply();
+      });
     };
-           
-           
+
+
     /* config object */
-    $scope.uiConfig = 
-    {
-      calendar:
-      { 
+    $scope.uiConfig = {
+      calendar: {
         height: 510,
         editable: false,
         displayEventTime: false,
-        header:{
-                left: 'title',
-                center: '',
-                right: 'today prev,next'
-              },
+        header: {
+          left: 'title',
+          center: '',
+          right: 'today prev,next'
+        },
         dayClick: $scope.dayClick,
         eventDrop: $scope.alertOnDrop,
         eventResize: $scope.alertOnResize,
         eventClick: $scope.eventClick,
         viewRender: $scope.renderView
-      }    
-    }; 
-     
+      }
+    };
+
     /* event sources array*/
-    $scope.eventSources = [$scope.model.events];     
+    $scope.eventSources = [$scope.model.events];
 
   }
 }());

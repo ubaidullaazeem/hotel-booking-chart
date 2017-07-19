@@ -6,9 +6,9 @@
     .module('newbookings')
     .controller('NewbookingsController', NewbookingsController);
 
-  NewbookingsController.$inject = ['DATA_BACKGROUND_COLOR', '$scope', '$state', 'newbookingResolve', '$mdDialog', 'selectedDate', 'HallsService', 'EventtypesService', 'TaxesService', 'PaymentstatusesService'];
+  NewbookingsController.$inject = ['AuthenticationService', 'DATA_BACKGROUND_COLOR', '$scope', '$state', 'newbookingResolve', '$mdDialog', 'NewbookingsService', 'selectedDate', 'HallsService', 'EventtypesService', 'TaxesService', 'PaymentstatusesService', 'Notification', '$mdpTimePicker'];
 
-  function NewbookingsController(DATA_BACKGROUND_COLOR, $scope, $state, newbooking, $mdDialog, selectedDate, HallsService, EventtypesService, TaxesService, PaymentstatusesService) {
+  function NewbookingsController(AuthenticationService, DATA_BACKGROUND_COLOR, $scope, $state, newbooking, $mdDialog, NewbookingsService, selectedDate, HallsService, EventtypesService, TaxesService, PaymentstatusesService, Notification, $mdpTimePicker) {
     $scope.DATA_BACKGROUND_COLOR = DATA_BACKGROUND_COLOR;
 
     $scope.ui = {
@@ -23,6 +23,33 @@
       paymentModes: ['None', 'Cheque', 'DD', 'Cash', 'NEFT']
     };
 
+    $scope.mixins = {
+      mSelectedHalls: [],
+      mSelectedEventType: null,
+      mOtherEvent: null,
+      mDescription: null,
+      mName: null,
+      mPhone: null,
+      mEmail: null,
+      mAddress: null,
+      mPhotoId: null,
+      mSelectedPaymentStatus: null,
+      mSelectedPaymentMode: null,
+      mManagerName: null,
+      mRent: 0,
+      mElectricityCharges: 0,
+      mCleaningCharges: 0,
+      mGeneratorCharges: 0,
+      mMiscellaneousCharges: 0,
+      mDiscount: 0,
+      mSubTotal: 0,
+      mCGST: 0,
+      mSGST: 0,
+      mGrandTotal: 0,
+      mAdvanceReceived: 0,
+      mBalanceDue: 0,
+    };
+
     $scope.eventTime = {
       mStartClock: new Date('1991-05-04T06:00:00'),
       mEndClock: new Date('1991-05-04T13:00:00'),
@@ -32,6 +59,10 @@
       mEndToServer: getTimeToServer(new Date('1991-05-04T13:00:00'))
     };
 
+    $scope.selectedHallsChanged = function() {
+      $scope.calculateBalanceDue();
+    }
+
     $scope.getOtherEvents = function() {
       var events = _.filter($scope.model.eventTypes, function(eventType) {
         return eventType.name === 'others';
@@ -39,81 +70,149 @@
       return events[0];
     };
 
-    $scope.showStartTimePicker = function(ev) 
-    {
-      $mdpTimePicker($scope.eventTime.mStartClock, 
-      {targetEvent: ev
-      })
-      .then(function(dateTime) 
-      {
-        $scope.eventTime.mStartClock = dateTime;
-        $scope.eventTime.mStartToDisplay = getTimeToDisplay(dateTime);
-        $scope.eventTime.mStartToServer = getTimeToServer(dateTime);
+    $scope.showStartTimePicker = function(ev) {
+      $mdpTimePicker($scope.eventTime.mStartClock, {
+          targetEvent: ev
+        })
+        .then(function(dateTime) {
+          $scope.eventTime.mStartClock = dateTime;
+          $scope.eventTime.mStartToDisplay = getTimeToDisplay(dateTime);
+          $scope.eventTime.mStartToServer = getTimeToServer(dateTime);
 
-        validateStartAndEndTime();
-      });
-    }  
-
-    $scope.showEndTimePicker = function(ev) 
-    {
-      $mdpTimePicker($scope.eventTime.mEndClock, 
-      {targetEvent: ev
-      })
-      .then(function(dateTime) 
-      {
-        $scope.eventTime.mEndClock = dateTime;
-        $scope.eventTime.mEndToDisplay = getTimeToDisplay(dateTime);
-        $scope.eventTime.mEndToServer = getTimeToServer(dateTime);
-
-        validateStartAndEndTime();
-      });
-    }  
-
-    function validateStartAndEndTime()
-    {
-      if ($scope.userForm) 
-        {        
-          var bool = (Date.parse($scope.eventTime.mEndToServer) > Date.parse($scope.eventTime.mStartToServer));
-          $scope.userForm.end.$setValidity("greater", bool);
-          $scope.userForm.start.$setValidity("lesser", bool);
-        }
+          validateStartAndEndTime();
+        });
     }
 
-    function getTimeToDisplay(date)
-    {
+    $scope.showEndTimePicker = function(ev) {
+      $mdpTimePicker($scope.eventTime.mEndClock, {
+          targetEvent: ev
+        })
+        .then(function(dateTime) {
+          $scope.eventTime.mEndClock = dateTime;
+          $scope.eventTime.mEndToDisplay = getTimeToDisplay(dateTime);
+          $scope.eventTime.mEndToServer = getTimeToServer(dateTime);
+
+          validateStartAndEndTime();
+        });
+    }
+
+    function validateStartAndEndTime() {
+      if ($scope.userForm) {
+        var bool = (Date.parse($scope.eventTime.mEndToServer) > Date.parse($scope.eventTime.mStartToServer));
+        $scope.userForm.end.$setValidity("greater", bool);
+        $scope.userForm.start.$setValidity("lesser", bool);
+      }
+    }
+
+    function getTimeToDisplay(date) {
       return moment(date).format('hh:mm:a');
     }
 
-    function getTimeToServer(date)
-    {
-      var dt = (new Date(selectedDate)).setHours(date.getHours(),date.getMinutes(),0,0);
+    function getTimeToServer(date) {
+      var dt = (new Date(selectedDate)).setHours(date.getHours(), date.getMinutes(), 0, 0);
       var dtGMT = new Date((new Date(dt)).toUTCString()).toISOString();
 
       return dtGMT;
     }
 
-    // Save Newbooking
-    function save(isValid) {
-      if (!isValid) {
-        $scope.$broadcast('show-errors-check-validity', 'vm.form.newbookingForm');
-        return false;
+    var divideRate;
+    var cgstPercent, sgstPercent;
+    var cgstString, sgstString;
+
+    $scope.calculateBalanceDue = function() {
+      var rent = 0;
+      angular.forEach($scope.mixins.mSelectedHalls, function(hall) {
+        rent = rent + Number(hall.rate);
+      });
+      $scope.mixins.mRent = rent;
+
+      var subTotal = Number($scope.mixins.mRent) + Number($scope.mixins.mElectricityCharges) + Number($scope.mixins.mCleaningCharges) +
+        Number($scope.mixins.mGeneratorCharges) + Number($scope.mixins.mMiscellaneousCharges) - Number($scope.mixins.mDiscount);
+
+      subTotal = Number(Number(subTotal / divideRate).toFixed(2)); //floating point to 2 digit precision
+      var cgst = Number(Number(Number(subTotal) * cgstPercent).toFixed(2));
+      var sgst = Number(Number(Number(subTotal) * sgstPercent).toFixed(2));
+      var grandTot = Number(Number(Math.round(Number(subTotal) + Number(cgst) + Number(sgst))).toFixed(2));
+      var balance = Number(Number(Math.round(Number(grandTot) - Number($scope.mixins.mAdvanceReceived))).toFixed(2));
+
+      $scope.mixins.mSubTotal = subTotal;
+      $scope.mixins.mCGST = cgst;
+      $scope.mixins.mSGST = sgst;
+      $scope.mixins.mGrandTotal = grandTot;
+      $scope.mixins.mBalanceDue = balance;
+
+      console.log("$scope.mSubTotal " + $scope.mixins.mSubTotal);
+      console.log("$scope.mCGST " + $scope.mixins.mCGST);
+      console.log("$scope.mSGST " + $scope.mixins.mSGST);
+      console.log("$scope.mGrandTotal " + $scope.mixins.mGrandTotal);
+      console.log("$scope.mBalanceDue " + $scope.mixins.mBalanceDue);
+    }
+
+    var init = function() {
+      if ($scope.model.taxes.length == 2) {
+        angular.forEach($scope.model.taxes, function(tax) {
+          console.log("tax " + JSON.stringify(tax));
+
+          if (tax.name == 'cgst') {
+            cgstPercent = Number(tax.percentage) / 100;
+            cgstString = tax.percentage + '%';
+
+            console.log("cgst ");
+          } else if (tax.name == 'sgst') {
+            sgstPercent = Number(tax.percentage) / 100;
+            sgstString = tax.percentage + '%';
+
+            console.log("sgst ");
+          } else {
+            Notification.error({
+              message: "Invalid tax name",
+              title: '<i class="glyphicon glyphicon-remove"></i> Tax Missing Error !!!'
+            });
+            $mdDialog.cancel();
+          }
+        });
+
+
+        if (!(cgstPercent && sgstPercent)) {
+          Notification.error({
+            message: "Invalid tax name",
+            title: '<i class="glyphicon glyphicon-remove"></i> Tax Missing Error !!!'
+          });
+          $mdDialog.cancel();
+        }
+
+        divideRate = 1 + cgstPercent + sgstPercent;
+        $scope.calculateBalanceDue();
+      } else {
+        Notification.error({
+          message: "Please add both the tax percentage in settings page",
+          title: '<i class="glyphicon glyphicon-remove"></i> Tax Missing Error !!!'
+        });
+        $mdDialog.cancel();
       }
+
+    };
+
+    $scope.model.taxes.$promise.then(function(result) {
+      init();
+    });
+
+    // Save Newbooking
+    $scope.save = function(isValid) {
+       if (!isValid) {
+         $scope.$broadcast('show-errors-check-validity', 'vm.form.newbookingForm');
+         return false;
+       }
 
       // TODO: move create/update logic to service
-      if (vm.newbooking._id) {
-        vm.newbooking.$update(successCallback, errorCallback);
-      } else {
-        vm.newbooking.$save(successCallback, errorCallback);
-      }
+      NewbookingsService.save($scope.mixins, successCallback, errorCallback);
 
       function successCallback(res) {
-        $state.go('newbookings.view', {
-          newbookingId: res._id
-        });
+         $mdDialog.hide(res);
       }
 
       function errorCallback(res) {
-        vm.error = res.data.message;
+        Notification.error({ message: res.data.message, title: '<i class="glyphicon glyphicon-remove"></i> Create Booking Error !!!' });
       }
     }
 

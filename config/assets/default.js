@@ -11,7 +11,8 @@ module.exports = {
         'public/lib/bootstrap/dist/css/bootstrap-theme.css',
         'public/lib/angular-ui-notification/dist/angular-ui-notification.css',
         'public/lib/angular-material/angular-material.css',
-        'public/lib/angular-bootstrap/ui-bootstrap-csp.css'
+        'public/lib/angular-bootstrap/ui-bootstrap-csp.css',
+        'public/lib/mdPickers/dist/mdPickers.css'
         // endbower
       ],
       js: [
@@ -37,7 +38,8 @@ module.exports = {
         'public/lib/fullcalendar/dist/fullcalendar.min.js',
         'public/lib/fullcalendar/dist/gcal.js',
         'public/lib/chart.js/dist/Chart.min.js',
-        'public/lib/angular-chart.js/dist/angular-chart.min.js'
+        'public/lib/angular-chart.js/dist/angular-chart.min.js',
+        'public/lib/mdPickers/dist/mdPickers.js'
         // endbower
       ],
       tests: ['public/lib/angular-mocks/angular-mocks.js']

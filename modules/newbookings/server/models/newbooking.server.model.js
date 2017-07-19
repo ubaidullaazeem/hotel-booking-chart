@@ -10,20 +10,148 @@ var mongoose = require('mongoose'),
  * Newbooking Schema
  */
 var NewbookingSchema = new Schema({
-  name: {
-    type: String,
+  mSelectedHalls: {
+    type: Array,
     default: '',
-    required: 'Please fill Newbooking name',
+    required: 'Please select halls',
     trim: true
   },
-  created: {
-    type: Date,
-    default: Date.now
+  mSelectedEventType: {
+    type: Object,
+    default: '',
+    required: 'Please select event type',
+    trim: true
   },
-  user: {
-    type: Schema.ObjectId,
-    ref: 'User'
+  mOtherEvent: {
+    type: String,
+    default: '',
+    trim: true
+  },
+  mDescription: {
+    type: String,
+    default: '',
+    trim: true
+  },
+  mName: {
+    type: String,
+    default: '',
+    required: 'Please enter customer name',
+    trim: true
+  },
+  mPhone: {
+    type: String,
+    default: '',
+    required: 'Please enter customer mobile number',
+    trim: true
+  },
+  mEmail: {
+    type: String,
+    default: '',
+    trim: true
+  },
+  mAddress: {
+    type: String,
+    default: '',
+    trim: true
+  },
+  mPhotoId: {
+    type: String,
+    default: '',
+    trim: true
+  },
+  mSelectedPaymentStatus: {
+    type: Object,
+    default: '',
+    required: 'Please select payment status',
+    trim: true
+  },
+  mSelectedPaymentMode: {
+    type: String,
+    default: '',
+    required: 'Please select payment mode',
+    trim: true
+  },
+  mManagerName: {
+    type: String,
+    default: '',
+    required: 'Please enter manager name',
+    trim: true
+  },
+  mRent: {
+    type: Number,
+    default: '',
+    required: 'Please enter rent amount',
+    trim: true
+  },
+  mElectricityCharges: {
+    type: Number,
+    default: '',
+    required: 'Please enter electricity charges',
+    trim: true
+  },
+  mCleaningCharges: {
+    type: Number,
+    default: '',
+    required: 'Please enter cleaning charges',
+    trim: true
+  },
+  mGeneratorCharges: {
+    type: Number,
+    default: '',
+    required: 'Please enter generator charges',
+    trim: true
+  },
+  mMiscellaneousCharges: {
+    type: Number,
+    default: '',
+    required: 'Please enter miscellaneous charges',
+    trim: true
+  },
+  mDiscount: {
+    type: Number,
+    default: '',
+    required: 'Please enter discount amount',
+    trim: true
+  },
+  mSubTotal: {
+    type: Number,
+    default: '',
+    required: 'Please enter subtotal amount',
+    trim: true
+  },
+  mCGST: {
+    type: Number,
+    default: '',
+    required: 'Please enter CGST tax',
+    trim: true
+  },
+  mSGST: {
+    type: Number,
+    default: '',
+    required: 'Please enter SGST tax',
+    trim: true
+  },
+  mGrandTotal: {
+    type: Number,
+    default: '',
+    required: 'Please enter grand total',
+    trim: true
+  },
+  mAdvanceReceived: {
+    type: Number,
+    default: '',
+    required: 'Please enter advance received amount',
+    trim: true
+  },
+  mBalanceDue: {
+    type: Number,
+    default: '',
+    required: 'Please enter balance due amount',
+    trim: true
   }
+},
+{
+    timestamps: true
 });
 
 mongoose.model('Newbooking', NewbookingSchema);

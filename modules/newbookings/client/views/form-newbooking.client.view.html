@@ -3,7 +3,7 @@
     <div class="card">
       <div class="card-header" data-background-color="{{DATA_BACKGROUND_COLOR}}">
         <div class="md-toolbar-tools">        
-          <span flex align="center"><h2>New Booking</h2> </span>
+          <span flex><h2>New Booking</h2> </span>
           <md-button class="md-icon-button" ng-click="cancel()">
              <md-icon md-svg-src="modules/core/client/img/icons/ic_close_24px.svg" aria-label="Close dialog"></md-icon>
           </md-button>
@@ -19,7 +19,7 @@
             <md-select style="text-transform: capitalize;"  multiple 
                         required
                         name="halls"
-                        ng-model="halls.mSelectedHalls"
+                        ng-model="mixins.mSelectedHalls"
                         ng-change="selectedHallsChanged()">                
               <md-optgroup label="Halls">
                 <md-option style="text-transform: capitalize;" ng-value="hall" ng-repeat="hall in model.halls">{{hall.name}}</md-option>
@@ -41,7 +41,7 @@
               <label>Event</label>
               <md-select  style="text-transform: capitalize;" required
                           name="event"
-                          ng-model="eventType.mSelectedEventType"
+                          ng-model="mixins.mSelectedEventType"
                           ng-change="onEventTypeSelected()">                
                 <md-optgroup label="Event">
                   <md-option style="text-transform: capitalize;" ng-value="eventType" ng-repeat="eventType in model.eventTypes">{{eventType.name}}</md-option>
@@ -52,8 +52,8 @@
               </div>
           </md-input-container>
 
-          <md-input-container flex ng-if="eventType.mSelectedEventType === getOtherEvents() && getOtherEvents()">
-            <input required name="otherEvent" ng-model="eventType.mOtherEvent" ng-pattern="mPattern"/>
+          <md-input-container flex ng-if="mixins.mSelectedEventType === getOtherEvents() && getOtherEvents()">
+            <input required name="otherEvent" ng-model="mixins.mOtherEvent" ng-pattern="mPattern"/>
             <div ng-messages="userForm.otherEvent.$error">
               <div ng-message="required">Other event is required.</div>
             </div>
@@ -65,7 +65,7 @@
           <md-input-container flex>
             <label>Time</label>
               <div ng-click="showStartTimePicker($event)">
-                <input required name="start" ng-model="eventTime.mStartToDisplay" onfocus="this.blur()" readonly></input>
+                <input class="form-control timepicker" required name="start" ng-model="eventTime.mStartToDisplay" onfocus="this.blur()" readonly></input>
               </div>
               <div ng-messages="userForm.start.$error">
                 <div ng-message="required">Start time is required.</div>
@@ -88,14 +88,14 @@
         <div layout="column" flex>
           <md-input-container flex>
             <label>Description</label>
-            <textarea style="resize: none;" rows="3" ng-model="mDescription" ng-pattern="mPattern"></textarea> 
+            <textarea style="resize: none;" rows="3" ng-model="mixins.mDescription" ng-pattern="mPattern"></textarea> 
           </md-input-container>  
         </div>
 
         <div layout="column" flex>
           <md-input-container flex>
             <label>Name</label>
-            <input required name="name" ng-model="mName" ng-pattern="mPattern"/>
+            <input required name="name" ng-model="mixins.mName" ng-pattern="mPattern"/>
             <div ng-messages="userForm.name.$error">
               <div ng-message="required">Name is required.</div>
             </div>
@@ -105,7 +105,7 @@
         <div layout="column" flex>
           <md-input-container flex>
             <label>Phone</label>
-            <input type="number" required name="phone" ng-model="mPhone" min="0" ng-maxlength="10" />
+            <input type="number" required name="phone" ng-model="mixins.mPhone" min="0" ng-maxlength="10" />
             <div ng-messages="userForm.phone.$error">
               <div ng-message="required">Phone is required.</div>
             </div>
@@ -115,7 +115,7 @@
         <div layout="column" flex>
           <md-input-container flex>
             <label>Email</label>
-            <input type="email" name="email" ng-model="mEmail" ng-pattern="/^.+@.+\..+$/" />
+            <input type="email" name="email" ng-model="mixins.mEmail" ng-pattern="/^.+@.+\..+$/" />
             <div ng-messages="userForm.email.$error" role="alert">
               <div ng-message-exp="['pattern']">
                 Invalid email.
@@ -127,14 +127,14 @@
         <div layout="column" flex>
           <md-input-container flex>
             <label>Address</label>
-            <textarea style="resize: none;" rows="3" ng-model="mAddress" ng-pattern="mPattern"></textarea> 
+            <textarea style="resize: none;" rows="3" ng-model="mixins.mAddress" ng-pattern="mPattern"></textarea> 
           </md-input-container>  
         </div>
 
         <div layout="column" flex>
           <md-input-container flex>
             <label>Photo ID of the Person</label>
-            <input ng-model="mPhotoId" ng-pattern="mPattern"/>
+            <input ng-model="mixins.mPhotoId" ng-pattern="mPattern"/>
           </md-input-container>  
         </div>
         
@@ -143,7 +143,7 @@
               <label>Payment Status</label>
               <md-select style="text-transform: capitalize;" required
                           name="payStatus" 
-                          ng-model="paymentStatus.mSelectedPaymentStatus"
+                          ng-model="mixins.mSelectedPaymentStatus"
                           ng-change="onPaymentStatusChanged()">                
                 <md-optgroup label="Payment Status">
                   <md-option style="text-transform: capitalize;" ng-value="paymentStatus" ng-repeat="paymentStatus in model.paymentStatuses">{{paymentStatus.name}}</md-option>
@@ -161,7 +161,7 @@
               <md-select 
                           required
                           name="payMode"
-                          ng-model="paymentMode.mSelectedPaymentMode"
+                          ng-model="mixins.mSelectedPaymentMode"
                           ng-change="onPaymentModeChanged()">                
                 <md-optgroup label="Payment Mode">
                   <md-option ng-value="paymentMode" ng-repeat="paymentMode in model.paymentModes">{{paymentMode}}</md-option>
@@ -176,7 +176,7 @@
         <div layout="column" flex>
           <md-input-container flex>
             <label>Manager Name</label>
-            <input required name="managerName" ng-model="mManagerName" ng-pattern="mPattern"/>
+            <input required name="managerName" ng-model="mixins.mManagerName" ng-pattern="mPattern"/>
             <div ng-messages="userForm.managerName.$error">
               <div ng-message="required">Manager Name is required.</div>
             </div>
@@ -186,7 +186,7 @@
         <div layout="column" flex>
           <md-input-container flex>
             <label>Rent</label>
-            <input required name="rent" ng-model="mRent" type="number" onfocus="this.blur()" readonly/>
+            <input required name="rent" ng-model="mixins.mRent" type="number" onfocus="this.blur()" readonly/>
             <div ng-messages="userForm.rent.$error">
               <div ng-message="required">Rent is required.</div>
             </div>
@@ -196,7 +196,7 @@
         <div layout="column" flex>
           <md-input-container flex>
             <label>Electricity Charges</label>
-            <input required name="electricity" ng-model="mElectricityCharges" type="number" min="0" ng-change="calculateBalanceDue()" ng-pattern="mNumberPattern"/>
+            <input required name="electricity" ng-model="mixins.mElectricityCharges" type="number" min="0" ng-change="calculateBalanceDue()" ng-pattern="mNumberPattern"/>
             <div ng-messages="userForm.electricity.$error">
               <div ng-message="required">Electricity Charges is required.</div>
             </div>
@@ -206,7 +206,7 @@
         <div layout="column" flex>
           <md-input-container flex>
             <label>Cleaning Charges</label>
-            <input required name="cleaning" ng-model="mCleaningCharges" type="number" min="0" ng-change="calculateBalanceDue()" ng-pattern="mNumberPattern"/>
+            <input required name="cleaning" ng-model="mixins.mCleaningCharges" type="number" min="0" ng-change="calculateBalanceDue()" ng-pattern="mNumberPattern"/>
             <div ng-messages="userForm.cleaning.$error">
               <div ng-message="required">Cleaning Charges is required.</div>
             </div>
@@ -216,7 +216,7 @@
         <div layout="column" flex>
           <md-input-container flex>
             <label>Generator Charges</label>
-            <input required name="generator" ng-model="mGeneratorCharges" type="number" min="0" ng-change="calculateBalanceDue()" ng-pattern="mNumberPattern"/>
+            <input required name="generator" ng-model="mixins.mGeneratorCharges" type="number" min="0" ng-change="calculateBalanceDue()" ng-pattern="mNumberPattern"/>
             <div ng-messages="userForm.generator.$error">
               <div ng-message="required">Generator Charges is required.</div>
             </div>
@@ -226,7 +226,7 @@
         <div layout="column" flex>
           <md-input-container flex>
             <label>Miscellaneous Charges</label>
-            <input required name="miscellaneous" ng-model="mMiscellaneousCharges" type="number" min="0" ng-change="calculateBalanceDue()" ng-pattern="mNumberPattern"/>
+            <input required name="miscellaneous" ng-model="mixins.mMiscellaneousCharges" type="number" min="0" ng-change="calculateBalanceDue()" ng-pattern="mNumberPattern"/>
             <div ng-messages="userForm.miscellaneous.$error">
               <div ng-message="required">Miscellaneous Charges is required.</div>
             </div>
@@ -236,7 +236,7 @@
         <div layout="column" flex>
           <md-input-container flex>
             <label>Discount</label>
-            <input required name="discount" ng-model="mDiscount" type="number" min="0" ng-change="calculateBalanceDue()" ng-pattern="mNumberPattern"/>
+            <input required name="discount" ng-model="mixins.mDiscount" type="number" min="0" ng-change="calculateBalanceDue()" ng-pattern="mNumberPattern"/>
             <div ng-messages="userForm.discount.$error">
               <div ng-message="required">Discount is required.</div>
             </div>
@@ -246,7 +246,7 @@
         <div layout="column" flex>
           <md-input-container flex>
             <label>Sub Total</label>
-            <input required name="subTotal" ng-model="mSubTotal" onfocus="this.blur()" type="number" readonly/>
+            <input required name="subTotal" ng-model="mixins.mSubTotal" onfocus="this.blur()" type="number" readonly/>
             <div ng-messages="userForm.subTotal.$error">
               <div ng-message="required">Sub Total is required.</div>
             </div>
@@ -255,10 +255,20 @@
 
         <div layout="column" flex>
           <md-input-container flex>
-            <label>Service Tax</label>
-            <input required name="serviceTax" ng-model="mServiceTax" onfocus="this.blur()" type="number" readonly/>
-            <div ng-messages="userForm.serviceTax.$error">
-              <div ng-message="required">Service Tax is required.</div>
+            <label>CGST</label>
+            <input required name="cgst" ng-model="mixins.mCGST" onfocus="this.blur()" type="number" readonly/>
+            <div ng-messages="userForm.cgst.$error">
+              <div ng-message="required">CGST is required.</div>
+            </div>
+          </md-input-container>  
+        </div>
+
+        <div layout="column" flex>
+          <md-input-container flex>
+            <label>SGST</label>
+            <input required name="sgst" ng-model="mixins.mSGST" onfocus="this.blur()" type="number" readonly/>
+            <div ng-messages="userForm.sgst.$error">
+              <div ng-message="required">SGST is required.</div>
             </div>
           </md-input-container>  
         </div>
@@ -266,7 +276,7 @@
         <div layout="column" flex>
           <md-input-container flex>
             <label>Grand Total</label>
-            <input required name="grandTotal" ng-model="mGrandTotal" onfocus="this.blur()" type="number" readonly/>
+            <input required name="grandTotal" ng-model="mixins.mGrandTotal" onfocus="this.blur()" type="number" readonly/>
             <div ng-messages="userForm.grandTotal.$error">
               <div ng-message="required">Grand Total is required.</div>
             </div>
@@ -276,7 +286,7 @@
          <div layout="column" flex>
           <md-input-container flex>
             <label>Advance Received</label>
-            <input required name="advanceReceived" ng-model="mAdvanceReceived" type="number" min="0" ng-change="calculateBalanceDue()" ng-pattern="mNumberPattern"/>
+            <input required name="advanceReceived" ng-model="mixins.mAdvanceReceived" type="number" min="0" ng-change="calculateBalanceDue()" ng-pattern="mNumberPattern"/>
             <div ng-messages="userForm.advanceReceived.$error">
               <div ng-message="required">Advance Received is required.</div>
             </div>
@@ -286,7 +296,7 @@
         <div layout="column" flex>
           <md-input-container flex>
             <label>Balance Due</label>
-            <input required name="balanceDue" ng-model="mBalanceDue" onfocus="this.blur()" type="number" step="any" readonly/>
+            <input required name="balanceDue" ng-model="mixins.mBalanceDue" onfocus="this.blur()" type="number" step="any" readonly/>
             <div ng-messages="userForm.balanceDue.$error">
               <div ng-message="required">Balance Due is required.</div>
             </div>
@@ -303,7 +313,7 @@
     <md-dialog-actions layout="row">  
       <md-button class="btn btn-next btn-fill btn-rose btn-wd" ng-disabled="userForm.$invalid" flex ng-click="submit(userForm, mFormActions[0])" type="submit">Print</md-button>
       <md-button class="btn btn-next btn-fill btn-primary btn-wd" ng-disabled="userForm.$invalid" flex ng-click="submit(userForm, mFormActions[1])" type="submit">Email</md-button>
-      <md-button class="btn btn-next btn-fill btn-info btn-wd" ng-disabled="userForm.$invalid" flex ng-click="submit(userForm, mFormActions[2])" type="submit">Confirm Booking</md-button>
+      <md-button class="btn btn-next btn-fill btn-info btn-wd" ng-disabled="userForm.$invalid" flex ng-click="save(userForm)" type="submit">Confirm Booking</md-button>
     </md-dialog-actions>
   </form>
 </md-dialog>
