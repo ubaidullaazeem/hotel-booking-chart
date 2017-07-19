@@ -17,9 +17,9 @@
 				<div class="card-content table-responsive">
 					<table class="table table-bordered" ng-show="halls.length">
 					  <tr>
-					    <th width="30%">Hall name</th>
-					    <th width="40%">Rate</th> 
-					    <th width="30%">Action</th>
+					    <th style="text-align: center" width="30%">Hall name</th>
+					    <th style="text-align: center" width="40%">Rate</th> 
+					    <th style="text-align: center" width="30%">Action</th>
 					  </tr>
 					  <tr ng-repeat = "hall in halls" style="text-align: center">
 				        <td style="text-transform: capitalize;">{{ hall.name }}</td>
@@ -27,7 +27,7 @@
 
 				        <td style="text-align: center;">
 				        	<md-button class="md-raised md-primary nonecase" style="min-width: 50px" ng-click="mShowHallPopup($event, $index, hall)"><span class="glyphicon glyphicon-pencil"></span></md-button>
-				        	<md-button class="md-raised md-warn nonecase" style="min-width: 50px" ng-click="mDeleteHall($event, $index, hall)"><span class="glyphicon glyphicon-trash"></span></md-button>
+				        	<md-button class="btn btn-danger btn-sm" style="min-width: 50px" ng-click="mDeleteHall($event, $index, hall)"><span class="glyphicon glyphicon-trash"></span></md-button>
 				        </td>
 				     </tr>		  
 					</table>
