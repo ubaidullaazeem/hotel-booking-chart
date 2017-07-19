@@ -7,12 +7,16 @@
 			<md-button class="md-raised md-primary nonecase" ng-click="changeView('month', myCalendar)">Month</md-button>
 		</div>
 
-		<div layout="column" style="margin-left: 20px">
+		<div layout="column">
 			<div flex></div>
-			<md-radio-group ng-model="mColorFilter" flex>
-		      <md-radio-button value="payment" class="md-primary" ng-style="{'display':'inline'}">Payment</md-radio-button>
-		      <md-radio-button value="event" class="md-primary" ng-style="{'display':'inline'}">Event</md-radio-button>
-		    </md-radio-group>
+			<div class="radio">
+				<label style="color: #999">
+					<input name="mColorFilter" ng-model="mColorFilter" type="radio"><span class="circle"></span><span class="check"></span> Payment
+				</label>
+				<label style="color: #999">
+					<input name="mColorFilter" ng-model="mColorFilter" type="radio"><span class="circle"></span><span class="check"></span> Event
+				</label>
+			</div>
 		    <div flex></div>
 		</div>
 

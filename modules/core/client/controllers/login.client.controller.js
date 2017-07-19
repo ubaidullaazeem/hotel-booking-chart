@@ -5,8 +5,8 @@
     .module('core')
     .controller('LoginController', LoginController);
 
-  LoginController.$inject = ['$scope', '$state', '$rootScope', 'AuthenticationService', 'AUTHORISED_EMAIL', 'MESSAGES', '$mdDialog', '$mdToast'];
-  function LoginController($scope, $state, $rootScope, AuthenticationService, AUTHORISED_EMAIL, MESSAGES, $mdDialog, $mdToast) 
+  LoginController.$inject = ['$scope', '$state', '$rootScope', 'AuthenticationService', 'AUTHORISED_EMAIL', 'MESSAGES', '$mdDialog', '$mdToast', 'Notification'];
+  function LoginController($scope, $state, $rootScope, AuthenticationService, AUTHORISED_EMAIL, MESSAGES, $mdDialog, $mdToast, Notification) 
   {
     //var vm = this;
 
@@ -72,9 +72,9 @@
                 {
                   if (primaryEmail.toLowerCase() == AUTHORISED_EMAIL) 
                   {  
-                    AuthenticationService.SetCredentials("", primaryEmail, userResult.id, userResult.displayName, userResult.image.url);
+                    AuthenticationService.SetCredentials("", primaryEmail, userResult.id, userResult.displayName, userResult.image.url);                    
 
-                    $mdToast.show($mdToast.simple().textContent("Success").position('top right').hideDelay(3000));
+                    Notification.success({ message: "Authorized successfully", title: '<i class="glyphicon glyphicon-remove"></i> Success !!!' });
 
                     $rootScope.isUserLoggedIn = true;
                     $rootScope.$broadcast('userLoggedIn');//sending broadcast to update the header name and image
