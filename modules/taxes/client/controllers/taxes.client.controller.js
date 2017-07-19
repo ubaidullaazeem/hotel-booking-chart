@@ -6,9 +6,9 @@
     .module('taxes')
     .controller('TaxesController', TaxesController);
 
-  TaxesController.$inject = ['DATA_BACKGROUND_COLOR', '$scope', '$state', '$rootScope', '$window', 'Authentication', '$mdDialog', '$mdToast', 'taxResolve', 'TaxesService'];
+  TaxesController.$inject = ['DATA_BACKGROUND_COLOR', '$scope', '$state', '$rootScope', '$window', 'Authentication', '$mdDialog', 'Notification', 'taxResolve', 'TaxesService'];
 
-  function TaxesController (DATA_BACKGROUND_COLOR, $scope, $state, $rootScope, $window, Authentication, $mdDialog, $mdToast, tax, TaxesService) 
+  function TaxesController (DATA_BACKGROUND_COLOR, $scope, $state, $rootScope, $window, Authentication, $mdDialog, Notification, tax, TaxesService) 
   {   
     $scope.model = {
       tax: {
@@ -45,7 +45,7 @@
 
         function errorCallback(res) 
         {
-          $mdToast.show($mdToast.simple().textContent(res.data.message).position('bottom right').hideDelay(3000));
+          Notification.error({ message: res.data.message, title: '<i class="glyphicon glyphicon-remove"></i> Create Tax Error !!!' });
         }
       }
     }

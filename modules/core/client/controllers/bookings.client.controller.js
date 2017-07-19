@@ -5,9 +5,9 @@
     .module('core')
     .controller('BookingsController', BookingsController);
 
-  BookingsController.$inject = ['$scope', '$state', '$rootScope', '$mdDialog', '$mdToast', '$timeout', 'HallsService', 'MESSAGES'];
+  BookingsController.$inject = ['$scope', '$state', '$rootScope', '$mdDialog', '$mdToast', '$timeout', 'HallsService', 'MESSAGES', 'Notification'];
 
-  function BookingsController($scope, $state, $rootScope, $mdDialog, $mdToast, $timeout, HallsService, MESSAGES) 
+  function BookingsController($scope, $state, $rootScope, $mdDialog, $mdToast, $timeout, HallsService, MESSAGES, Notification) 
   {    
     $rootScope.isUserLoggedIn = true;
 
@@ -58,7 +58,7 @@
 
       if (moment(date) < moment(new Date().setHours(0,0,0,0)))
       {
-        $mdToast.show($mdToast.simple().textContent(MESSAGES.PAST_DATE).position('bottom right').hideDelay(3000));
+        Notification.error({ message: MESSAGES.PAST_DATE, title: '<i class="glyphicon glyphicon-remove"></i> Past Date Error !!!' });
       }
       else
       {

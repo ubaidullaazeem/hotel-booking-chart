@@ -5,9 +5,9 @@
     .module('core')
     .controller('SettingsController', SettingsController);
 
-  SettingsController.$inject = ['COLOURS', 'DATA_BACKGROUND_COLOR', '$scope', '$state', '$rootScope', '$mdDialog', '$mdToast', 'HallsService', 'EventtypesService', 'TaxesService', 'PaymentstatusesService'];
+  SettingsController.$inject = ['COLOURS', 'DATA_BACKGROUND_COLOR', '$scope', '$state', '$rootScope', '$mdDialog', 'HallsService', 'Notification', 'EventtypesService', 'TaxesService', 'PaymentstatusesService'];
 
-  function SettingsController(COLOURS, DATA_BACKGROUND_COLOR, $scope, $state, $rootScope, $mdDialog, $mdToast, HallsService, EventtypesService, TaxesService, PaymentstatusesService) 
+  function SettingsController(COLOURS, DATA_BACKGROUND_COLOR, $scope, $state, $rootScope, $mdDialog, HallsService, Notification, EventtypesService, TaxesService, PaymentstatusesService) 
   {
     
     $scope.DATA_BACKGROUND_COLOR = DATA_BACKGROUND_COLOR;
@@ -62,7 +62,7 @@
           }
 
           function errorCallback(res) {
-            $mdToast.show($mdToast.simple().textContent(res.data.message).position('bottom right').hideDelay(3000));
+            Notification.error({ message: res.data.message, title: '<i class="glyphicon glyphicon-remove"></i> Delete Hall Error !!!' });
           }
         },
         function() {
@@ -159,7 +159,7 @@
           }
 
           function errorCallback(res) {
-            $mdToast.show($mdToast.simple().textContent(res.data.message).position('bottom right').hideDelay(3000));
+            Notification.error({ message: res.data.message, title: '<i class="glyphicon glyphicon-remove"></i> Delete Event Error !!!' });
           }
         },
         function() {

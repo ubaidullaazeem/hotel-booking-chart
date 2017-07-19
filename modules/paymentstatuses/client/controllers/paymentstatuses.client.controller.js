@@ -6,9 +6,9 @@
     .module('paymentstatuses')
     .controller('PaymentstatusesController', PaymentstatusesController);
 
-  PaymentstatusesController.$inject = ['DATA_BACKGROUND_COLOR', '$scope', '$state', 'paymentstatusResolve', '$mdDialog', '$mdToast', 'PaymentstatusesService', 'colorsResolve'];
+  PaymentstatusesController.$inject = ['DATA_BACKGROUND_COLOR', '$scope', '$state', 'paymentstatusResolve', '$mdDialog', 'Notification', 'PaymentstatusesService', 'colorsResolve'];
 
-  function PaymentstatusesController (DATA_BACKGROUND_COLOR, $scope, $state, paymentstatus, $mdDialog, $mdToast, PaymentstatusesService, colorsResolve) 
+  function PaymentstatusesController (DATA_BACKGROUND_COLOR, $scope, $state, paymentstatus, $mdDialog, Notification, PaymentstatusesService, colorsResolve) 
   {
     $scope.colours = colorsResolve;
     $scope.model = {
@@ -49,7 +49,7 @@
 
         function errorCallback(res) 
         {
-          $mdToast.show($mdToast.simple().textContent(res.data.message).position('bottom right').hideDelay(3000));
+          Notification.error({ message: res.data.message, title: '<i class="glyphicon glyphicon-remove"></i> Create Payment Status Error !!!' });
         }
       }      
     }

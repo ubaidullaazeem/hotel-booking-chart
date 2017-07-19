@@ -6,9 +6,9 @@
     .module('eventtypes')
     .controller('EventtypesController', EventtypesController);
 
-  EventtypesController.$inject = ['DATA_BACKGROUND_COLOR', '$scope', '$state', '$rootScope', '$window', '$mdDialog', '$mdToast', 'eventtypeResolve', 'EventtypesService', 'COLOURS', 'colorsResolve'];
+  EventtypesController.$inject = ['DATA_BACKGROUND_COLOR', '$scope', '$state', '$rootScope', '$window', '$mdDialog', 'Notification', 'eventtypeResolve', 'EventtypesService', 'COLOURS', 'colorsResolve'];
 
-  function EventtypesController (DATA_BACKGROUND_COLOR, $scope, $state, $rootScope, $window, $mdDialog, $mdToast, eventtype, EventtypesService, COLOURS, colorsResolve) 
+  function EventtypesController (DATA_BACKGROUND_COLOR, $scope, $state, $rootScope, $window, $mdDialog, Notification, eventtype, EventtypesService, COLOURS, colorsResolve) 
   {
     $scope.colours = colorsResolve;
     $scope.model = {
@@ -54,7 +54,7 @@
 
         function errorCallback(res) 
         {
-          $mdToast.show($mdToast.simple().textContent(res.data.message).position('bottom right').hideDelay(3000));
+          Notification.error({ message: res.data.message, title: '<i class="glyphicon glyphicon-remove"></i> Create Event Error !!!' });
         }
       }
     }

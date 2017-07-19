@@ -6,9 +6,9 @@
     .module('halls')
     .controller('HallsController', HallsController);
 
-  HallsController.$inject = ['DATA_BACKGROUND_COLOR', '$scope', '$state', '$rootScope', '$mdDialog', '$mdToast', 'hallResolve', 'HallsService'];
+  HallsController.$inject = ['DATA_BACKGROUND_COLOR', '$scope', '$state', '$rootScope', '$mdDialog', 'Notification', 'hallResolve', 'HallsService'];
 
-  function HallsController (DATA_BACKGROUND_COLOR, $scope, $state, $rootScope, $mdDialog, $mdToast, hall, HallsService) 
+  function HallsController (DATA_BACKGROUND_COLOR, $scope, $state, $rootScope, $mdDialog, Notification, hall, HallsService) 
   {   
     $scope.model = {
       hall: {
@@ -44,8 +44,8 @@
         }
 
         function errorCallback(res) 
-        {
-          $mdToast.show($mdToast.simple().textContent(res.data.message).position('bottom right').hideDelay(3000));
+        {          
+          Notification.error({ message: res.data.message, title: '<i class="glyphicon glyphicon-remove"></i> Create Hall Error !!!' });
         }
       }
     }
