@@ -1,15 +1,15 @@
 <md-dialog flex>
   <form name="userForm">
-    <md-toolbar>
-      <div class="md-toolbar-tools">
-        
-        <span flex align="center"><h2>New Booking</h2> </span>
-        <md-button class="md-icon-button" ng-click="cancel()">
-           <md-icon md-svg-src="modules/core/client/img/icons/ic_close_24px.svg" aria-label="Close dialog"></md-icon>
-        </md-button>
-      </div>
-    </md-toolbar>
-
+    <div class="card">
+      <div class="card-header" data-background-color="{{DATA_BACKGROUND_COLOR}}">
+        <div class="md-toolbar-tools">        
+          <span flex align="center"><h2>New Booking</h2> </span>
+          <md-button class="md-icon-button" ng-click="cancel()">
+             <md-icon md-svg-src="modules/core/client/img/icons/ic_close_24px.svg" aria-label="Close dialog"></md-icon>
+          </md-button>
+        </div>
+        </div>
+    </div>
     <md-dialog-content>
       <div class="md-dialog-content">
 
@@ -52,7 +52,7 @@
               </div>
           </md-input-container>
 
-          <md-input-container flex ng-if="eventType.mSelectedEventType === getOtherEvents()">
+          <md-input-container flex ng-if="eventType.mSelectedEventType === getOtherEvents() && getOtherEvents()">
             <input required name="otherEvent" ng-model="eventType.mOtherEvent" ng-pattern="mPattern"/>
             <div ng-messages="userForm.otherEvent.$error">
               <div ng-message="required">Other event is required.</div>
@@ -164,7 +164,7 @@
                           ng-model="paymentMode.mSelectedPaymentMode"
                           ng-change="onPaymentModeChanged()">                
                 <md-optgroup label="Payment Mode">
-                  <md-option ng-value="paymentMode" ng-repeat="paymentMode in paymentMode.mAllPaymentMode">{{paymentMode}}</md-option>
+                  <md-option ng-value="paymentMode" ng-repeat="paymentMode in model.paymentModes">{{paymentMode}}</md-option>
                 </md-optgroup>
               </md-select>    
               <div ng-messages="userForm.payMode.$error" ng-show="userForm.payMode.$invalid && submitted">
