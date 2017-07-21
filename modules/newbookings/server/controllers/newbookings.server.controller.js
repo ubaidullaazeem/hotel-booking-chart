@@ -7,6 +7,7 @@ var path = require('path'),
   mongoose = require('mongoose'),
   Newbooking = mongoose.model('Newbooking'),
   errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller')),
+  async = require('async'),
   _ = require('lodash');
 
 /**
@@ -15,8 +16,51 @@ var path = require('path'),
 exports.create = function(req, res) {
   var newbooking = new Newbooking(req.body);
   newbooking.user = req.user;
+  var mapSelectedHallsByName = _.map(req.body.mSelectedHalls, 'name');
+  Newbooking.find({
+    $and: [{
+      mStartDateTime: {
+        $gte: req.body.startGMT
+      }
+    }, {
+      mEndDateTime: {
+        $lte: req.body.endGMT
+      }
+    }]
+  }, function(err, entries) {
+    if (entries.length > 0) {
+      var mapEntriesBySelectedHalls = _.map(entries, 'mSelectedHalls');
+      entries.forEach(function(entry) {
+        var endTime = new Date(entry.mEndDateTime);
+        var addExtraTime = endTime.setHours(endTime.getHours() + 3);
+        if ((convertTimeStamp(req.body.mStartDateTime) <= addExtraTime) && (convertTimeStamp(req.body.mEndDateTime) >= convertTimeStamp(entry.mStartDateTime))) { // overlaps
+          mapEntriesBySelectedHalls.forEach(function(bookedHall) {
+            var mapEntrySelectedHallByName = _.map(bookedHall, 'name');            
+            var commonHallsFromArrays = _.intersection(mapEntrySelectedHallByName, mapSelectedHallsByName);
+            if (commonHallsFromArrays.length > 0) {
+              return res.status(400).send({
+                message: "Halls '" + commonHallsFromArrays + "' are already booked on the date between startdate: " + convertDate(req.body.mStartDateTime) + " enddate: " + convertDate(req.body.mEndDateTime)
+              });
+            } else {
+              saveBooking(newbooking, res);
+            }
+          });
+        } else {
+          saveBooking(newbooking, res);
+        }
+      });
+    } else {
+      saveBooking(newbooking, res);
+    }
+  });
+};
 
-  newbooking.save(function(err) {
+/**
+ * Save New Booking
+ */
+
+ function saveBooking(newbooking, res) {
+    newbooking.save(function(err) {
     if (err) {
       return res.status(400).send({
         message: errorHandler.getErrorMessage(err)
@@ -25,7 +69,7 @@ exports.create = function(req, res) {
       res.jsonp(newbooking);
     }
   });
-};
+ }
 
 /**
  * Show the current Newbooking
@@ -115,3 +159,19 @@ exports.newbookingByID = function(req, res, next, id) {
     next();
   });
 };
+
+/**
+ * Date convertion to YYYY-MM-DD HH:MM:SS
+ */
+
+function convertDate(date) {
+  return new Date(date).toString().replace(/GMT.+/,"");
+}
+
+/**
+ * Date convertion to timestamp
+ */
+
+function convertTimeStamp(date) {
+  return new Date(date).getTime();
+}

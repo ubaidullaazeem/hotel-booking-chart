@@ -1,4 +1,4 @@
-<md-dialog flex>
+<md-dialog flex="30">
   <form name="hallForm" autocomplete="off">    
     <div class="card">
         <div class="card-header" data-background-color="{{DATA_BACKGROUND_COLOR}}">
@@ -21,7 +21,14 @@
                 <div ng-messages="hallForm.name.$error">
                   <div ng-message="required">Hall name is required.</div>
                 </div>
-              </md-input-container>  
+              </md-input-container>
+
+              <md-input-container flex>
+                <label>Effective Date</label>
+                <div ng-click="showStartDatePicker($event)">
+                  <input class="form-control datepicker" required name="start" ng-model="model.hall.effectiveDate" onfocus="this.blur()"></input>
+                </div>
+              </md-input-container>
 
               <md-input-container flex>
                 <label>Rate</label>

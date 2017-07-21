@@ -6,13 +6,15 @@
     .module('newbookings')
     .controller('NewbookingsController', NewbookingsController);
 
-  NewbookingsController.$inject = ['AuthenticationService', 'DATA_BACKGROUND_COLOR', '$scope', '$state', 'newbookingResolve', '$mdDialog', 'NewbookingsService', 'selectedDate', 'HallsService', 'EventtypesService', 'TaxesService', 'PaymentstatusesService', 'Notification', '$mdpTimePicker'];
+  NewbookingsController.$inject = ['AuthenticationService', 'DATA_BACKGROUND_COLOR', 'HARDCODE_VALUES', '$scope', '$state', 'newbookingResolve', '$mdDialog', 'NewbookingsService', 'selectedDate', 'HallsService', 'EventtypesService', 'TaxesService', 'PaymentstatusesService', 'Notification', '$mdpTimePicker'];
 
-  function NewbookingsController(AuthenticationService, DATA_BACKGROUND_COLOR, $scope, $state, newbooking, $mdDialog, NewbookingsService, selectedDate, HallsService, EventtypesService, TaxesService, PaymentstatusesService, Notification, $mdpTimePicker) {
+  function NewbookingsController(AuthenticationService, DATA_BACKGROUND_COLOR, HARDCODE_VALUES, $scope, $state, newbooking, $mdDialog, NewbookingsService, selectedDate, HallsService, EventtypesService, TaxesService, PaymentstatusesService, Notification, $mdpTimePicker) {
     $scope.DATA_BACKGROUND_COLOR = DATA_BACKGROUND_COLOR;
 
     $scope.ui = {
       mSelectedDateToDisplay: selectedDate.format('DD-MMMM-YYYY'),
+      mNumberPattern: /^[0-9]*$/,
+      mEmailPattern: /^.+@.+\..+$/
     }
 
     $scope.model = {
@@ -65,7 +67,7 @@
 
     $scope.getOtherEvents = function() {
       var events = _.filter($scope.model.eventTypes, function(eventType) {
-        return eventType.name === 'others';
+        return eventType.name === HARDCODE_VALUES[0];
       });
       return events[0];
     };
@@ -94,6 +96,15 @@
 
           validateStartAndEndTime();
         });
+    }
+
+    $scope.sendMail = function() {
+      if ($scope.mixins.mEmail === null) {
+        Notification.error({
+          message: "Mail not sent",
+          title: '<i class="glyphicon glyphicon-remove"></i> Email Id Missing Error !!!'
+        });
+      }
     }
 
     function validateStartAndEndTime() {
@@ -148,6 +159,17 @@
       console.log("$scope.mBalanceDue " + $scope.mixins.mBalanceDue);
     }
 
+    $scope.onPaymentStatusChanged = function() {
+      var getQueryPaymentStatus = _.filter($scope.model.paymentStatuses, function(paymentStatus) {
+        return paymentStatus.name === HARDCODE_VALUES[1];
+      });
+      if ($scope.mixins.mSelectedPaymentStatus == getQueryPaymentStatus[0]) {
+        $scope.mixins.mSelectedPaymentMode = $scope.model.paymentModes[0];
+      } else {
+        $scope.mixins.mSelectedPaymentMode = null;
+      }
+    }
+
     var init = function() {
       if ($scope.model.taxes.length == 2) {
         angular.forEach($scope.model.taxes, function(tax) {
@@ -199,20 +221,34 @@
 
     // Save Newbooking
     $scope.save = function(isValid) {
-       if (!isValid) {
-         $scope.$broadcast('show-errors-check-validity', 'vm.form.newbookingForm');
-         return false;
-       }
+      if (!isValid) {
+        $scope.$broadcast('show-errors-check-validity', 'vm.form.newbookingForm');
+        return false;
+      }
 
+      $scope.mixins.mStartDateTime = new Date($scope.eventTime.mStartToServer);
+      $scope.mixins.mEndDateTime = new Date($scope.eventTime.mEndToServer);
+      $scope.mixins.startGMT = moment(selectedDate).startOf('day').toDate().toISOString();
+      $scope.mixins.endGMT = moment(selectedDate).endOf('day').toDate().toISOString();
+
+      angular.forEach($scope.mixins.mSelectedHalls, function(selectedHall) {
+        selectedHall.mCleaningCharges = 0;
+        selectedHall.mGeneratorCharges = 0;
+        selectedHall.mMiscellaneousCharges = 0;
+        selectedHall.mElectricityCharges = 0;
+      });
       // TODO: move create/update logic to service
       NewbookingsService.save($scope.mixins, successCallback, errorCallback);
 
       function successCallback(res) {
-         $mdDialog.hide(res);
+        $mdDialog.hide(res);
       }
 
       function errorCallback(res) {
-        Notification.error({ message: res.data.message, title: '<i class="glyphicon glyphicon-remove"></i> Create Booking Error !!!' });
+        Notification.error({
+          message: res.data.message,
+          title: '<i class="glyphicon glyphicon-remove"></i> Create Booking Error !!!'
+        });
       }
     }
 

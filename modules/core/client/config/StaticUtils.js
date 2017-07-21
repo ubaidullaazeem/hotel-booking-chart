@@ -7,6 +7,7 @@
 	.constant('GOOGLE_DISCOVERY_DOCS', ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"])
 	.constant('AUTHORISED_EMAIL', 'ubai.cse@gmail.com')
 	.constant('DATA_BACKGROUND_COLOR', 'rose')
+	.constant('HARDCODE_VALUES', ['others', 'query'])
 	.constant('API', {
        	'CALENDAR_LIST_URL' : 'https://www.googleapis.com/calendar/v3/users/me/calendarList',
        	'CALENDAR_EVENT_LIST_URL' : 'https://www.googleapis.com/calendar/v3/calendars/',

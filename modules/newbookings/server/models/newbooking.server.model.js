@@ -16,6 +16,12 @@ var NewbookingSchema = new Schema({
     required: 'Please select halls',
     trim: true
   },
+  mStartDateTime: {
+    type: Date
+  },
+  mEndDateTime: {
+    type: Date
+  },
   mSelectedEventType: {
     type: Object,
     default: '',

@@ -22,6 +22,13 @@
     /** CRUD Functionality for Hall **/
 
     $scope.mShowHallPopup = function(ev, index = null, hall = null) {
+       var oldShow = $mdDialog.show;
+        $mdDialog.show = function(options) {
+          if (options.hasOwnProperty("skipHide")) {
+            options.multiple = options.skipHide;
+          }
+          return oldShow(options);
+        };
       $mdDialog.show({
           controller: 'HallsController',
           templateUrl: 'modules/halls/client/views/form-hall.client.view.html',

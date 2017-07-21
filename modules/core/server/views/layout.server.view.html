@@ -43,19 +43,19 @@
 
 <body class="ng-cloak">
   <div class="wrapper"> 
-    <div class="sidebar" ng-if="isUserLoggedIn" data-active-color="rose" data-background-color="white" data-image="/modules/core/client/img/sidebar-1.jpg">
+    <div class="sidebar" data-active-color="rose" data-background-color="white" data-image="/modules/core/client/img/sidebar-1.jpg">
     <!--
     Tip 1: You can change the color of active element of the sidebar using: data-active-color="purple | blue | green | orange | red | rose"
     Tip 2: you can also add an image using data-image tag
     Tip 3: you can change the color of the sidebar with data-background-color="white | black"
     -->
-        <div class="logo">
+        <div class="logo" ng-if="isUserLoggedIn">
             <a href="#" class="simple-text">
             <img src="/modules/core/client/img/logo.png" style="width: 170px; height: 65px">
             </a>
         </div>    
        <div class="sidebar-wrapper">
-         <div ng-include="'/modules/core/client/views/sidebar.client.view.html'"></div>
+         <div ng-include="'/modules/core/client/views/sidebar.client.view.html'" ng-if="isUserLoggedIn"></div>
        </div>
       </div>
       <div class="main-panel" ng-if="isUserLoggedIn">

@@ -6,15 +6,16 @@
     .module('halls')
     .controller('HallsController', HallsController);
 
-  HallsController.$inject = ['DATA_BACKGROUND_COLOR', '$scope', '$state', '$rootScope', '$mdDialog', 'Notification', 'hallResolve', 'HallsService'];
+  HallsController.$inject = ['DATA_BACKGROUND_COLOR', '$scope', '$state', '$rootScope', '$mdDialog', 'Notification', 'hallResolve', 'HallsService', '$mdpDatePicker'];
 
-  function HallsController (DATA_BACKGROUND_COLOR, $scope, $state, $rootScope, $mdDialog, Notification, hall, HallsService) 
+  function HallsController (DATA_BACKGROUND_COLOR, $scope, $state, $rootScope, $mdDialog, Notification, hall, HallsService, $mdpDatePicker) 
   {   
     $scope.model = {
       hall: {
         name: hall ? hall.name : undefined,
         rate: hall ? hall.rate : undefined,
-        _id: hall ? hall._id : undefined
+        _id: hall ? hall._id : undefined,
+        effectiveDate: hall ? moment(hall.effectiveDate).format('DD, MMM YYYY') : moment(new Date()).format('DD, MMM YYYY')
       }
     };
 
@@ -53,6 +54,15 @@
     $scope.cancel = function()
     {
       $mdDialog.cancel();
-    }    
+    }
+
+     $scope.showStartDatePicker = function(ev) {
+      $mdpDatePicker($scope.model.effectiveDate, {
+          targetEvent: ev,
+        })
+        .then(function(dateTime) {
+          $scope.model.hall.effectiveDate = moment(dateTime).format('DD, MMM YYYY');
+        });
+    }
   }
 }());

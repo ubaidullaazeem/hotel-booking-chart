@@ -24,13 +24,13 @@
   // Angular-ui-notification configuration
   angular.module('ui-notification').config(function(NotificationProvider) {
     NotificationProvider.setOptions({
-      delay: 2000,
+      delay: 5000,
       startTop: 20,
       startRight: 10,
       verticalSpacing: 20,
       horizontalSpacing: 20,
       positionX: 'right',
-      positionY: 'bottom'
+      positionY: 'top'
     });
   });
 }(window));

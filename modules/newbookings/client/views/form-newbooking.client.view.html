@@ -1,4 +1,4 @@
-<md-dialog flex>
+<md-dialog flex="50">
   <form name="userForm">
     <div class="card">
       <div class="card-header" data-background-color="{{DATA_BACKGROUND_COLOR}}">
@@ -105,7 +105,7 @@
         <div layout="column" flex>
           <md-input-container flex>
             <label>Phone</label>
-            <input type="number" required name="phone" ng-model="mixins.mPhone" min="0" ng-maxlength="10" />
+            <input type="text" required name="phone" ng-pattern="ui.mNumberPattern" ng-model="mixins.mPhone" min="0" ng-maxlength="10" />
             <div ng-messages="userForm.phone.$error">
               <div ng-message="required">Phone is required.</div>
             </div>
@@ -115,7 +115,7 @@
         <div layout="column" flex>
           <md-input-container flex>
             <label>Email</label>
-            <input type="email" name="email" ng-model="mixins.mEmail" ng-pattern="/^.+@.+\..+$/" />
+            <input type="email" name="email" ng-model="mixins.mEmail" ng-pattern="ui.mEmailPattern" />
             <div ng-messages="userForm.email.$error" role="alert">
               <div ng-message-exp="['pattern']">
                 Invalid email.
@@ -312,7 +312,7 @@
 
     <md-dialog-actions layout="row">  
       <md-button class="btn btn-next btn-fill btn-rose btn-wd" ng-disabled="userForm.$invalid" flex ng-click="submit(userForm, mFormActions[0])" type="submit">Print</md-button>
-      <md-button class="btn btn-next btn-fill btn-primary btn-wd" ng-disabled="userForm.$invalid" flex ng-click="submit(userForm, mFormActions[1])" type="submit">Email</md-button>
+      <md-button class="btn btn-next btn-fill btn-primary btn-wd" ng-disabled="userForm.$invalid" flex ng-click="sendMail()" type="submit">Email</md-button>
       <md-button class="btn btn-next btn-fill btn-info btn-wd" ng-disabled="userForm.$invalid" flex ng-click="save(userForm)" type="submit">Confirm Booking</md-button>
     </md-dialog-actions>
   </form>
