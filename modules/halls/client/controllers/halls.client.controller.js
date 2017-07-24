@@ -6,22 +6,22 @@
     .module('halls')
     .controller('HallsController', HallsController);
 
-  HallsController.$inject = ['DATA_BACKGROUND_COLOR', '$scope', '$state', '$rootScope', '$mdDialog', 'Notification', 'hallResolve', 'HallsService', '$mdpDatePicker', 'TaxesService'];
+  HallsController.$inject = ['DATA_BACKGROUND_COLOR', 'CommonService', '$scope', '$state', '$rootScope', '$mdDialog', 'Notification', 'hallResolve', 'HallsService', '$mdpDatePicker', 'TaxesService'];
 
-  function HallsController(DATA_BACKGROUND_COLOR, $scope, $state, $rootScope, $mdDialog, Notification, hall, HallsService, $mdpDatePicker, TaxesService) {
+  function HallsController(DATA_BACKGROUND_COLOR, CommonService, $scope, $state, $rootScope, $mdDialog, Notification, hall, HallsService, $mdpDatePicker, TaxesService) {
     $scope.model = {
       hall: {
         name: hall ? hall.name : undefined,
-        rate: hall ? hall.rate : undefined,
-        _id: hall ? hall._id : undefined,
-        powerConsumpationCharges: hall ? hall.powerConsumpationCharges : undefined,
-        cleaningCharges: hall ? hall.cleaningCharges : undefined,
-        CGSTTax: hall ? hall.CGSTTax : undefined,
-        SGSTTax: hall ? hall.SGSTTax : undefined,
+        _id: hall ? hall._id : undefined,        
         effectiveDate: hall ? dateConvertion(hall.effectiveDate) : dateConvertion(new Date()),
         rateSummaries: hall ? hall.rateSummaries : [],
       },
       taxes: TaxesService.query(),
+      rate: undefined,
+      powerConsumpationCharges: undefined,
+      cleaningCharges: undefined,
+      CGSTTax: undefined,
+      SGSTTax: undefined,
     };
 
     $scope.ui = {
@@ -30,25 +30,47 @@
 
     $scope.DATA_BACKGROUND_COLOR = DATA_BACKGROUND_COLOR;
 
-    $scope.loadInitial = function() {
-      var currentDate = new Date();
-      var summaryRate = findRateSummariesByDate($scope.model.hall.rateSummaries, currentDate);
-      if (summaryRate.length > 0) {
-        $scope.model.hall.rate = summaryRate[0].rate;
-        $scope.model.hall.effectiveDate = dateConvertion(summaryRate[0].effectiveDate);
-      } else {
-        var getLastSummary = _.last($scope.model.hall.rateSummaries);
-        $scope.model.hall.rate = getLastSummary.rate;
-        $scope.model.hall.effectiveDate = dateConvertion(getLastSummary.effectiveDate);
+    $scope.loadInitial = function() {  
+      if ($scope.model.hall._id) {
+        var currentDate = new Date();
+        var summaryRate = CommonService.findRateSummariesByDate($scope.model.hall.rateSummaries, currentDate);
+        if (summaryRate.length > 0) {
+          $scope.model.rate = summaryRate[0].rate;
+          $scope.model.powerConsumpationCharges = summaryRate[0].powerConsumpationCharges;
+          $scope.model.cleaningCharges = summaryRate[0].cleaningCharges;
+          $scope.model.CGSTTax = summaryRate[0].CGSTTax;
+          $scope.model.SGSTTax = summaryRate[0].SGSTTax;
+          $scope.model.hall.effectiveDate = dateConvertion(summaryRate[0].effectiveDate);
+        } else {
+          var getLastSummary = _.last($scope.model.hall.rateSummaries);
+          $scope.model.rate = getLastSummary.rate;
+          $scope.model.powerConsumpationCharges = getLastSummary.powerConsumpationCharges;
+          $scope.model.cleaningCharges = getLastSummary.cleaningCharges;
+          $scope.model.CGSTTax = getLastSummary.CGSTTax;
+          $scope.model.SGSTTax = getLastSummary.SGSTTax;
+          $scope.model.hall.effectiveDate = dateConvertion(getLastSummary.effectiveDate);
+        }
       }
     };
 
+    $scope.model.taxes.$promise.then(function(result) {
+      console.log(_.map($scope.model.taxes, 'name'));
+      var hasContainsTaxName = _.includes(_.map($scope.model.taxes, 'name'), 'cgst', 'sgst');
+      if (!hasContainsTaxName) {
+        Notification.error({
+          message: "Please add both CGST and SGST tax rate.",
+          title: '<i class="glyphicon glyphicon-remove"></i> Tax Missing Error !!!'
+        });
+        $mdDialog.cancel();
+      }
+    });
+
     $scope.calculateTaxRate = function() {
-      var totalCost = Number($scope.model.hall.rate) + Number($scope.model.hall.powerConsumpationCharges) + Number($scope.model.hall.cleaningCharges);
-      var cgstPercent = Number(getTaxRateByName('cgst')) / 100;
-      var sgstPercent = Number(getTaxRateByName('sgst')) / 100;
-      $scope.model.hall.CGSTTax = Number(Number(Number(totalCost) * cgstPercent).toFixed(2));
-      $scope.model.hall.SGSTTax = Number(Number(Number(totalCost) * sgstPercent).toFixed(2));
+      var totalCost = Number($scope.model.rate) + Number($scope.model.powerConsumpationCharges) + Number($scope.model.cleaningCharges);
+      var cgstPercent = Number(CommonService.getTaxRateByName($scope.model.taxes, 'cgst')) / 100;
+      var sgstPercent = Number(CommonService.getTaxRateByName($scope.model.taxes, 'sgst')) / 100;
+      $scope.model.CGSTTax = Number(Number(Number(totalCost) * cgstPercent).toFixed(2));
+      $scope.model.SGSTTax = Number(Number(Number(totalCost) * sgstPercent).toFixed(2));
     };
 
     $scope.save = function(hallForm) {
@@ -56,23 +78,35 @@
       if (hallForm.$valid) {
         if ($scope.model.hall._id) {
           var requestedEffectiveDate = new Date($scope.model.hall.effectiveDate);
-          var summaryRate = findRateSummariesByDate($scope.model.hall.rateSummaries, requestedEffectiveDate);
+          var summaryRate = CommonService.findRateSummariesByDate($scope.model.hall.rateSummaries, requestedEffectiveDate);
           if (summaryRate.length > 0) {
             var index = _.indexOf($scope.model.hall.rateSummaries, summaryRate[0]);
             $scope.model.hall.rateSummaries[index] = {
-              rate: $scope.model.hall.rate,
+              rate: $scope.model.rate,
+              powerConsumpationCharges: $scope.model.powerConsumpationCharges,
+              cleaningCharges: $scope.model.cleaningCharges,
+              CGSTTax: $scope.model.CGSTTax,
+              SGSTTax: $scope.model.SGSTTax,
               effectiveDate: $scope.model.hall.effectiveDate
             };
           } else {
             $scope.model.hall.rateSummaries.push({
-              rate: $scope.model.hall.rate,
+              rate: $scope.model.rate,
+              powerConsumpationCharges: $scope.model.powerConsumpationCharges,
+              cleaningCharges: $scope.model.cleaningCharges,
+              CGSTTax: $scope.model.CGSTTax,
+              SGSTTax: $scope.model.SGSTTax,
               effectiveDate: $scope.model.hall.effectiveDate
             });
           }
           HallsService.update($scope.model.hall, successCallback, errorCallback);
         } else {
           $scope.model.hall.rateSummaries.push({
-            rate: $scope.model.hall.rate,
+            rate: $scope.model.rate,
+            powerConsumpationCharges: $scope.model.powerConsumpationCharges,
+            cleaningCharges: $scope.model.cleaningCharges,
+            CGSTTax: $scope.model.CGSTTax,
+            SGSTTax: $scope.model.SGSTTax,
             effectiveDate: $scope.model.hall.effectiveDate
           });
           HallsService.save($scope.model.hall, successCallback, errorCallback);
@@ -96,7 +130,7 @@
     }
 
     $scope.showStartDatePicker = function(ev) {
-      $mdpDatePicker($scope.model.effectiveDate, {
+      $mdpDatePicker($scope.model.hall.effectiveDate, {
           targetEvent: ev,
         })
         .then(function(dateTime) {
@@ -107,21 +141,5 @@
     function dateConvertion(date) {
       return moment(date).format('DD, MMM YYYY');
     }
-
-    function findRateSummariesByDate(rateSummaries, date) {
-      var summaries = _.filter(rateSummaries, function(summary) {
-        var createdHallEffectiveDate = new Date(summary.effectiveDate);
-        return ((createdHallEffectiveDate.getFullYear() === date.getFullYear()) && (createdHallEffectiveDate.getMonth() === date.getMonth()));
-      });
-
-      return summaries;
-    }
-
-    function getTaxRateByName(name) {
-      var taxArray = _.filter($scope.model.taxes, function(tax) {
-        return tax.name === name;
-      });
-      return taxArray[0].percentage;
-    };
   }
 }());

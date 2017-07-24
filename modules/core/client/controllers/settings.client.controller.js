@@ -5,9 +5,9 @@
     .module('core')
     .controller('SettingsController', SettingsController);
 
-  SettingsController.$inject = ['COLOURS', 'DATA_BACKGROUND_COLOR', '$scope', '$state', '$rootScope', '$mdDialog', 'HallsService', 'Notification', 'EventtypesService', 'TaxesService', 'PaymentstatusesService'];
+  SettingsController.$inject = ['COLOURS', 'CommonService', 'DATA_BACKGROUND_COLOR', '$scope', '$state', '$rootScope', '$mdDialog', 'HallsService', 'Notification', 'EventtypesService', 'TaxesService', 'PaymentstatusesService'];
 
-  function SettingsController(COLOURS, DATA_BACKGROUND_COLOR, $scope, $state, $rootScope, $mdDialog, HallsService, Notification, EventtypesService, TaxesService, PaymentstatusesService) 
+  function SettingsController(COLOURS, CommonService, DATA_BACKGROUND_COLOR, $scope, $state, $rootScope, $mdDialog, HallsService, Notification, EventtypesService, TaxesService, PaymentstatusesService) 
   {
     
     $scope.DATA_BACKGROUND_COLOR = DATA_BACKGROUND_COLOR;
@@ -231,16 +231,21 @@
 
     $scope.findRateSummariesByDate = function(hall) {
       var date = new Date();
-      var summaries = _.filter(hall.rateSummaries, function(summary) {
-        var createdHallEffectiveDate = new Date(summary.effectiveDate);
-        return ((createdHallEffectiveDate.getFullYear() === date.getFullYear()) && (createdHallEffectiveDate.getMonth() === date.getMonth()));
-      });
+      var summaries = CommonService.findRateSummariesByDate(hall.rateSummaries, date);
       if (summaries.length > 0) {
         hall.rate = summaries[0].rate;
+        hall.powerConsumpationCharges = summaries[0].powerConsumpationCharges;
+        hall.cleaningCharges = summaries[0].cleaningCharges;
+        hall.CGSTTax = summaries[0].CGSTTax;
+        hall.SGSTTax = summaries[0].SGSTTax;
         hall.effectiveDate = summaries[0].effectiveDate;
       } else {
         var getLastSummary = _.last(hall.rateSummaries);
         hall.rate = getLastSummary.rate;
+        hall.powerConsumpationCharges = getLastSummary.powerConsumpationCharges;
+        hall.cleaningCharges = getLastSummary.cleaningCharges;
+        hall.CGSTTax = getLastSummary.CGSTTax;
+        hall.SGSTTax = getLastSummary.SGSTTax;
         hall.effectiveDate = getLastSummary.effectiveDate;
       }
 
