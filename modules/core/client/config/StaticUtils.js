@@ -5,9 +5,11 @@
 	.constant('GOOGLE_CLIENT_ID', '228725713486-eng36vttlj0c1pt3nor8nti4j5i2laqu.apps.googleusercontent.com')
 	.constant('GOOGLE_SCOPES', 'https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/calendar.readonly')
 	.constant('GOOGLE_DISCOVERY_DOCS', ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"])
-	.constant('AUTHORISED_EMAIL', 'ubai.cse@gmail.com')
+	.constant('AUTHORISED_EMAIL', 'kumar@riverstonetech.com')
 	.constant('DATA_BACKGROUND_COLOR', 'rose')
-	.constant('HARDCODE_VALUES', ['others', 'query'])
+	.constant('HARDCODE_VALUES', ['others'])
+	.constant('CGST', 'cgst')
+    .constant('SGST', 'sgst')
 	.constant('API', {
        	'CALENDAR_LIST_URL' : 'https://www.googleapis.com/calendar/v3/users/me/calendarList',
        	'CALENDAR_EVENT_LIST_URL' : 'https://www.googleapis.com/calendar/v3/calendars/',
@@ -28,7 +30,5 @@
 		'HALL_BOOKING_ERROR' : 'Unable to book the Halls.',
 		'CHECK_ENTERED_DATA' : 'Please enter valid data.'
 	})
-	.constant('EVENTS', ['Birthday party', 'Reception', 'Marriage', 'New born', 'Other'])
-	.constant('PAY_STATUS', ['Query', 'Advance paid', 'Fully paid'])
-	.constant('PAY_MODES', ['None', 'Cheque', 'DD', 'Cash', 'NEFT']);
+	.constant('PAY_MODES', ['Cheque', 'DD', 'Cash', 'NEFT']);
 }).call(this);

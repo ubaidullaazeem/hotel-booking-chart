@@ -143,8 +143,7 @@
               <label>Payment Status</label>
               <md-select style="text-transform: capitalize;" required
                           name="payStatus" 
-                          ng-model="mixins.mSelectedPaymentStatus"
-                          ng-change="onPaymentStatusChanged()">                
+                          ng-model="mixins.mSelectedPaymentStatus">                
                 <md-optgroup label="Payment Status">
                   <md-option style="text-transform: capitalize;" ng-value="paymentStatus" ng-repeat="paymentStatus in model.paymentStatuses">{{paymentStatus.name}}</md-option>
                 </md-optgroup>
@@ -154,25 +153,7 @@
               </div>
           </md-input-container>             
         </div>
-
-        <div layout="column" flex>
-          <md-input-container flex>
-              <label>Payment Mode</label>
-              <md-select 
-                          required
-                          name="payMode"
-                          ng-model="mixins.mSelectedPaymentMode"
-                          ng-change="onPaymentModeChanged()">                
-                <md-optgroup label="Payment Mode">
-                  <md-option ng-value="paymentMode" ng-repeat="paymentMode in model.paymentModes">{{paymentMode}}</md-option>
-                </md-optgroup>
-              </md-select>    
-              <div ng-messages="userForm.payMode.$error" ng-show="userForm.payMode.$invalid && submitted">
-                <div ng-message="required">Payment mode is required.</div>
-              </div>
-          </md-input-container>             
-        </div>
-
+        
         <div layout="column" flex>
           <md-input-container flex>
             <label>Manager Name</label>
@@ -185,10 +166,10 @@
 
         <div layout="column" flex>
           <md-input-container flex>
-            <label>Rent</label>
-            <input required name="rent" ng-model="mixins.mRent" type="number" onfocus="this.blur()" readonly/>
-            <div ng-messages="userForm.rent.$error">
-              <div ng-message="required">Rent is required.</div>
+            <label>Basic Cost</label>
+            <input required name="basicCost" ng-model="mixins.mBasicCost" type="number" min="{{ui.mMinBasicCost}}" ng-pattern="ui.mNumberPattern"/>
+            <div ng-messages="userForm.basicCost.$error">
+              <div ng-message="required">Basic cost is required.</div>
             </div>
           </md-input-container>  
         </div>
@@ -196,7 +177,7 @@
         <div layout="column" flex>
           <md-input-container flex>
             <label>Electricity Charges</label>
-            <input required name="electricity" ng-model="mixins.mElectricityCharges" type="number" min="0" ng-change="calculateBalanceDue()" ng-pattern="mNumberPattern"/>
+            <input required name="electricity" ng-model="mixins.mElectricityCharges" type="number" min="0" ng-change="calculateBalanceDue()" ng-pattern="ui.mNumberPattern"/>
             <div ng-messages="userForm.electricity.$error">
               <div ng-message="required">Electricity Charges is required.</div>
             </div>
@@ -206,7 +187,7 @@
         <div layout="column" flex>
           <md-input-container flex>
             <label>Cleaning Charges</label>
-            <input required name="cleaning" ng-model="mixins.mCleaningCharges" type="number" min="0" ng-change="calculateBalanceDue()" ng-pattern="mNumberPattern"/>
+            <input required name="cleaning" ng-model="mixins.mCleaningCharges" type="number" min="0" ng-change="calculateBalanceDue()" ng-pattern="ui.mNumberPattern"/>
             <div ng-messages="userForm.cleaning.$error">
               <div ng-message="required">Cleaning Charges is required.</div>
             </div>
@@ -216,7 +197,7 @@
         <div layout="column" flex>
           <md-input-container flex>
             <label>Generator Charges</label>
-            <input required name="generator" ng-model="mixins.mGeneratorCharges" type="number" min="0" ng-change="calculateBalanceDue()" ng-pattern="mNumberPattern"/>
+            <input required name="generator" ng-model="mixins.mGeneratorCharges" type="number" min="0" ng-change="calculateBalanceDue()" ng-pattern="ui.mNumberPattern"/>
             <div ng-messages="userForm.generator.$error">
               <div ng-message="required">Generator Charges is required.</div>
             </div>
@@ -226,7 +207,7 @@
         <div layout="column" flex>
           <md-input-container flex>
             <label>Miscellaneous Charges</label>
-            <input required name="miscellaneous" ng-model="mixins.mMiscellaneousCharges" type="number" min="0" ng-change="calculateBalanceDue()" ng-pattern="mNumberPattern"/>
+            <input required name="miscellaneous" ng-model="mixins.mMiscellaneousCharges" type="number" min="0" ng-change="calculateBalanceDue()" ng-pattern="ui.mNumberPattern"/>
             <div ng-messages="userForm.miscellaneous.$error">
               <div ng-message="required">Miscellaneous Charges is required.</div>
             </div>
@@ -236,7 +217,7 @@
         <div layout="column" flex>
           <md-input-container flex>
             <label>Discount</label>
-            <input required name="discount" ng-model="mixins.mDiscount" type="number" min="0" ng-change="calculateBalanceDue()" ng-pattern="mNumberPattern"/>
+            <input required name="discount" ng-model="mixins.mDiscount" type="number" min="0" ng-change="calculateBalanceDue()" ng-pattern="ui.mNumberPattern"/>
             <div ng-messages="userForm.discount.$error">
               <div ng-message="required">Discount is required.</div>
             </div>
@@ -282,15 +263,45 @@
             </div>
           </md-input-container>  
         </div>
+         
+        <div layout="column" flex>
+            <label>Payment Received</label>
+          
+            <div layout="row" flex>
+              <md-input-container flex>
+                <label>Amount Paid</label>
+                <input required name="amountPaid" ng-model="mixins.mPaymentHistory[0].amountPaid" type="number" min="1" ng-change="calculateBalanceDue()" ng-pattern="ui.mNumberPattern"/>
+                <div ng-messages="userForm.amountPaid.$error">
+                  <div ng-message="required">Amount paid is required.</div>
+                </div>
+              </md-input-container>  
+              
+              <md-input-container flex>
+                <label>Paid Date</label>
+                  <div ng-click="showPaidDatePicker($event)">
+                    <input required name="paidDate" ng-model="mixins.mPaymentHistory[0].paidDate | date:'dd/MM/yyyy'" onfocus="this.blur()" readonly></input>
+                  </div>                  
+                  <div ng-messages="userForm.paidDate.$error">
+                    <div ng-message="required">Paid date is required.</div>
+                  </div>
+              </md-input-container>
 
-         <div layout="column" flex>
-          <md-input-container flex>
-            <label>Advance Received</label>
-            <input required name="advanceReceived" ng-model="mixins.mAdvanceReceived" type="number" min="0" ng-change="calculateBalanceDue()" ng-pattern="mNumberPattern"/>
-            <div ng-messages="userForm.advanceReceived.$error">
-              <div ng-message="required">Advance Received is required.</div>
+              <md-input-container flex>
+                  <label>Payment Mode</label>
+                  <md-select  required
+                              name="payMode"
+                              ng-model="mixins.mPaymentHistory[0].paymentMode"
+                              ng-change="onPaymentModeChanged()">                
+                    <md-optgroup label="Payment Mode">
+                      <md-option ng-value="paymentMode" ng-repeat="paymentMode in model.paymentModes">{{paymentMode}}</md-option>
+                    </md-optgroup>
+                  </md-select>    
+                  <div ng-messages="userForm.payMode.$error" ng-show="userForm.payMode.$invalid && submitted">
+                    <div ng-message="required">Payment mode is required.</div>
+                  </div>
+              </md-input-container>   
+
             </div>
-          </md-input-container>  
         </div>
 
         <div layout="column" flex>

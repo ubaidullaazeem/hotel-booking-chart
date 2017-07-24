@@ -6,15 +6,16 @@
     .module('newbookings')
     .controller('NewbookingsController', NewbookingsController);
 
-  NewbookingsController.$inject = ['AuthenticationService', 'DATA_BACKGROUND_COLOR', 'HARDCODE_VALUES', '$scope', '$state', 'newbookingResolve', '$mdDialog', 'NewbookingsService', 'selectedDate', 'HallsService', 'EventtypesService', 'TaxesService', 'PaymentstatusesService', 'Notification', '$mdpTimePicker'];
+  NewbookingsController.$inject = ['AuthenticationService', 'CGST', 'SGST', 'DATA_BACKGROUND_COLOR', 'HARDCODE_VALUES', '$scope', '$state', 'newbookingResolve', '$mdDialog', 'NewbookingsService', 'selectedDate', 'HallsService', 'EventtypesService', 'TaxesService', 'PaymentstatusesService', 'Notification', '$mdpTimePicker', '$mdpDatePicker', 'PAY_MODES', 'CommonService'];
 
-  function NewbookingsController(AuthenticationService, DATA_BACKGROUND_COLOR, HARDCODE_VALUES, $scope, $state, newbooking, $mdDialog, NewbookingsService, selectedDate, HallsService, EventtypesService, TaxesService, PaymentstatusesService, Notification, $mdpTimePicker) {
+  function NewbookingsController(AuthenticationService, CGST, SGST, DATA_BACKGROUND_COLOR, HARDCODE_VALUES, $scope, $state, newbooking, $mdDialog, NewbookingsService, selectedDate, HallsService, EventtypesService, TaxesService, PaymentstatusesService, Notification, $mdpTimePicker, $mdpDatePicker, PAY_MODES, CommonService) {
     $scope.DATA_BACKGROUND_COLOR = DATA_BACKGROUND_COLOR;
 
     $scope.ui = {
       mSelectedDateToDisplay: selectedDate.format('DD-MMMM-YYYY'),
       mNumberPattern: /^[0-9]*$/,
-      mEmailPattern: /^.+@.+\..+$/
+      mEmailPattern: /^.+@.+\..+$/,
+      mMinBasicCost : 0,
     }
 
     $scope.model = {
@@ -22,7 +23,7 @@
       eventTypes: EventtypesService.query(),
       taxes: TaxesService.query(),
       paymentStatuses: PaymentstatusesService.query(),
-      paymentModes: ['None', 'Cheque', 'DD', 'Cash', 'NEFT']
+      paymentModes: PAY_MODES
     };
 
     $scope.mixins = {
@@ -36,9 +37,8 @@
       mAddress: null,
       mPhotoId: null,
       mSelectedPaymentStatus: null,
-      mSelectedPaymentMode: null,
       mManagerName: null,
-      mRent: 0,
+      mBasicCost: 0,
       mElectricityCharges: 0,
       mCleaningCharges: 0,
       mGeneratorCharges: 0,
@@ -48,7 +48,11 @@
       mCGST: 0,
       mSGST: 0,
       mGrandTotal: 0,
-      mAdvanceReceived: 0,
+      mPaymentHistory: [{
+        amountPaid: '',
+        paidDate: '',
+        paymentMode: ''
+      }],
       mBalanceDue: 0,
     };
 
@@ -60,8 +64,37 @@
       mStartToServer: getTimeToServer(new Date('1991-05-04T06:00:00')),
       mEndToServer: getTimeToServer(new Date('1991-05-04T13:00:00'))
     };
+    
+    $scope.selectedHallsChanged = function() 
+    {
+      var totalBasicCost = 0, totalElectricityCharges=0, totalCleaningCharges=0;
+      
+      angular.forEach($scope.mixins.mSelectedHalls, function(hall) {        
+        
+        var effectiveSummaries = CommonService.findRateSummariesByDate(hall.rateSummaries, new Date());
 
-    $scope.selectedHallsChanged = function() {
+        if (effectiveSummaries.length > 0) 
+        {
+          totalBasicCost = totalBasicCost + effectiveSummaries[0].rate;
+          totalElectricityCharges = totalElectricityCharges + effectiveSummaries[0].powerConsumpationCharges;
+          totalCleaningCharges = totalCleaningCharges + effectiveSummaries[0].cleaningCharges;
+        }
+        else
+        {
+          Notification.error({
+            message: "Effective date is not found for " + hall.name,
+            title: '<i class="glyphicon glyphicon-remove"></i> Effective date Error !!!'
+          });
+          $mdDialog.cancel();
+        }
+
+        $scope.ui.mMinBasicCost = totalBasicCost;
+
+        $scope.mixins.mBasicCost = totalBasicCost;
+        $scope.mixins.mElectricityCharges = totalElectricityCharges;
+        $scope.mixins.mCleaningCharges = totalCleaningCharges;
+      });
+
       $scope.calculateBalanceDue();
     }
 
@@ -98,6 +131,16 @@
         });
     }
 
+    $scope.showPaidDatePicker = function(ev) {
+      var dateToPicker = $scope.mixins.mPaymentHistory[0].paidDate ? new Date($scope.mixins.mPaymentHistory[0].paidDate) : new Date();
+
+      $mdpDatePicker(dateToPicker, {
+        targetEvent: ev
+      }).then(function(date) {
+        $scope.mixins.mPaymentHistory[0].paidDate = new Date((new Date(date)).toUTCString()).toISOString();
+      });
+    }
+
     $scope.sendMail = function() {
       if ($scope.mixins.mEmail === null) {
         Notification.error({
@@ -130,14 +173,17 @@
     var cgstPercent, sgstPercent;
     var cgstString, sgstString;
 
-    $scope.calculateBalanceDue = function() {
-      var rent = 0;
-      angular.forEach($scope.mixins.mSelectedHalls, function(hall) {
-        rent = rent + Number(hall.rate);
-      });
-      $scope.mixins.mRent = rent;
+    $scope.calculateBalanceDue = function() {   
 
-      var subTotal = Number($scope.mixins.mRent) + Number($scope.mixins.mElectricityCharges) + Number($scope.mixins.mCleaningCharges) +
+      var subTotal = Number($scope.mixins.mBasicCost) + Number($scope.mixins.mElectricityCharges) + Number($scope.mixins.mCleaningCharges) +
+        Number($scope.mixins.mGeneratorCharges) + Number($scope.mixins.mMiscellaneousCharges) - Number($scope.mixins.mDiscount);      
+
+      var cgst = Number(Number(Number(subTotal) * cgstPercent).toFixed(2));
+      var sgst = Number(Number(Number(subTotal) * sgstPercent).toFixed(2));
+      var grandTot = Number(Number(Math.round(Number(subTotal) + Number(cgst) + Number(sgst))).toFixed(2));
+      var balance = Number(Number(Math.round(Number(grandTot) - Number($scope.mixins.mPaymentHistory[0].amountPaid))).toFixed(2));
+
+      /*var subTotal = Number($scope.mixins.mBasicCost) + Number($scope.mixins.mElectricityCharges) + Number($scope.mixins.mCleaningCharges) +
         Number($scope.mixins.mGeneratorCharges) + Number($scope.mixins.mMiscellaneousCharges) - Number($scope.mixins.mDiscount);
 
       subTotal = Number(Number(subTotal / divideRate).toFixed(2)); //floating point to 2 digit precision
@@ -145,7 +191,7 @@
       var sgst = Number(Number(Number(subTotal) * sgstPercent).toFixed(2));
       var grandTot = Number(Number(Math.round(Number(subTotal) + Number(cgst) + Number(sgst))).toFixed(2));
       var balance = Number(Number(Math.round(Number(grandTot) - Number($scope.mixins.mAdvanceReceived))).toFixed(2));
-
+*/
       $scope.mixins.mSubTotal = subTotal;
       $scope.mixins.mCGST = cgst;
       $scope.mixins.mSGST = sgst;
@@ -158,60 +204,29 @@
       console.log("$scope.mGrandTotal " + $scope.mixins.mGrandTotal);
       console.log("$scope.mBalanceDue " + $scope.mixins.mBalanceDue);
     }
-
-    $scope.onPaymentStatusChanged = function() {
-      var getQueryPaymentStatus = _.filter($scope.model.paymentStatuses, function(paymentStatus) {
-        return paymentStatus.name === HARDCODE_VALUES[1];
-      });
-      if ($scope.mixins.mSelectedPaymentStatus == getQueryPaymentStatus[0]) {
-        $scope.mixins.mSelectedPaymentMode = $scope.model.paymentModes[0];
-      } else {
-        $scope.mixins.mSelectedPaymentMode = null;
-      }
-    }
-
+    
     var init = function() {
-      if ($scope.model.taxes.length == 2) {
-        angular.forEach($scope.model.taxes, function(tax) {
-          console.log("tax " + JSON.stringify(tax));
 
-          if (tax.name == 'cgst') {
-            cgstPercent = Number(tax.percentage) / 100;
-            cgstString = tax.percentage + '%';
-
-            console.log("cgst ");
-          } else if (tax.name == 'sgst') {
-            sgstPercent = Number(tax.percentage) / 100;
-            sgstString = tax.percentage + '%';
-
-            console.log("sgst ");
-          } else {
-            Notification.error({
-              message: "Invalid tax name",
-              title: '<i class="glyphicon glyphicon-remove"></i> Tax Missing Error !!!'
-            });
-            $mdDialog.cancel();
-          }
-        });
-
-
-        if (!(cgstPercent && sgstPercent)) {
-          Notification.error({
-            message: "Invalid tax name",
-            title: '<i class="glyphicon glyphicon-remove"></i> Tax Missing Error !!!'
-          });
-          $mdDialog.cancel();
-        }
-
-        divideRate = 1 + cgstPercent + sgstPercent;
-        $scope.calculateBalanceDue();
-      } else {
+      var hasContainsTaxName = CommonService.hasContainsTaxName($scope.model.taxes);
+      if (!hasContainsTaxName) {
         Notification.error({
-          message: "Please add both the tax percentage in settings page",
+          message: "Please add both CGST and SGST tax rate.",
           title: '<i class="glyphicon glyphicon-remove"></i> Tax Missing Error !!!'
         });
         $mdDialog.cancel();
+      } else {
+
+        var cgst = CommonService.getTaxRateByName($scope.model.taxes, CGST);
+        var sgst = CommonService.getTaxRateByName($scope.model.taxes, SGST);
+
+        cgstPercent = Number(cgst) / 100;
+        sgstPercent = Number(sgst) / 100;
+        cgstString = cgst + '%';
+        sgstString = sgst + '%';
       }
+
+      divideRate = 1 + cgstPercent + sgstPercent;
+      $scope.calculateBalanceDue();   
 
     };
 
@@ -221,23 +236,55 @@
 
     // Save Newbooking
     $scope.save = function(isValid) {
-      if (!isValid) {
-        $scope.$broadcast('show-errors-check-validity', 'vm.form.newbookingForm');
-        return false;
-      }
+
+      console.log("save");
 
       $scope.mixins.mStartDateTime = new Date($scope.eventTime.mStartToServer);
       $scope.mixins.mEndDateTime = new Date($scope.eventTime.mEndToServer);
-      $scope.mixins.startGMT = moment(selectedDate).startOf('day').toDate().toISOString();
-      $scope.mixins.endGMT = moment(selectedDate).endOf('day').toDate().toISOString();
+      
+      /*var hallsTotalBasicCost=0;
+      angular.forEach($scope.mixins.mSelectedHalls, function(hall) {
+        var effectiveSummaries = CommonService.findRateSummariesByDate(hall.rateSummaries, new Date());
+        if (effectiveSummaries.length > 0) 
+        {
+          hallsTotalBasicCost = hallsTotalBasicCost + effectiveSummaries[0].rate;
+        }
+        else
+        {
+          Notification.error({
+            message: "Effective date is not found for " + hall.name,
+            title: '<i class="glyphicon glyphicon-remove"></i> Effective date Error !!!'
+          });
+          $mdDialog.cancel();
+        }
+      });
+
+      for(var i=0; i<$scope.mixins.mSelectedHalls.length; i++)
+      {
+        var effectiveSummaries = CommonService.findRateSummariesByDate($scope.mixins.mSelectedHalls[i].rateSummaries, new Date());
+
+        console.log("effectiveSummaries "+JSON.stringify(effectiveSummaries));
+
+        $scope.mixins.mSelectedHalls[i].mElectricityCharges = effectiveSummaries.powerConsumpationCharges;
+        $scope.mixins.mSelectedHalls[i].mCleaningCharges = effectiveSummaries.cleaningCharges;
+        $scope.mixins.mSelectedHalls[i].mGeneratorCharges = 0;
+        $scope.mixins.mSelectedHalls[i].mMiscellaneousCharges = 0;
+        $scope.mixins.mSelectedHalls[i].mRate =  (effectiveSummaries.rate / hallsTotalBasicCost) * $scope.mixins.mBasicCost;
+        
+        console.log("effectiveSummaries.powerConsumpationCharges "+effectiveSummaries.powerConsumpationCharges);
+        console.log("mElectricityCharges "+$scope.mixins.mSelectedHalls[i].mElectricityCharges);
+      }*/
 
       angular.forEach($scope.mixins.mSelectedHalls, function(selectedHall) {
         selectedHall.mCleaningCharges = 0;
         selectedHall.mGeneratorCharges = 0;
         selectedHall.mMiscellaneousCharges = 0;
-        selectedHall.mElectricityCharges = 0;
+        selectedHall.mElectricityCharges = 0;    
+
       });
-      // TODO: move create/update logic to service
+
+      console.log("$scope.mixins "+JSON.stringify($scope.mixins));
+
       NewbookingsService.save($scope.mixins, successCallback, errorCallback);
 
       function successCallback(res) {

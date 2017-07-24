@@ -6,9 +6,9 @@
     .module('halls')
     .controller('HallsController', HallsController);
 
-  HallsController.$inject = ['DATA_BACKGROUND_COLOR', 'CommonService', '$scope', '$state', '$rootScope', '$mdDialog', 'Notification', 'hallResolve', 'HallsService', '$mdpDatePicker', 'TaxesService'];
+  HallsController.$inject = ['CGST', 'SGST', 'DATA_BACKGROUND_COLOR', 'CommonService', '$scope', '$state', '$rootScope', '$mdDialog', 'Notification', 'hallResolve', 'HallsService', '$mdpDatePicker', 'TaxesService'];
 
-  function HallsController(DATA_BACKGROUND_COLOR, CommonService, $scope, $state, $rootScope, $mdDialog, Notification, hall, HallsService, $mdpDatePicker, TaxesService) {
+  function HallsController(CGST, SGST, DATA_BACKGROUND_COLOR, CommonService, $scope, $state, $rootScope, $mdDialog, Notification, hall, HallsService, $mdpDatePicker, TaxesService) {
     $scope.model = {
       hall: {
         name: hall ? hall.name : undefined,
@@ -44,7 +44,7 @@
     };
 
     $scope.model.taxes.$promise.then(function(result) {
-      var hasContainsTaxName = _.includes(_.map($scope.model.taxes, 'name'), 'cgst', 'sgst');
+      var hasContainsTaxName = CommonService.hasContainsTaxName($scope.model.taxes);
       if (!hasContainsTaxName) {
         Notification.error({
           message: "Please add both CGST and SGST tax rate.",
@@ -56,8 +56,8 @@
 
     $scope.calculateTaxRate = function() {
       var totalCost = Number($scope.model.rate) + Number($scope.model.powerConsumpationCharges) + Number($scope.model.cleaningCharges);
-      var cgstPercent = Number(CommonService.getTaxRateByName($scope.model.taxes, 'cgst')) / 100;
-      var sgstPercent = Number(CommonService.getTaxRateByName($scope.model.taxes, 'sgst')) / 100;
+      var cgstPercent = Number(CommonService.getTaxRateByName($scope.model.taxes, CGST)) / 100;
+      var sgstPercent = Number(CommonService.getTaxRateByName($scope.model.taxes, SGST)) / 100;
       $scope.model.CGSTTax = Number(Number(Number(totalCost) * cgstPercent).toFixed(2));
       $scope.model.SGSTTax = Number(Number(Number(totalCost) * sgstPercent).toFixed(2));
     };

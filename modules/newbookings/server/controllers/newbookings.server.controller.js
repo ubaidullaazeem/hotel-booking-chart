@@ -31,9 +31,7 @@ exports.create = function(req, res) {
     if (entries.length > 0) {
       var mapEntriesBySelectedHalls = _.map(entries, 'mSelectedHalls');
       entries.forEach(function(entry) {
-        var endTime = new Date(entry.mEndDateTime);
-        var addExtraTime = endTime.setHours(endTime.getHours() + 3);
-        if ((convertTimeStamp(req.body.mStartDateTime) <= addExtraTime) && (convertTimeStamp(req.body.mEndDateTime) >= convertTimeStamp(entry.mStartDateTime))) { // overlaps
+        if ((convertTimeStamp(req.body.mStartDateTime) <= addExtraHours(entry.mEndDateTime, 3)) && (convertTimeStamp(req.body.mEndDateTime) >= addExtraHours(entry.mStartDateTime, 3))) { // overlaps
           mapEntriesBySelectedHalls.forEach(function(bookedHall) {
             var mapEntrySelectedHallByName = _.map(bookedHall, 'name');            
             var commonHallsFromArrays = _.intersection(mapEntrySelectedHallByName, mapSelectedHallsByName);
@@ -175,3 +173,14 @@ function convertDate(date) {
 function convertTimeStamp(date) {
   return new Date(date).getTime();
 }
+
+/**
+ * Add hours
+ */
+
+function addExtraHours(date, hours) {
+  var dateTime = new Date(date);
+  var addExtraTime = dateTime.setHours(dateTime.getHours() + hours);
+  return addExtraTime;
+}
+

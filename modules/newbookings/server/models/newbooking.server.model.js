@@ -71,19 +71,13 @@ var NewbookingSchema = new Schema({
     required: 'Please select payment status',
     trim: true
   },
-  mSelectedPaymentMode: {
-    type: String,
-    default: '',
-    required: 'Please select payment mode',
-    trim: true
-  },
   mManagerName: {
     type: String,
     default: '',
     required: 'Please enter manager name',
     trim: true
   },
-  mRent: {
+  mBasicCost: {
     type: Number,
     default: '',
     required: 'Please enter rent amount',
@@ -143,12 +137,11 @@ var NewbookingSchema = new Schema({
     required: 'Please enter grand total',
     trim: true
   },
-  mAdvanceReceived: {
-    type: Number,
-    default: '',
-    required: 'Please enter advance received amount',
-    trim: true
-  },
+  mPaymentHistory: [{
+    amountPaid : Number,
+    paidDate : Date,
+    paymentMode : String
+  }],
   mBalanceDue: {
     type: Number,
     default: '',

@@ -2,7 +2,7 @@
     'use strict';
     angular.module('core')
 
-    .factory('CommonService', ['$http', function($http) {
+    .factory('CommonService', ['CGST', 'SGST', '$http', function(CGST, SGST, $http) {
 
         var CommonService = {};
 
@@ -25,6 +25,10 @@
                 return tax.name === name;
             });
             return taxArray[0].percentage;
+        };
+
+        CommonService.hasContainsTaxName = function(taxes) {
+            return _.includes(_.map(taxes, 'name'), CGST, SGST);
         };
 
         function rateSummariesByDateImpl(rateSummaries, date) {
