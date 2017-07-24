@@ -229,6 +229,23 @@
       $mdDialog.cancel();
     };
 
+    $scope.findRateSummariesByDate = function(hall) {
+      var date = new Date();
+      var summaries = _.filter(hall.rateSummaries, function(summary) {
+        var createdHallEffectiveDate = new Date(summary.effectiveDate);
+        return ((createdHallEffectiveDate.getFullYear() === date.getFullYear()) && (createdHallEffectiveDate.getMonth() === date.getMonth()));
+      });
+      if (summaries.length > 0) {
+        hall.rate = summaries[0].rate;
+        hall.effectiveDate = summaries[0].effectiveDate;
+      } else {
+        var getLastSummary = _.last(hall.rateSummaries);
+        hall.rate = getLastSummary.rate;
+        hall.effectiveDate = getLastSummary.effectiveDate;
+      }
+
+    };
+
   }
 
 

@@ -17,10 +17,14 @@ var HallSchema = new Schema({
     trim: true,
     lowercase: true
   },
-  rate:{
-    type: Number,
-    required: 'Please fill Hall rate'
-  }
+  powerConsumpationCharges: Number,
+  cleaningCharges: Number,
+  CGSTTax: Number,
+  SGSTTax: Number,
+  rateSummaries: [{
+    rate: Number,
+    effectiveDate: Date
+  }],
 },
 {
     timestamps: true
