@@ -5,66 +5,24 @@
     .module('core')
     .controller('BookingsController', BookingsController);
 
-  BookingsController.$inject = ['$scope', '$state', '$rootScope', '$mdDialog', '$mdToast', '$timeout', 'HallsService', 'MESSAGES', 'Notification'];
+  BookingsController.$inject = ['$scope', '$state', '$rootScope', '$mdDialog', '$mdToast', '$timeout', 'HallsService', 'MESSAGES', 'Notification', 'NewbookingsService', 'SearchBookingServices'];
 
-  function BookingsController($scope, $state, $rootScope, $mdDialog, $mdToast, $timeout, HallsService, MESSAGES, Notification) {
+  function BookingsController($scope, $state, $rootScope, $mdDialog, $mdToast, $timeout, HallsService, MESSAGES, Notification, NewbookingsService, SearchBookingServices) {
     $rootScope.isUserLoggedIn = true;
 
     $scope.model = {
-      events: [{
-        title: 'Long Event0',
-        start: new Date('Jul 17 2017 10:00:00 GMT+0530 (IST)'),
-        end: new Date('Jul 17 2017 17:00:00 GMT+0530 (IST)')
-      }, {
-        title: 'Long Event1',
-        start: new Date('Jul 17 2017 10:00:00 GMT+0530 (IST)'),
-        end: new Date('Jul 17 2017 17:00:00 GMT+0530 (IST)')
-      }, {
-        title: 'Long Event2',
-        start: new Date('Jul 17 2017 10:00:00 GMT+0530 (IST)'),
-        end: new Date('Jul 17 2017 17:00:00 GMT+0530 (IST)')
-      }, {
-        title: 'Long Event3',
-        start: new Date('Jul 17 2017 10:00:00 GMT+0530 (IST)'),
-        end: new Date('Jul 17 2017 17:00:00 GMT+0530 (IST)')
-      }, {
-        title: 'Long Event4',
-        start: new Date('Jul 17 2017 10:00:00 GMT+0530 (IST)'),
-        end: new Date('Jul 17 2017 17:00:00 GMT+0530 (IST)')
-      }, {
-        title: 'Long Event5',
-        start: new Date('Jul 17 2017 10:00:00 GMT+0530 (IST)'),
-        end: new Date('Jul 17 2017 17:00:00 GMT+0530 (IST)')
-      }, {
-        title: 'Long Event',
-        start: new Date('Jul 19 2017 10:00:00 GMT+0530 (IST)'),
-        end: new Date('Jul 19 2017 17:00:00 GMT+0530 (IST)')
-      }, {
-        title: 'Long Event',
-        start: new Date('Jul 21 2017 10:00:00 GMT+0530 (IST)'),
-        end: new Date('Jul 21 2017 17:00:00 GMT+0530 (IST)')
-      }, {
-        title: 'Long Event',
-        start: new Date('Jul 23 2017 10:00:00 GMT+0530 (IST)'),
-        end: new Date('Jul 23 2017 17:00:00 GMT+0530 (IST)')
-      }, {
-        title: 'Long Event',
-        start: new Date('Jul 25 2017 10:00:00 GMT+0530 (IST)'),
-        end: new Date('Jul 25 2017 17:00:00 GMT+0530 (IST)')
-      }, {
-        title: 'Long Event',
-        start: new Date('Jul 27 2017 10:00:00 GMT+0530 (IST)'),
-        end: new Date('Jul 27 2017 17:00:00 GMT+0530 (IST)')
-      }, {
-        title: 'Long Event',
-        start: new Date('Jul 29 2017 10:00:00 GMT+0530 (IST)'),
-        end: new Date('Jul 29 2017 17:00:00 GMT+0530 (IST)')
-      }, ]
+      events: [],
+      newBookings: NewbookingsService.query(),
+      mColorFilter: 1,   
     };
 
     $scope.ui = {
       mCalendarTitle: '',
       mColorFilter: 'payment'
+    };
+
+    $scope.searchParams = {
+      selectedHalls: []
     };
 
 
@@ -89,7 +47,33 @@
       }
     };
 
+    $scope.loadinitial = function() {
+      angular.forEach($scope.model.newBookings, function(newbooking) {
+        eventsPush(newbooking);
+      });
+    };
 
+    $scope.model.newBookings.$promise.then(function(result) {
+      $scope.loadinitial();
+    });
+
+    $scope.selectedHallsChanged = function() {
+      $scope.model.events.length = 0;
+      $scope.model.newBookings.length = 0;
+      SearchBookingServices.requestsearch($scope.searchParams).then(function(searchResults) {
+        $scope.model.newBookings = searchResults;
+        angular.forEach(searchResults, function(searchResult) {
+          eventsPush(searchResult);
+        });
+      });
+    };
+
+    $scope.colorFilter = function() {
+      $scope.model.events.length = 0;
+      $scope.loadinitial();
+      angular.element('#calendar').fullCalendar('removeEvents');
+      angular.element('#calendar').fullCalendar('addEventSource', $scope.model.events);
+    };
 
     var currentView = "month";
 
@@ -115,32 +99,30 @@
         };
 
         $mdDialog.show(confirm).then(function() {
-            $mdDialog.show({
-                controller: 'NewbookingsController',
-                templateUrl: 'modules/newbookings/client/views/form-newbooking.client.view.html',
-                parent: angular.element(document.body),
-                clickOutsideToClose: false,
-                fullscreen: true,
-                resolve: {
-                  selectedDate: function() {
-                    return date;
-                  },
-                  newbookingResolve: function() {
-                    return null;
-                  }
+          $mdDialog.show({
+              controller: 'NewbookingsController',
+              templateUrl: 'modules/newbookings/client/views/form-newbooking.client.view.html',
+              parent: angular.element(document.body),
+              clickOutsideToClose: false,
+              fullscreen: true,
+              resolve: {
+                selectedDate: function() {
+                  return date;
                 },
-              })
-              .then(function(answer) {
-                console.log('You said the information was "' + answer + '".');
-              }, function() {
-                console.log('You cancelled the dialog.');
-              });
+                newbookingResolve: function() {
+                  return null;
+                }
+              },
+            })
+            .then(function(updatedItem) {
+              $scope.model.events.push(updatedItem);
+            }, function() {
+              console.log('You cancelled the dialog.');
+            });
           },
-          function() {
-            console.log("no");
-          });
-
-
+        function() {
+          console.log("no");
+        });
       }
     };
 
@@ -194,8 +176,6 @@
       });
 
       $scope.ui.mCalendarTitle = view.title;
-
-      //$scope.loadinitial(date);
     };
 
 
@@ -207,6 +187,23 @@
         angular.element('#calendar').fullCalendar('changeView', view);
 
         $scope.$apply();
+      });
+    };
+
+    function eventsPush(booking) {
+      var colorCode;
+      if($scope.model.mColorFilter === 1 || $scope.model.mColorFilter === '1') {
+        colorCode = booking.mSelectedPaymentStatus.colour.code;
+      } else {
+        colorCode = booking.mSelectedEventType.colour.code;
+      }
+      $scope.model.events.push({
+        _id: booking._id,
+        title: booking.mName,
+        start: new Date(booking.mStartDateTime),
+        end: new Date(booking.mEndDateTime),
+        color: colorCode,
+        stick: true
       });
     };
 

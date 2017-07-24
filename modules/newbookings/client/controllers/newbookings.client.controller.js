@@ -288,7 +288,15 @@
       NewbookingsService.save($scope.mixins, successCallback, errorCallback);
 
       function successCallback(res) {
-        $mdDialog.hide(res);
+        var event = {
+          _id: res._id,
+          title: res.mName,
+          start: new Date(res.mStartDateTime),
+          end: new Date(res.mEndDateTime),
+          color: res.mSelectedPaymentStatus.colour.code,
+          stick: true
+        };
+        $mdDialog.hide(event);
       }
 
       function errorCallback(res) {

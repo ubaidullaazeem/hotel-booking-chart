@@ -135,6 +135,45 @@ exports.list = function(req, res) {
 };
 
 /**
+ * Search of Newbookings
+ */
+exports.search = function(req, res) {
+  var mapSelectedHallsByName = _.map(req.body.selectedHalls, 'name');
+  if (req.body.selectedHalls.length > 0) {
+    Newbooking.find({
+      mSelectedHalls: {
+        $elemMatch: {
+          name: {
+            $in: mapSelectedHallsByName
+          }
+        }
+      }
+    }, function(err, searchResults) {
+      if (err) {
+        return res.status(400).send({
+          message: errorHandler.getErrorMessage(err)
+        });
+      } else {
+        res.jsonp(searchResults);
+      }
+
+    });
+  } else {
+    Newbooking.find().sort('-created').populate('user', 'displayName').exec(function(err, newbookings) {
+      if (err) {
+        return res.status(400).send({
+          message: errorHandler.getErrorMessage(err)
+        });
+      } else {
+        res.jsonp(newbookings);
+      }
+    });
+  }
+
+};
+
+
+/**
  * Newbooking middleware
  */
 exports.newbookingByID = function(req, res, next, id) {

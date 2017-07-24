@@ -11,10 +11,10 @@
 			<div flex></div>
 			<div class="radio">
 				<label style="color: #999">
-					<input name="mColorFilter" ng-model="mColorFilter" type="radio"><span class="circle"></span><span class="check"></span> Payment
+					<input name="mColorFilter" ng-model="model.mColorFilter" type="radio" value="1" ng-click="colorFilter()"><span class="circle"></span><span class="check"></span> Payment
 				</label>
 				<label style="color: #999">
-					<input name="mColorFilter" ng-model="mColorFilter" type="radio"><span class="circle"></span><span class="check"></span> Event
+					<input name="mColorFilter" ng-model="model.mColorFilter" type="radio" value="2" ng-click="colorFilter()"><span class="circle"></span><span class="check"></span> Event
 				</label>
 			</div>
 		    <div flex></div>
@@ -24,7 +24,7 @@
 	        <label>Halls</label>
 	        <md-select  multiple style="text-transform: capitalize"
 	                    name="halls"
-	                    ng-model="halls.mSelectedHalls"
+	                    ng-model="searchParams.selectedHalls"
 	                    ng-change="selectedHallsChanged()">                
 	          <md-optgroup label="Halls">
 	            <md-option style="text-transform: capitalize" ng-value="hall" ng-repeat="hall in halls.mAllHalls">{{hall.name}}</md-option>

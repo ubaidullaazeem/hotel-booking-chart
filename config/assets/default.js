@@ -35,7 +35,7 @@ module.exports = {
         'public/lib/lodash/lodash.js',
         'public/lib/moment/min/moment.min.js',
         'public/lib/angular-ui-calendar/src/calendar.js',
-        'public/lib/fullcalendar/dist/fullcalendar.min.js',
+        'modules/core/client/js/dist/fullcalendar.min.js',
         'public/lib/fullcalendar/dist/gcal.js',
         'public/lib/chart.js/dist/Chart.min.js',
         'public/lib/angular-chart.js/dist/angular-chart.min.js',

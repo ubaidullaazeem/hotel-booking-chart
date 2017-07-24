@@ -25,13 +25,15 @@
     };
 
     $scope.ui = {
-      mNumberPattern: /^[0-9]*$/
+      mNumberPattern: /^[0-9]*$/,
+      createMode: true,
     }
 
     $scope.DATA_BACKGROUND_COLOR = DATA_BACKGROUND_COLOR;
 
     $scope.loadInitial = function() {  
       if ($scope.model.hall._id) {
+        $scope.ui.createMode = false;
         var currentDate = new Date();
         var summaryRate = CommonService.findRateSummariesByDate($scope.model.hall.rateSummaries, currentDate);
         $scope.model.rate = summaryRate[0].rate;

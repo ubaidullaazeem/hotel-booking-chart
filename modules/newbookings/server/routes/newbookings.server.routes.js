@@ -17,6 +17,9 @@ module.exports = function(app) {
     .put(newbookings.update)
     .delete(newbookings.delete);
 
+  app.route('/api/newbookings/search')/*.all(newbookingsPolicy.isAllowed)*/
+    .post(newbookings.search);
+
   // Finish by binding the Newbooking middleware
   app.param('newbookingId', newbookings.newbookingByID);
 };
