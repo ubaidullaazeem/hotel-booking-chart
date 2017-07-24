@@ -34,27 +34,16 @@
       if ($scope.model.hall._id) {
         var currentDate = new Date();
         var summaryRate = CommonService.findRateSummariesByDate($scope.model.hall.rateSummaries, currentDate);
-        if (summaryRate.length > 0) {
-          $scope.model.rate = summaryRate[0].rate;
-          $scope.model.powerConsumpationCharges = summaryRate[0].powerConsumpationCharges;
-          $scope.model.cleaningCharges = summaryRate[0].cleaningCharges;
-          $scope.model.CGSTTax = summaryRate[0].CGSTTax;
-          $scope.model.SGSTTax = summaryRate[0].SGSTTax;
-          $scope.model.hall.effectiveDate = dateConvertion(summaryRate[0].effectiveDate);
-        } else {
-          var getLastSummary = _.last($scope.model.hall.rateSummaries);
-          $scope.model.rate = getLastSummary.rate;
-          $scope.model.powerConsumpationCharges = getLastSummary.powerConsumpationCharges;
-          $scope.model.cleaningCharges = getLastSummary.cleaningCharges;
-          $scope.model.CGSTTax = getLastSummary.CGSTTax;
-          $scope.model.SGSTTax = getLastSummary.SGSTTax;
-          $scope.model.hall.effectiveDate = dateConvertion(getLastSummary.effectiveDate);
-        }
+        $scope.model.rate = summaryRate[0].rate;
+        $scope.model.powerConsumpationCharges = summaryRate[0].powerConsumpationCharges;
+        $scope.model.cleaningCharges = summaryRate[0].cleaningCharges;
+        $scope.model.CGSTTax = summaryRate[0].CGSTTax;
+        $scope.model.SGSTTax = summaryRate[0].SGSTTax;
+        $scope.model.hall.effectiveDate = dateConvertion(summaryRate[0].effectiveDate);       
       }
     };
 
     $scope.model.taxes.$promise.then(function(result) {
-      console.log(_.map($scope.model.taxes, 'name'));
       var hasContainsTaxName = _.includes(_.map($scope.model.taxes, 'name'), 'cgst', 'sgst');
       if (!hasContainsTaxName) {
         Notification.error({
@@ -78,7 +67,7 @@
       if (hallForm.$valid) {
         if ($scope.model.hall._id) {
           var requestedEffectiveDate = new Date($scope.model.hall.effectiveDate);
-          var summaryRate = CommonService.findRateSummariesByDate($scope.model.hall.rateSummaries, requestedEffectiveDate);
+          var summaryRate = CommonService.findRateSummariesByDateBeforeSave($scope.model.hall.rateSummaries, requestedEffectiveDate);
           if (summaryRate.length > 0) {
             var index = _.indexOf($scope.model.hall.rateSummaries, summaryRate[0]);
             $scope.model.hall.rateSummaries[index] = {

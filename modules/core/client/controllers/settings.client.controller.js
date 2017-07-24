@@ -232,23 +232,12 @@
     $scope.findRateSummariesByDate = function(hall) {
       var date = new Date();
       var summaries = CommonService.findRateSummariesByDate(hall.rateSummaries, date);
-      if (summaries.length > 0) {
-        hall.rate = summaries[0].rate;
-        hall.powerConsumpationCharges = summaries[0].powerConsumpationCharges;
-        hall.cleaningCharges = summaries[0].cleaningCharges;
-        hall.CGSTTax = summaries[0].CGSTTax;
-        hall.SGSTTax = summaries[0].SGSTTax;
-        hall.effectiveDate = summaries[0].effectiveDate;
-      } else {
-        var getLastSummary = _.last(hall.rateSummaries);
-        hall.rate = getLastSummary.rate;
-        hall.powerConsumpationCharges = getLastSummary.powerConsumpationCharges;
-        hall.cleaningCharges = getLastSummary.cleaningCharges;
-        hall.CGSTTax = getLastSummary.CGSTTax;
-        hall.SGSTTax = getLastSummary.SGSTTax;
-        hall.effectiveDate = getLastSummary.effectiveDate;
-      }
-
+      hall.rate = summaries[0].rate;
+      hall.powerConsumpationCharges = summaries[0].powerConsumpationCharges;
+      hall.cleaningCharges = summaries[0].cleaningCharges;
+      hall.CGSTTax = summaries[0].CGSTTax;
+      hall.SGSTTax = summaries[0].SGSTTax;
+      hall.effectiveDate = summaries[0].effectiveDate;
     };
 
   }
