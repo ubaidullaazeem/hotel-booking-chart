@@ -12,7 +12,8 @@ module.exports = {
         'public/lib/angular-ui-notification/dist/angular-ui-notification.css',
         'public/lib/angular-material/angular-material.css',
         'public/lib/angular-bootstrap/ui-bootstrap-csp.css',
-        'public/lib/mdPickers/dist/mdPickers.css'
+        'modules/core/client/css/mdPickers.css',
+        'public/lib/perfect-scrollbar/css/perfect-scrollbar.min.css',
         // endbower
       ],
       js: [
@@ -39,7 +40,9 @@ module.exports = {
         'public/lib/fullcalendar/dist/gcal.js',
         'public/lib/chart.js/dist/Chart.min.js',
         'public/lib/angular-chart.js/dist/angular-chart.min.js',
-        'public/lib/mdPickers/dist/mdPickers.js'
+        'modules/core/client/js/mdPickers.js',
+        'public/lib/perfect-scrollbar/js/perfect-scrollbar.jquery.min.js',
+        'public/lib/angular-perfect-scrollbar/src/angular-perfect-scrollbar.js',
         // endbower
       ],
       tests: ['public/lib/angular-mocks/angular-mocks.js']

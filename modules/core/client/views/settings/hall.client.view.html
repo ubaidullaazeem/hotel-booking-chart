@@ -13,34 +13,35 @@
 				<div class="card-content">
 					<h4 class="card-title" ng-hide="halls.length">No halls found.</h4>
 				</div>
-				
-				<div class="card-content table-responsive">
-					<table class="table table-bordered" ng-show="halls.length">
-					  <tr>
-					    <th style="text-align: center" width="15%">Hall name</th>
-					    <th style="text-align: center" width="9%">Rate</th> 
-					    <th style="text-align: center" width="15%">Electricity Charge</th> 
-					    <th style="text-align: center" width="15%">Cleaning Charge</th> 
-					    <th style="text-align: center" width="8%">SGST</th> 
-					    <th style="text-align: center" width="8%">CGST</th> 
-					    <th style="text-align: center" width="15%">Effective Date</th> 
-					    <th style="text-align: center" width="15%">Action</th>
-					  </tr>
-					  <tr ng-repeat = "hall in halls" style="text-align: center" ng-init="findRateSummariesByDate(hall)">
-				        <td style="text-transform: capitalize;">{{ hall.name }}</td>
-				        <td>{{ hall.rate | currency:"₹":0 }}</td>
-				        <td>{{ hall.powerConsumpationCharges | currency:"₹":0 }}</td>
-				        <td>{{ hall.cleaningCharges | currency:"₹":0 }}</td>
-				        <td>{{ hall.CGSTTax | currency:"₹":0 }}</td>
-				        <td>{{ hall.SGSTTax | currency:"₹":0 }}</td>
-				        <td>{{ hall.effectiveDate | date:'MMM yyyy' }}</td>
-				        <td style="text-align: center;">
-				        	<md-button class="md-raised md-primary nonecase" style="min-width: 50px" ng-click="mShowHallPopup($event, $index, hall)"><span class="glyphicon glyphicon-pencil"></span></md-button>
-				        	<md-button class="btn btn-danger btn-sm" style="min-width: 50px" ng-click="mDeleteHall($event, $index, hall)"><span class="glyphicon glyphicon-trash"></span></md-button>
-				        </td>
-				     </tr>		  
-					</table>
-				</div>
+				<perfect-scrollbar class="scroller" wheel-propagation="true" wheel-speed="10" min-scrollbar-length="20">
+					<div class="card-content table-responsive">
+						<table class="table table-bordered" ng-show="halls.length">
+						  <tr>
+						    <th style="text-align: center" width="15%">Hall name</th>
+						    <th style="text-align: center" width="9%">Rate</th> 
+						    <th style="text-align: center" width="15%">Electricity Charge</th> 
+						    <th style="text-align: center" width="15%">Cleaning Charge</th> 
+						    <th style="text-align: center" width="8%">SGST</th> 
+						    <th style="text-align: center" width="8%">CGST</th> 
+						    <th style="text-align: center" width="15%">Effective Date</th> 
+						    <th style="text-align: center" width="15%">Action</th>
+						  </tr>
+						  <tr ng-repeat = "hall in halls" style="text-align: center" ng-init="findRateSummariesByDate(hall)">
+					        <td style="text-transform: capitalize;">{{ hall.name }}</td>
+					        <td>{{ hall.rate | currency:"₹":0 }}</td>
+					        <td>{{ hall.powerConsumpationCharges | currency:"₹":0 }}</td>
+					        <td>{{ hall.cleaningCharges | currency:"₹":0 }}</td>
+					        <td>{{ hall.CGSTTax | currency:"₹":0 }}</td>
+					        <td>{{ hall.SGSTTax | currency:"₹":0 }}</td>
+					        <td>{{ hall.effectiveDate | date:'MMM yyyy' }}</td>
+					        <td style="text-align: center;">
+					        	<md-button class="md-raised md-primary nonecase" style="min-width: 50px" ng-click="mShowHallPopup($event, $index, hall)"><span class="glyphicon glyphicon-pencil"></span></md-button>
+					        	<md-button class="btn btn-danger btn-sm" style="min-width: 50px" ng-click="mDeleteHall($event, $index, hall)"><span class="glyphicon glyphicon-trash"></span></md-button>
+					        </td>
+					     </tr>		  
+						</table>
+					</div>
+				</perfect-scrollbar>
 			</div>
 	   </div>
 	</div>

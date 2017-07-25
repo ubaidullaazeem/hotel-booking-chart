@@ -13,23 +13,25 @@
 				<div class="card-content">
 					<h4 class="card-title" ng-hide="taxes.length">No taxes rate found.</h4>
 				</div>
-				<div class="card-content table-responsive">
-					<table class="table table-bordered" ng-show="taxes.length">
-						<tr>
-							<th style="text-align: center" width="30%">Field</th>
-							<th style="text-align: center" width="40%">Value</th> 
-							<th style="text-align: center" width="30%">Action</th>
-						</tr>
-						<tr ng-repeat = "tax in taxes" style="text-align: center">
-							<td>{{ tax.name | uppercase}}(%)</td>
-							<td>{{ tax.percentage }}</td>
+				<perfect-scrollbar class="scroller" wheel-propagation="true" wheel-speed="10" min-scrollbar-length="20">
+					<div class="card-content table-responsive">
+						<table class="table table-bordered" ng-show="taxes.length">
+							<tr>
+								<th style="text-align: center" width="30%">Field</th>
+								<th style="text-align: center" width="40%">Value</th> 
+								<th style="text-align: center" width="30%">Action</th>
+							</tr>
+							<tr ng-repeat = "tax in taxes" style="text-align: center">
+								<td>{{ tax.name | uppercase}}(%)</td>
+								<td>{{ tax.percentage }}</td>
 
-							<td style="text-align: center;">
-							<md-button class="md-raised md-primary nonecase" style="min-width: 50px" ng-click="mShowTaxPopup($event, $index, tax)"><span class="glyphicon glyphicon-pencil"></span></md-button>
-							</td>
-						</tr>
-					</table>
-				</div>
+								<td style="text-align: center;">
+								<md-button class="md-raised md-primary nonecase" style="min-width: 50px" ng-click="mShowTaxPopup($event, $index, tax)"><span class="glyphicon glyphicon-pencil"></span></md-button>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</perfect-scrollbar>
 			</div>
 	   </div>
 	</div>

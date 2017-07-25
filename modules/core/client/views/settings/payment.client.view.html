@@ -13,24 +13,25 @@
 				<div class="card-content">
 					<h4 class="card-title" ng-hide="paymentStatuses.length">No payment status found.</h4>
 				</div>
-				
-				<div class="card-content table-responsive">
-					<table class="table table-bordered" ng-show="paymentStatuses.length">
-						<tr>
-							<th style="text-align: center" width="30%">Field</th>
-							<th style="text-align: center" width="40%">Colour</th> 
-							<th style="text-align: center" width="30%">Action</th>
-						</tr>
-						<tr ng-repeat = "paymentStatus in paymentStatuses" style="text-align: center">
-							<td style="text-transform: capitalize; vertical-align:middle">{{ paymentStatus.name }}</td>
-							<td style="vertical-align:middle">{{ paymentStatus.colour.name }}</td>
+				<perfect-scrollbar class="scroller" wheel-propagation="true" wheel-speed="10" min-scrollbar-length="20">
+					<div class="card-content table-responsive">
+						<table class="table table-bordered" ng-show="paymentStatuses.length">
+							<tr>
+								<th style="text-align: center" width="30%">Field</th>
+								<th style="text-align: center" width="40%">Colour</th> 
+								<th style="text-align: center" width="30%">Action</th>
+							</tr>
+							<tr ng-repeat = "paymentStatus in paymentStatuses" style="text-align: center">
+								<td style="text-transform: capitalize; vertical-align:middle">{{ paymentStatus.name }}</td>
+								<td style="vertical-align:middle">{{ paymentStatus.colour.name }}</td>
 
-							<td style="text-align: center;">
-							<md-button class="md-raised md-primary nonecase" style="min-width: 50px" ng-click="mShowPaymentStatusPopup($event, $index, paymentStatus)"><span class="glyphicon glyphicon-pencil"></span></md-button>
-							</td>
-						</tr>		  
-					</table>
-				</div>
+								<td style="text-align: center;">
+								<md-button class="md-raised md-primary nonecase" style="min-width: 50px" ng-click="mShowPaymentStatusPopup($event, $index, paymentStatus)"><span class="glyphicon glyphicon-pencil"></span></md-button>
+								</td>
+							</tr>		  
+						</table>
+					</div>
+				</perfect-scrollbar>
 			</div>
 	   </div>
 	</div>

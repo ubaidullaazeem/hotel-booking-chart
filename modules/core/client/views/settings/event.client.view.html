@@ -13,24 +13,26 @@
 				<div class="card-content">
 					<h4 class="card-title" ng-hide="eventTypes.length">No event found.</h4>
 				</div>
-				<div class="card-content table-responsive">
-					<table class="table table-bordered" ng-show="eventTypes.length">
-						<tr>
-							<th style="text-align: center" width="30%">Event name</th>
-							<th style="text-align: center" width="40%">Colour</th> 
-							<th style="text-align: center" width="30%">Action</th>
-						</tr>
-						<tr ng-repeat = "eventType in eventTypes" style="text-align: center">
-							<td style="text-transform: capitalize;">{{ eventType.name }}</td>
-							<td>{{ eventType.colour.name }}</td>
+				<perfect-scrollbar class="scroller" wheel-propagation="true" wheel-speed="10" min-scrollbar-length="20">
+					<div class="card-content table-responsive">
+						<table class="table table-bordered" ng-show="eventTypes.length">
+							<tr>
+								<th style="text-align: center" width="30%">Event name</th>
+								<th style="text-align: center" width="40%">Colour</th> 
+								<th style="text-align: center" width="30%">Action</th>
+							</tr>
+							<tr ng-repeat = "eventType in eventTypes" style="text-align: center">
+								<td style="text-transform: capitalize;">{{ eventType.name }}</td>
+								<td>{{ eventType.colour.name }}</td>
 
-							<td style="text-align: center;">
-							<md-button class="md-raised md-primary nonecase md-mini" style="min-width: 50px" ng-click="mShowEventTypePopup($event, $index, eventType)"><span class="glyphicon glyphicon-pencil"></span></md-button>
-							<md-button class="btn btn-danger btn-sm" style="min-width: 50px" ng-click="mDeleteEventType($event, $index, eventType)"><span class="glyphicon glyphicon-trash"></span></md-button>
-							</td>
-						</tr>		  
-					</table>
-				</div>
+								<td style="text-align: center;">
+								<md-button class="md-raised md-primary nonecase md-mini" style="min-width: 50px" ng-click="mShowEventTypePopup($event, $index, eventType)"><span class="glyphicon glyphicon-pencil"></span></md-button>
+								<md-button class="btn btn-danger btn-sm" style="min-width: 50px" ng-click="mDeleteEventType($event, $index, eventType)"><span class="glyphicon glyphicon-trash"></span></md-button>
+								</td>
+							</tr>		  
+						</table>
+					</div>
+				</perfect-scrollbar>
 			</div>
 	   </div>
 	</div>
