@@ -109,7 +109,7 @@
                 selectedDate: function() {
                   return date;
                 },
-                newbookingResolve: function() {
+                selectedEvent: function() {
                   return null;
                 }
               },
@@ -141,28 +141,38 @@
 
     //with this you can handle the click on the events
     $scope.eventClick = function(event) {
-      console.log("eventClick " + event);
-
-      /*$mdDialog.show({
-              controller: BookingDetailsController,
-              templateUrl: 'views/events/booking-details.html',
-              parent: angular.element(document.body),
-              clickOutsideToClose:false,
-              fullscreen: false, 
-              resolve: {
-                          selectedEvent: function() 
-                          {
-                            return event;
-                          }
-                        },
-            })
-            .then(function(answer) 
-            {
-              console.log('You said the information was "' + answer + '".');
-            }, function() {
-             console.log('You cancelled the dialog.');
-            });
-          */
+      var oldShow = $mdDialog.show;
+        $mdDialog.show = function(options) {
+          if (options.hasOwnProperty("skipHide")) {
+            options.multiple = options.skipHide;
+          }
+          return oldShow(options);
+        };
+      NewbookingsService.get({
+        newbookingId: event._id
+      }, function(data) {
+        $mdDialog.show({
+            controller: 'NewbookingsController',
+            templateUrl: 'modules/newbookings/client/views/form-newbooking.client.view.html',
+            parent: angular.element(document.body),
+            clickOutsideToClose: false,
+            fullscreen: true,
+            resolve: {
+              selectedDate: function() {
+                return event.start;
+              },
+              selectedEvent: function() {
+                return data;
+              }
+            },
+          })
+          .then(function(updatedItem) {
+            var index = _.indexOf($scope.model.events, event);
+            $scope.model.events[index] = updatedItem;
+          }, function() {
+            console.log('You cancelled the dialog.');
+          });
+      });
     };
 
 

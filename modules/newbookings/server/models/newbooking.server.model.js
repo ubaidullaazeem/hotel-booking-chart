@@ -137,7 +137,7 @@ var NewbookingSchema = new Schema({
     required: 'Please enter grand total',
     trim: true
   },
-  mPaymentHistory: [{
+  mPaymentHistories: [{
     amountPaid : Number,
     paidDate : Date,
     paymentMode : String
