@@ -29,26 +29,30 @@ exports.create = function(req, res) {
     }]
   }, function(err, entries) {
     if (entries.length > 0) {
+      var breakloop = false;
       var mapEntriesBySelectedHalls = _.map(entries, 'mSelectedHalls');
       entries.forEach(function(entry) {
-        if ((convertTimeStamp(req.body.mStartDateTime) <= addExtraHours(entry.mEndDateTime, 3)) && (convertTimeStamp(req.body.mEndDateTime) >= addExtraHours(entry.mStartDateTime, 3))) { // overlaps
-          mapEntriesBySelectedHalls.forEach(function(bookedHall) {
-            var mapEntrySelectedHallByName = _.map(bookedHall, 'name');            
-            var commonHallsFromArrays = _.intersection(mapEntrySelectedHallByName, mapSelectedHallsByName);
-            if (commonHallsFromArrays.length > 0) {
-              return res.status(400).send({
-                message: "Halls '" + commonHallsFromArrays + "' are already booked on the date between startdate: " + convertDate(req.body.mStartDateTime) + " enddate: " + convertDate(req.body.mEndDateTime)
-              });
-            } else {
-              saveBooking(newbooking, res);
-            }
-          });
-        } else {
-          saveBooking(newbooking, res);
+        if (breakloop) {
+          if ((req.body.mStartDateTime <= convertISTToGMT(addExtraHours(entry.mEndDateTime, 3))) && (req.body.mEndDateTime >= convertISTToGMT(addExtraHours(entry.mStartDateTime, 3)))) { // overlaps
+            mapEntriesBySelectedHalls.forEach(function(bookedHall) {
+              var mapEntrySelectedHallByName = _.map(bookedHall, 'name');
+              var commonHallsFromArrays = _.intersection(mapEntrySelectedHallByName, mapSelectedHallsByName);
+              if (commonHallsFromArrays.length > 0) {                
+                return res.status(400).send({
+                  message: "Halls '" + commonHallsFromArrays + "' are already booked on the date between startdate: " + convertDate(req.body.mStartDateTime) + " enddate: " + convertDate(req.body.mEndDateTime)
+                });
+                breakloop = true;
+              } else {
+                saveBooking(newbooking, res);
+              }
+            });
+          } else {
+            saveBooking(newbooking, res);
+          }
         }
       });
     } else {
-      saveBooking(newbooking, res);
+      saveBooking(newbooking, res)
     }
   });
 };
@@ -221,5 +225,9 @@ function addExtraHours(date, hours) {
   var dateTime = new Date(date);
   var addExtraTime = dateTime.setHours(dateTime.getHours() + hours);
   return addExtraTime;
+}
+
+function convertISTToGMT(date){
+  return new Date((new Date(date)).toUTCString()).toISOString();
 }
 
