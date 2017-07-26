@@ -16,43 +16,13 @@ var path = require('path'),
 exports.create = function(req, res) {
   var newbooking = new Newbooking(req.body);
   newbooking.user = req.user;
-  var mapSelectedHallsByName = _.map(req.body.mSelectedHalls, 'name');
-  Newbooking.find({
-    $and: [{
-      mStartDateTime: {
-        $gte: req.body.startGMT
-      }
-    }, {
-      mEndDateTime: {
-        $lte: req.body.endGMT
-      }
-    }]
-  }, function(err, entries) {
-    if (entries.length > 0) {
-      var breakloop = false;
-      var mapEntriesBySelectedHalls = _.map(entries, 'mSelectedHalls');
-      entries.forEach(function(entry) {
-        if (breakloop) {
-          if ((req.body.mStartDateTime <= convertISTToGMT(addExtraHours(entry.mEndDateTime, 3))) && (req.body.mEndDateTime >= convertISTToGMT(addExtraHours(entry.mStartDateTime, 3)))) { // overlaps
-            mapEntriesBySelectedHalls.forEach(function(bookedHall) {
-              var mapEntrySelectedHallByName = _.map(bookedHall, 'name');
-              var commonHallsFromArrays = _.intersection(mapEntrySelectedHallByName, mapSelectedHallsByName);
-              if (commonHallsFromArrays.length > 0) {                
-                return res.status(400).send({
-                  message: "Halls '" + commonHallsFromArrays + "' are already booked on the date between startdate: " + convertDate(req.body.mStartDateTime) + " enddate: " + convertDate(req.body.mEndDateTime)
-                });
-                breakloop = true;
-              } else {
-                saveBooking(newbooking, res);
-              }
-            });
-          } else {
-            saveBooking(newbooking, res);
-          }
-        }
+  newbooking.save(function(err) {
+    if (err) {
+      return res.status(400).send({
+        message: errorHandler.getErrorMessage(err)
       });
     } else {
-      saveBooking(newbooking, res)
+      res.jsonp(newbooking);
     }
   });
 };
@@ -139,6 +109,32 @@ exports.list = function(req, res) {
 };
 
 /**
+ * Validate Overlap
+ */
+
+exports.validateoverlap = function(req, res) {
+  Newbooking.find({
+    $and: [{
+      mStartDateTime: {
+        $gte: req.body.startGMT
+      }
+    }, {
+      mEndDateTime: {
+        $lte: req.body.endGMT
+      }
+    }]
+  }, function(err, entries) {
+    if (err) {
+      return res.status(400).send({
+        message: errorHandler.getErrorMessage(err)
+      });
+    } else {
+      res.jsonp(entries);
+    }
+  });
+};
+
+/**
  * Search of Newbookings
  */
 exports.search = function(req, res) {
@@ -200,34 +196,4 @@ exports.newbookingByID = function(req, res, next, id) {
     next();
   });
 };
-
-/**
- * Date convertion to YYYY-MM-DD HH:MM:SS
- */
-
-function convertDate(date) {
-  return new Date(date).toString().replace(/GMT.+/,"");
-}
-
-/**
- * Date convertion to timestamp
- */
-
-function convertTimeStamp(date) {
-  return new Date(date).getTime();
-}
-
-/**
- * Add hours
- */
-
-function addExtraHours(date, hours) {
-  var dateTime = new Date(date);
-  var addExtraTime = dateTime.setHours(dateTime.getHours() + hours);
-  return addExtraTime;
-}
-
-function convertISTToGMT(date){
-  return new Date((new Date(date)).toUTCString()).toISOString();
-}
 

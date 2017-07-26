@@ -6,9 +6,9 @@
     .module('newbookings')
     .controller('NewbookingsController', NewbookingsController);
 
-  NewbookingsController.$inject = ['AuthenticationService', 'CGST', 'SGST', 'DATA_BACKGROUND_COLOR', 'HARDCODE_VALUES', '$filter', '$scope', '$state', 'selectedEvent', '$mdDialog', 'NewbookingsService', 'selectedDate', 'HallsService', 'EventtypesService', 'TaxesService', 'PaymentstatusesService', 'Notification', '$mdpTimePicker', '$mdpDatePicker', 'PAY_MODES', 'CommonService'];
+  NewbookingsController.$inject = ['AuthenticationService', 'CGST', 'SGST', 'DATA_BACKGROUND_COLOR', 'HARDCODE_VALUES', '$filter', '$scope', '$state', 'selectedEvent', '$mdDialog', 'NewbookingsService', 'selectedDate', 'HallsService', 'EventtypesService', 'TaxesService', 'PaymentstatusesService', 'Notification', '$mdpTimePicker', '$mdpDatePicker', 'PAY_MODES', 'CommonService', 'ValidateOverlapBookingServices'];
 
-  function NewbookingsController(AuthenticationService, CGST, SGST, DATA_BACKGROUND_COLOR, HARDCODE_VALUES, $filter, $scope, $state, selectedEvent, $mdDialog, NewbookingsService, selectedDate, HallsService, EventtypesService, TaxesService, PaymentstatusesService, Notification, $mdpTimePicker, $mdpDatePicker, PAY_MODES, CommonService) {
+  function NewbookingsController(AuthenticationService, CGST, SGST, DATA_BACKGROUND_COLOR, HARDCODE_VALUES, $filter, $scope, $state, selectedEvent, $mdDialog, NewbookingsService, selectedDate, HallsService, EventtypesService, TaxesService, PaymentstatusesService, Notification, $mdpTimePicker, $mdpDatePicker, PAY_MODES, CommonService, ValidateOverlapBookingServices) {
     $scope.DATA_BACKGROUND_COLOR = DATA_BACKGROUND_COLOR;
 
     $scope.ui = {
@@ -18,7 +18,9 @@
       mMinBasicCost : 0,
       mMinElectricityCharges : 0,
       mMinCleaningCharges : 0,
-      createMode: true
+      mMinActualElectricityCharges: 0,
+      createMode: true,
+      showMdSelect: true,
     }
 
     $scope.model = {
@@ -26,7 +28,10 @@
       eventTypes: EventtypesService.query(),
       paymentStatuses: PaymentstatusesService.query(),
       taxes: TaxesService.query(),
-      paymentModes: PAY_MODES
+      paymentModes: PAY_MODES,
+      originalHalls: selectedEvent ? angular.copy(selectedEvent.mSelectedHalls) : undefined,
+      originalHallBookStartTime: selectedEvent ? angular.copy(selectedEvent.mStartDateTime) : undefined,
+      originalHallBookEndTime: selectedEvent ? angular.copy(selectedEvent.mEndDateTime) : undefined,
     };
 
     $scope.mPaymentHistory = {
@@ -60,6 +65,8 @@
       mGrandTotal: selectedEvent ? selectedEvent.mGrandTotal : 0,
       mPaymentHistories: selectedEvent ? selectedEvent.mPaymentHistories : [],
       mBalanceDue: selectedEvent ? selectedEvent.mBalanceDue : 0,
+      mDamages: selectedEvent ? selectedEvent.mDamages : 0,
+      mActualElectricityCharges: selectedEvent ? selectedEvent.mActualElectricityCharges : 0,
     };
 
     $scope.eventTime = {
@@ -71,9 +78,9 @@
       mEndToServer: getTimeToServer(new Date('1991-05-04T13:00:00'))
     };
 
-    $scope.$watch('mPaymentHistory.paidDate', function(newValue) {
-      $scope.mPaymentHistory.paidDate = $filter('date')(newValue, 'yyyy/MM/dd');
-    });
+    // $scope.$watch('mPaymentHistory.paidDate', function(newValue) {
+    //   $scope.mPaymentHistory.paidDate = $filter('date')(newValue, 'yyyy/MM/dd');
+    // });
 
     var selectedHallsTotalBasicCost=0, selectedHallsTotalEBCharges=0, selectedHallsTotalCleaningCharges=0;
     
@@ -158,7 +165,7 @@
       $mdpDatePicker(dateToPicker, {
         targetEvent: ev
       }).then(function(date) {
-        $scope.mPaymentHistory.paidDate = new Date((new Date(date)).toUTCString()).toISOString();
+        $scope.mPaymentHistory.paidDate = new Date(date);
       });
     };
 
@@ -220,7 +227,9 @@
     var init = function() {
       if($scope.mixins._id) {
         $scope.ui.createMode = false;
-      }
+        $scope.ui.showMdSelect = false;
+      };
+      $scope.disabledSelectedHalls =  _.map($scope.mixins.mSelectedHalls, 'name');
       var hasContainsTaxName = CommonService.hasContainsTaxName($scope.model.taxes);
       if (!hasContainsTaxName) {
         Notification.error({
@@ -262,62 +271,64 @@
         }
 
         $scope.mixins.mStartDateTime = new Date($scope.eventTime.mStartToServer);
-        $scope.mixins.mEndDateTime = new Date($scope.eventTime.mEndToServer);
-        $scope.mixins.startGMT = moment(selectedDate).startOf('day').toDate().toISOString();
-        $scope.mixins.endGMT = moment(selectedDate).endOf('day').toDate().toISOString();
+        $scope.mixins.mEndDateTime = new Date($scope.eventTime.mEndToServer);  
+        $scope.mixins.mExtraStartDateTime = addExtraHours($scope.eventTime.mStartToServer, 3);
+        $scope.mixins.mExtraEndDateTime = addExtraHours($scope.eventTime.mEndToServer, 3);    
       
         if($scope.ui.createMode) {
           $scope.mixins.mPaymentHistories.push($scope.mPaymentHistory);
         } else {
           pushPayment();
-        }     
-        
-        for(var i=0; i<$scope.mixins.mSelectedHalls.length; i++)
-        {
-          var effectiveSummaries = CommonService.findRateSummariesByDate($scope.mixins.mSelectedHalls[i].rateSummaries, new Date());
-
-          if (effectiveSummaries.length > 0) 
-          {
-            var effectiveSummary = effectiveSummaries[0];
-
-            //Prorating basic cost, generator, miscellaneous and discount is based on hall's basic cost and electricity, cleaning is based hall's electricity and cleaning charges
-            $scope.mixins.mSelectedHalls[i].mRate =  (effectiveSummary.rate / selectedHallsTotalBasicCost) * $scope.mixins.mBasicCost;
-            $scope.mixins.mSelectedHalls[i].mElectricityCharges = (effectiveSummary.powerConsumpationCharges / selectedHallsTotalEBCharges) * $scope.mixins.mElectricityCharges;
-            $scope.mixins.mSelectedHalls[i].mActualElectricityCharges = 0;//updated while editing the booking
-            $scope.mixins.mSelectedHalls[i].mCleaningCharges = (effectiveSummary.cleaningCharges / selectedHallsTotalCleaningCharges) * $scope.mixins.mCleaningCharges;
-            $scope.mixins.mSelectedHalls[i].mGeneratorCharges = (effectiveSummary.rate / selectedHallsTotalBasicCost) * $scope.mixins.mGeneratorCharges;
-            $scope.mixins.mSelectedHalls[i].mMiscellaneousCharges = (effectiveSummary.rate / selectedHallsTotalBasicCost) * $scope.mixins.mMiscellaneousCharges;
-            $scope.mixins.mSelectedHalls[i].mDiscount = (effectiveSummary.rate / selectedHallsTotalBasicCost) * $scope.mixins.mDiscount;
-
-            $scope.mixins.mSelectedHalls[i].mCGST = (effectiveSummary.rate / selectedHallsTotalBasicCost) * $scope.mixins.mCGST;
-            $scope.mixins.mSelectedHalls[i].mSGST = (effectiveSummary.rate / selectedHallsTotalBasicCost) * $scope.mixins.mSGST;
-
-            //All rate before applying the discount 
-            $scope.mixins.mSelectedHalls[i].mRevenue = $scope.mixins.mSelectedHalls[i].mRate + $scope.mixins.mSelectedHalls[i].mElectricityCharges 
-                                          + $scope.mixins.mSelectedHalls[i].mCleaningCharges + $scope.mixins.mSelectedHalls[i].mGeneratorCharges
-                                          + $scope.mixins.mSelectedHalls[i].mMiscellaneousCharges + $scope.mixins.mSelectedHalls[i].mCGST
-                                          + $scope.mixins.mSelectedHalls[i].mSGST;
-
-            $scope.mixins.mSelectedHalls[i].mCollection = (effectiveSummary.rate / selectedHallsTotalBasicCost) * $scope.mPaymentHistory.amountPaid;
-          }
-          else
-          {
-            Notification.error({
-              message: "Effective date is not found for " + hall.name,
-              title: '<i class="glyphicon glyphicon-remove"></i> Effective date Error !!!'
-            });
-            $mdDialog.cancel();
-            break;
-          }             
         }
+
+        // Calculate Prorate Charges
+
+        calculateProrateCharges();
 
        $scope.mixins.mSelectedHalls = _.uniqBy($scope.mixins.mSelectedHalls, '_id');
-                
-        if ($scope.mixins._id) {
-          NewbookingsService.update($scope.mixins, successCallback, errorCallback);
-        } else {
-          NewbookingsService.save($scope.mixins, successCallback, errorCallback);
-        }
+
+        var gmtDateTime = {
+          startGMT: moment(selectedDate).startOf('day').toDate().toISOString(),
+          endGMT: moment(selectedDate).endOf('day').toDate().toISOString()
+        };
+
+        var overlap = false;
+        var mapSelectedHallsByName = _.map($scope.mixins.mSelectedHalls, 'name');        
+
+        ValidateOverlapBookingServices.requestvalidateoverlap(gmtDateTime).then(function(bookedHallsOnTheDay) {
+          if(!$scope.ui.createMode) {
+            bookedHallsOnTheDay = _.reject(bookedHallsOnTheDay, function(hallonday) {
+              return hallonday._id === $scope.mixins._id;
+            });
+          }
+          var mapEntriesBySelectedHalls = _.map(bookedHallsOnTheDay, 'mSelectedHalls');          
+          angular.forEach(bookedHallsOnTheDay, function(bookedHallOnTheDay) {
+            if (!overlap) {              
+              if (($scope.eventTime.mStartToServer <= bookedHallOnTheDay.mEndDateTime) && ($scope.eventTime.mEndToServer >= bookedHallOnTheDay.mStartDateTime)) {
+                angular.forEach(mapEntriesBySelectedHalls, function(bookedHall) {
+                  if (!overlap) {
+                    var mapEntrySelectedHallByName = _.map(bookedHall, 'name');
+                    var commonHallsFromArrays = _.intersection(mapEntrySelectedHallByName, mapSelectedHallsByName);
+                    if (commonHallsFromArrays.length > 0) {
+                      overlap = true;
+                      Notification.error({
+                        message: "Halls '" + commonHallsFromArrays + "' are already booked on the date between startdate: " + convertDate($scope.eventTime.mStartToServer) + " enddate: " + convertDate($scope.eventTime.mEndToServer),
+                        title: '<i class="glyphicon glyphicon-remove"></i> Hall Booking Overlap !!!'
+                      });
+                    };
+                  }
+                });
+              }
+            }
+          });
+          if (!overlap) {
+            if ($scope.mixins._id) {
+              NewbookingsService.update($scope.mixins, successCallback, errorCallback);
+            } else {
+              NewbookingsService.save($scope.mixins, successCallback, errorCallback);
+            }
+          }
+        });
 
         function successCallback(res) {
 
@@ -326,9 +337,14 @@
             title: '<i class="glyphicon glyphicon-remove"></i> Success !!!'
           });
 
+          var bookingTitle = res.mSelectedEventType.name;
+          if (res.mSelectedEventType.name === HARDCODE_VALUES[0]) {
+            bookingTitle = res.mOtherEvent;
+          }
+
           var event = {
             _id: res._id,
-            title: res.mName,
+            title: bookingTitle.charAt(0).toUpperCase() + bookingTitle.slice(1),
             start: new Date(res.mStartDateTime),
             end: new Date(res.mEndDateTime),
             color: res.mSelectedPaymentStatus.colour.code,
@@ -355,6 +371,24 @@
       return _.includes(pluckHalls, hall.name);
     };
 
+    $scope.showMdselect = function() {
+      swal({
+          title: "Do you want to change the hall?",
+          text: "If you change the hall, new rate will be applied.",
+          type: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#DD6B55",
+          confirmButtonText: "Yes",
+          closeOnConfirm: true
+        },
+        function(isConfirm) {
+          if(isConfirm) {
+            $scope.ui.showMdSelect = true;  
+            $scope.$apply(); 
+          }                         
+        });
+    };
+
     function clearPaymentHistory() {
       $scope.mPaymentHistory = {
         amountPaid: null,
@@ -376,6 +410,66 @@
       if($scope.mPaymentHistory.amountPaid && $scope.mPaymentHistory.paymentMode) {
         $scope.mixins.mPaymentHistories.unshift($scope.mPaymentHistory);
       }      
-    };
+    };    
+
+    /**
+     * Date convertion to YYYY-MM-DD HH:MM:SS
+     */
+
+    function convertDate(date) {
+      return new Date(date).toString().replace(/GMT.+/, "");
+    }
+
+    /**
+     * Date convertion to timestamp
+     */
+
+    function convertTimeStamp(date) {
+      return new Date(date).getTime();
+    }
+
+    /**
+     * Add hours
+     */
+
+    function addExtraHours(date, hours) {
+      var dateTime = new Date(date);
+      var addExtraTime = dateTime.setHours(dateTime.getHours() + hours);
+      return addExtraTime;
+    }
+
+    function calculateProrateCharges() {
+      for (var i = 0; i < $scope.mixins.mSelectedHalls.length; i++) {
+        var effectiveSummaries = CommonService.findRateSummariesByDate($scope.mixins.mSelectedHalls[i].rateSummaries, new Date());
+
+        if (effectiveSummaries.length > 0) {
+          var effectiveSummary = effectiveSummaries[0];
+
+          //Prorating basic cost, generator, miscellaneous and discount is based on hall's basic cost and electricity, cleaning is based hall's electricity and cleaning charges
+          $scope.mixins.mSelectedHalls[i].mRate = (effectiveSummary.rate / selectedHallsTotalBasicCost) * $scope.mixins.mBasicCost;
+          $scope.mixins.mSelectedHalls[i].mElectricityCharges = (effectiveSummary.powerConsumpationCharges / selectedHallsTotalEBCharges) * $scope.mixins.mElectricityCharges;
+          $scope.mixins.mSelectedHalls[i].mActualElectricityCharges = 0; //updated while editing the booking
+          $scope.mixins.mSelectedHalls[i].mCleaningCharges = (effectiveSummary.cleaningCharges / selectedHallsTotalCleaningCharges) * $scope.mixins.mCleaningCharges;
+          $scope.mixins.mSelectedHalls[i].mGeneratorCharges = (effectiveSummary.rate / selectedHallsTotalBasicCost) * $scope.mixins.mGeneratorCharges;
+          $scope.mixins.mSelectedHalls[i].mMiscellaneousCharges = (effectiveSummary.rate / selectedHallsTotalBasicCost) * $scope.mixins.mMiscellaneousCharges;
+          $scope.mixins.mSelectedHalls[i].mDiscount = (effectiveSummary.rate / selectedHallsTotalBasicCost) * $scope.mixins.mDiscount;
+
+          $scope.mixins.mSelectedHalls[i].mCGST = (effectiveSummary.rate / selectedHallsTotalBasicCost) * $scope.mixins.mCGST;
+          $scope.mixins.mSelectedHalls[i].mSGST = (effectiveSummary.rate / selectedHallsTotalBasicCost) * $scope.mixins.mSGST;
+
+          //All rate before applying the discount 
+          $scope.mixins.mSelectedHalls[i].mRevenue = $scope.mixins.mSelectedHalls[i].mRate + $scope.mixins.mSelectedHalls[i].mElectricityCharges + $scope.mixins.mSelectedHalls[i].mCleaningCharges + $scope.mixins.mSelectedHalls[i].mGeneratorCharges + $scope.mixins.mSelectedHalls[i].mMiscellaneousCharges + $scope.mixins.mSelectedHalls[i].mCGST + $scope.mixins.mSelectedHalls[i].mSGST;
+
+          $scope.mixins.mSelectedHalls[i].mCollection = (effectiveSummary.rate / selectedHallsTotalBasicCost) * $scope.mPaymentHistory.amountPaid;
+        } else {
+          Notification.error({
+            message: "Effective date is not found for " + hall.name,
+            title: '<i class="glyphicon glyphicon-remove"></i> Effective date Error !!!'
+          });
+          $mdDialog.cancel();
+          break;
+        }
+      }
+    }
   }
 }());

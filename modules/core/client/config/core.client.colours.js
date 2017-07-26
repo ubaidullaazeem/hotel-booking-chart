@@ -16,25 +16,25 @@
 							name : 'Gold', code : '#FFD700'
 						},
 						{
-							name : 'Gray', code : '#808080'
+							name : 'Gray', code : '#999999'
 						},
 						{
-							name : 'Green', code : '#008000'
+							name : 'Green', code : '#4caf50'
 						},
 						{
 							name : 'Lime', code : '#00FF00'
 						},
 						{
-							name : 'Orange', code : '#FFA500'
+							name : 'Orange', code : '#ff9800'
 						},
 						{
-							name : 'Pink', code : '#FFC0CB'
+							name : 'Pink', code : '#e91e63'
 						},
 						{
 							name : 'Purple', code : '#800080'
 						},
 						{
-							name : 'Red', code : '#FF0000'
+							name : 'Red', code : '#f44336'
 						},
 						{
 							name : 'Silver', code : '#C0C0C0'
@@ -47,6 +47,9 @@
 						},
 						{
 							name : 'Yellow', code : '#FFFF00'
+						},
+						{
+							name : 'Azure', code : '#00bcd4'
 						}
 						]);
 }).call(this);

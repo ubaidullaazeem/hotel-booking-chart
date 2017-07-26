@@ -14,6 +14,7 @@ module.exports = {
         'public/lib/angular-bootstrap/ui-bootstrap-csp.css',
         'modules/core/client/css/mdPickers.css',
         'public/lib/perfect-scrollbar/css/perfect-scrollbar.min.css',
+        'public/lib/sweetalert/dist/sweetalert.css'
         // endbower
       ],
       js: [
@@ -43,6 +44,7 @@ module.exports = {
         'modules/core/client/js/mdPickers.js',
         'public/lib/perfect-scrollbar/js/perfect-scrollbar.jquery.min.js',
         'public/lib/angular-perfect-scrollbar/src/angular-perfect-scrollbar.js',
+        'public/lib/sweetalert/dist/sweetalert.min.js'
         // endbower
       ],
       tests: ['public/lib/angular-mocks/angular-mocks.js']

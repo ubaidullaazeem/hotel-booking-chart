@@ -20,6 +20,9 @@ module.exports = function(app) {
   app.route('/api/newbookings/search')/*.all(newbookingsPolicy.isAllowed)*/
     .post(newbookings.search);
 
+  app.route('/api/newbookings/validateoverlap')/*.all(newbookingsPolicy.isAllowed)*/
+    .post(newbookings.validateoverlap);
+
   // Finish by binding the Newbooking middleware
   app.param('newbookingId', newbookings.newbookingByID);
 };

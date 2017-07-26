@@ -5,9 +5,9 @@
     .module('core')
     .controller('BookingsController', BookingsController);
 
-  BookingsController.$inject = ['EventtypesService', 'PaymentstatusesService', 'TaxesService', '$scope', '$state', '$rootScope', '$mdDialog', '$mdToast', '$timeout', 'HallsService', 'MESSAGES', 'Notification', 'NewbookingsService', 'SearchBookingServices'];
+  BookingsController.$inject = ['EventtypesService', 'PaymentstatusesService', 'TaxesService', '$scope', '$state', '$rootScope', '$mdDialog', '$mdToast', '$timeout', 'HallsService', 'MESSAGES', 'Notification', 'NewbookingsService', 'SearchBookingServices', 'HARDCODE_VALUES'];
 
-  function BookingsController(EventtypesService, PaymentstatusesService, TaxesService, $scope, $state, $rootScope, $mdDialog, $mdToast, $timeout, HallsService, MESSAGES, Notification, NewbookingsService, SearchBookingServices) {
+  function BookingsController(EventtypesService, PaymentstatusesService, TaxesService, $scope, $state, $rootScope, $mdDialog, $mdToast, $timeout, HallsService, MESSAGES, Notification, NewbookingsService, SearchBookingServices, HARDCODE_VALUES) {
     $rootScope.isUserLoggedIn = true;
 
     $scope.model = {
@@ -219,9 +219,13 @@
       } else {
         colorCode = booking.mSelectedEventType.colour.code;
       }
+      var bookingTitle = booking.mSelectedEventType.name;
+      if(booking.mSelectedEventType.name === HARDCODE_VALUES[0]) {
+        bookingTitle = booking.mOtherEvent;
+      }
       $scope.model.events.push({
         _id: booking._id,
-        title: booking.mName,
+        title: bookingTitle.charAt(0).toUpperCase() + bookingTitle.slice(1),
         start: new Date(booking.mStartDateTime),
         end: new Date(booking.mEndDateTime),
         color: colorCode,

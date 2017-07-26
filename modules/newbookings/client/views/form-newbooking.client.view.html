@@ -12,10 +12,13 @@
     </div>
     <md-dialog-content>
       <div class="md-dialog-content">
-
         <div layout="row" flex>
-          <md-input-container flex>
-            <label>Halls</label>
+          <md-input-container flex ng-show="!ui.showMdSelect">
+            <label>Halls</label>           
+           <input style="text-transform: capitalize; cursor: pointer" ng-click="showMdselect()" name="selectedHalls" ng-model="disabledSelectedHalls" readonly></input>
+          </md-input-container>         
+          <md-input-container flex ng-show="ui.showMdSelect">
+            <label>Halls</label>           
             <md-select style="text-transform: capitalize;"  multiple 
                         required
                         name="halls"
@@ -26,7 +29,6 @@
                 <md-option style="text-transform: capitalize;" ng-value="hall" ng-selected="{{ selectHallsByDefault(hall) }}" ng-repeat="hall in model.halls">{{hall.name}}</md-option>
               </md-optgroup>
             </md-select>
-            {{changeCount}}
             <div ng-messages="bookingForm.halls.$error" ng-show="bookingForm.halls.$invalid  && submitted">
               <div ng-message="required">Halls is required.</div>
             </div>
@@ -170,6 +172,16 @@
           </md-input-container>  
         </div>
 
+         <div layout="column" flex ng-if="!ui.createMode">
+          <md-input-container flex>
+            <label>Actual Electricity Charges</label>
+            <input name="actualelectricity" ng-model="mixins.mActualElectricityCharges" type="number" min="{{ui.mMinElectricityCharges}}" ng-change="calculateBalanceDue()" ng-pattern="ui.mNumberPattern"/>
+            <div ng-messages="bookingForm.electricity.$error">
+              <div ng-message="required">Actual Electricity Charges is required.</div>
+            </div>
+          </md-input-container>  
+        </div>
+
         <div layout="column" flex>
           <md-input-container flex>
             <label>Cleaning Charges</label>
@@ -196,6 +208,16 @@
             <input required name="miscellaneous" ng-model="mixins.mMiscellaneousCharges" type="number" min="0" ng-change="calculateBalanceDue()" ng-pattern="ui.mNumberPattern"/>
             <div ng-messages="bookingForm.miscellaneous.$error">
               <div ng-message="required">Miscellaneous Charges is required.</div>
+            </div>
+          </md-input-container>  
+        </div>
+
+        <div layout="column" flex ng-if="!ui.createMode">
+          <md-input-container flex>
+            <label>Damages</label>
+            <input name="damages" ng-model="mixins.mDamages" type="number" min="0" ng-change="calculateBalanceDue()" ng-pattern="ui.mNumberPattern"/>
+            <div ng-messages="bookingForm.miscellaneous.$error">
+              <div ng-message="required">Damages Charges is required.</div>
             </div>
           </md-input-container>  
         </div>
@@ -280,7 +302,7 @@
               <md-input-container flex>
                 <label>Paid Date</label>
                   <div ng-click="showPaidDatePicker($event)">
-                    <input ng-required="ui.createMode" name="paidDate" ng-model="mPaymentHistory.paidDate" onfocus="this.blur()" readonly></input>
+                    <input type="date" ng-required="ui.createMode" name="paidDate" ng-model="mPaymentHistory.paidDate"></input>
                   </div>                  
                   <div ng-messages="bookingForm.paidDate.$error">
                     <div ng-message="required">Paid date is required.</div>
@@ -309,35 +331,25 @@
             <div ng-if="!ui.createMode" layout="row" flex ng-repeat="mPaymentHistory in mixins.mPaymentHistories track by $index">              
               <md-input-container flex>
                 <label>Amount Paid</label>
-                <input required name="amountPaid" ng-model="mPaymentHistory.amountPaid" type="number" min="1" ng-change="calculateBalanceDue()" ng-pattern="ui.mNumberPattern" ng-disabled="true"/>
-                <div ng-messages="bookingForm.amountPaid.$error">
-                  <div ng-message="required">Amount paid is required.</div>
-                </div>
+                <input name="amountPaid" ng-model="mPaymentHistory.amountPaid" type="number" min="1" ng-change="calculateBalanceDue()" ng-pattern="ui.mNumberPattern" ng-disabled="true"/>                
               </md-input-container>  
               
               <md-input-container flex>
                 <label>Paid Date</label>
                   <div ng-click="showPaidDatePicker($event)">
-                    <input required name="paidDate" ng-model="mPaymentHistory.paidDate | date:'dd/MM/yyyy'" onfocus="this.blur()" readonly ng-disabled="true"></input>
-                  </div>                  
-                  <div ng-messages="bookingForm.paidDate.$error">
-                    <div ng-message="required">Paid date is required.</div>
+                    <input mo-date-input="YYYY-MM-DD" name="paidDate" ng-model="mPaymentHistory.paidDate" ng-disabled="true"></input>
                   </div>
               </md-input-container>
 
               <md-input-container flex>
                   <label>Payment Mode</label>
-                  <md-select  required
-                              name="payMode"
+                  <md-select name="payMode"
                               ng-model="mPaymentHistory.paymentMode"
                               ng-change="onPaymentModeChanged()" ng-disabled="true">                
                     <md-optgroup label="Payment Mode">
                       <md-option ng-value="paymentMode" ng-repeat="paymentMode in model.paymentModes">{{paymentMode}}</md-option>
                     </md-optgroup>
-                  </md-select>    
-                  <div ng-messages="bookingForm.payMode.$error" ng-show="bookingForm.payMode.$invalid && submitted">
-                    <div ng-message="required">Payment mode is required.</div>
-                  </div>
+                  </md-select>                 
               </md-input-container>   
               <div class="pull-right">
                 <md-button class="btn btn-danger btn-sm" style="min-width: 50px" ng-click="removePayment($index)" type="submit"><span class="glyphicon glyphicon-remove"></span></md-button>
