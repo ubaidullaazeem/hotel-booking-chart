@@ -28,10 +28,7 @@
       eventTypes: EventtypesService.query(),
       paymentStatuses: PaymentstatusesService.query(),
       taxes: TaxesService.query(),
-      paymentModes: PAY_MODES,
-      originalHalls: selectedEvent ? angular.copy(selectedEvent.mSelectedHalls) : undefined,
-      originalHallBookStartTime: selectedEvent ? angular.copy(selectedEvent.mStartDateTime) : undefined,
-      originalHallBookEndTime: selectedEvent ? angular.copy(selectedEvent.mEndDateTime) : undefined,
+      paymentModes: PAY_MODES
     };
 
     $scope.mPaymentHistory = {
@@ -257,7 +254,9 @@
     });
 
     // Save Newbooking
+   // Save Newbooking
     $scope.save = function(form) {
+
       if (form.$valid) 
       {
         if ($scope.mixins.mSelectedPaymentStatus.name.toLowerCase() == 'fully paid' && $scope.mixins.mBalanceDue !== 0)
@@ -269,6 +268,10 @@
 
           return;
         }
+        /*else if ($scope.mixins.mSelectedPaymentStatus.name.toLowerCase() == 'advance paid' && $scope.mixins.mBalanceDue <= 0)
+        {
+
+        }*/
 
         $scope.mixins.mStartDateTime = new Date($scope.eventTime.mStartToServer);
         $scope.mixins.mEndDateTime = new Date($scope.eventTime.mEndToServer);  
@@ -330,35 +333,115 @@
           }
         });
 
-        function successCallback(res) {
+        function successCallback(res) 
+        {          
+          if ($scope.ui.createMode)//Create booking
+          {              
+            var calendarListReq = gapi.client.calendar.calendarList.list();                    
+            calendarListReq.execute(function(respCalList) 
+            {
+              if(respCalList && respCalList.hasOwnProperty('error')) // error
+              {
+                Notification.error({
+                  message: "Unable to fetch the halls from Google Calendar",
+                  title: '<i class="glyphicon glyphicon-remove"></i> Google Calendar Error !!!'
+                });
 
-          Notification.success({
-            message: "Booked successfully",
-            title: '<i class="glyphicon glyphicon-remove"></i> Success !!!'
-          });
+                showBookingCompleteMessage(res);
+              } 
+              else // success
+              {
+                var processedHalls = 0;
+                angular.forEach($scope.mixins.mSelectedHalls, function(hall) {
 
-          var bookingTitle = res.mSelectedEventType.name;
-          if (res.mSelectedEventType.name === HARDCODE_VALUES[0]) {
-            bookingTitle = res.mOtherEvent;
+                  var matchedCalendars = _.filter(respCalList.items, function(obj) {
+                    return obj.summary.toLowerCase().trim() === hall.name.toLowerCase().trim();
+                  });
+                  
+                  if (matchedCalendars.length > 0)
+                  {
+                    var matchedCalendar = matchedCalendars[0];
+                    var eventName = ($scope.mixins.mSelectedEventType.name === HARDCODE_VALUES[0]) ? $scope.mixins.mOtherEvent : $scope.mixins.mSelectedEventType.name;
+
+                    var insertEventReq = gapi.client.calendar.events.insert({calendarId : matchedCalendar.id, start : {timeZone: 'Asia/Kolkata', dateTime : $scope.eventTime.mStartToServer},
+                                    end : {timeZone: 'Asia/Kolkata', dateTime : $scope.eventTime.mEndToServer}, description : $scope.mixins.mDescription, summary : eventName}); 
+                                     
+                    insertEventReq.execute(function(insertEventRes) 
+                    {
+                      processedHalls++;
+
+                      if(insertEventRes && insertEventRes.hasOwnProperty('error')) // error
+                      {
+                        Notification.error({
+                          message: "Unable to add the event in "+matchedCalendar.summary,
+                          title: '<i class="glyphicon glyphicon-remove"></i> Google Calendar Error !!!'
+                        });
+                      } 
+                      else // success
+                      {
+                        hall.mCalendarId = matchedCalendar.id;
+                        hall.mEventId = insertEventRes.id;    
+                      }  
+
+                      if (processedHalls === $scope.mixins.mSelectedHalls.length) 
+                      {
+                        updateCalendarData(res);      
+                      }
+                    });
+                  }
+                  else
+                  {   
+                    processedHalls++;
+                    if (processedHalls === $scope.mixins.mSelectedHalls.length) 
+                    {
+                      updateCalendarData(res);                     
+                    }
+
+                    Notification.warning({
+                      message: "Unable to find the "+hall.name+ " in Google Calendar",
+                      title: '<i class="glyphicon glyphicon-remove"></i> Google Calendar Warning !!!'
+                    });                    
+                  }
+                });                   
+              }      
+
+            });
           }
-
-          var event = {
-            _id: res._id,
-            title: bookingTitle.charAt(0).toUpperCase() + bookingTitle.slice(1),
-            start: new Date(res.mStartDateTime),
-            end: new Date(res.mEndDateTime),
-            color: res.mSelectedPaymentStatus.colour.code,
-            stick: true
-          };
-          $mdDialog.hide(event);
+          else//Edit booking
+          {
+             console.log("edit booking update To do Google calendar");
+          }
         };
 
-        function errorCallback(res) {
+        function errorCallback(res) 
+        {
           Notification.error({
             message: res.data.message,
             title: '<i class="glyphicon glyphicon-remove"></i> Create Booking Error !!!'
           });
-        }
+        };
+
+      };
+    };
+
+    function updateCalendarData(res)
+    {
+      var updatedData = {_id : res._id, mSelectedHalls : $scope.mixins.mSelectedHalls};
+      NewbookingsService.update(updatedData, updateSuccessCallback, updateErrorCallback);
+
+      function updateSuccessCallback(res) 
+      { 
+        showBookingCompleteMessage(res);
+      }
+
+      function updateErrorCallback(res) 
+      {
+        Notification.error({
+          message: "Unable to update the Google calendar event details in database",
+          title: '<i class="glyphicon glyphicon-remove"></i> Error !!!'
+        });
+
+        showBookingCompleteMessage(res);
       };
     };
 
@@ -387,6 +470,28 @@
             $scope.$apply(); 
           }                         
         });
+    };
+
+    function showBookingCompleteMessage(res) {
+      Notification.success({
+        message: "Booked successfully",
+        title: '<i class="glyphicon glyphicon-remove"></i> Success !!!'
+      });
+
+      var bookingTitle = res.mSelectedEventType.name;
+      if (res.mSelectedEventType.name === HARDCODE_VALUES[0]) {
+        bookingTitle = res.mOtherEvent;
+      }
+
+      var event = {
+        _id: res._id,
+        title: bookingTitle.charAt(0).toUpperCase() + bookingTitle.slice(1),
+        start: new Date(res.mStartDateTime),
+        end: new Date(res.mEndDateTime),
+        color: res.mSelectedPaymentStatus.colour.code,
+        stick: true
+      };
+      $mdDialog.hide(event);
     };
 
     function clearPaymentHistory() {
