@@ -23,8 +23,8 @@ module.exports = function(app) {
   app.route('/api/newbookings/validateoverlap')/*.all(newbookingsPolicy.isAllowed)*/
     .post(newbookings.validateoverlap);
 
-  app.route('/api/newbookings/newBookingEmail')
-    .post(newbookings.newBookingEmail);
+  app.route('/api/newbookings/sendmail')
+    .post(newbookings.sendEmail);
 
   // Finish by binding the Newbooking middleware
   app.param('newbookingId', newbookings.newbookingByID);

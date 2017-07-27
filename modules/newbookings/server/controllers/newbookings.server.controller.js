@@ -4,12 +4,16 @@
  * Module dependencies.
  */
 var path = require('path'),
+  config = require(path.resolve('./config/config')),
   mongoose = require('mongoose'),
   Newbooking = mongoose.model('Newbooking'),
   errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller')),
+  nodemailer = require('nodemailer'),
+  smtpTransport = nodemailer.createTransport(config.mailer.options),
   async = require('async'),
   _ = require('lodash'),
-  htmlToPdf = require('html-to-pdf');
+  pdf = require('html-pdf'),
+  fs = require('fs');
 
 
 /**
@@ -136,20 +140,69 @@ exports.validateoverlap = function(req, res) {
   });
 };
 
-exports.newBookingEmail = function(req, res) {
-  htmlToPdf.convertHTMLString(req.body.content, 'path/to/destination.pdf',
-    function (error, success) {
-      if (error) {
-        console.log('Oh noes! Errorz!');
-        console.log('error', error);
-      } else {
-        console.log('Woot! Success!');
-        console.log(success);
-      }
-    }
-  );
+/**
+ * Email template to Booking Report
+ */
+exports.sendEmail = function(req, res, next) {
+  async.waterfall([
 
-  console.log('htmlToPdf:', htmlToPdf);
+    function(done) {
+      pdf.create(req.body.content).toFile('modules/newbookings/server/templates/booking-details.pdf', function(err, filename) {
+        done(err, filename);
+      });
+    },
+    function(filename, done) {
+      var httpTransport = 'http://';
+      if (config.secure && config.secure.ssl === true) {
+        httpTransport = 'https://';
+      }
+      var baseUrl = req.app.get('domain') || httpTransport + req.headers.host;
+      var templateURL = 'modules/newbookings/server/templates/customer-booking-email';
+
+      res.render(path.resolve(templateURL), {
+        customerName: req.body.name,
+        appName: config.app.title,
+        currentTime: new Date()
+      }, function(err, emailHTML) {
+        done(err, emailHTML, req);
+      });
+    },
+    // If valid email, send reset email using service
+    function(emailHTML, req, done) {
+      var path = 'modules/newbookings/server/templates/booking-details.pdf';
+      var mailOptions = {
+        to: req.body.email,
+        from: config.mailer.from,
+        subject: req.body.subject,
+        html: emailHTML,
+        attachments: [{
+          filename: "booking-details.pdf",
+          path: path,
+          contentType: 'application/pdf'
+        }]
+      };
+      smtpTransport.sendMail(mailOptions, function(err) {
+        if (!err) {
+          fs.unlink(path);
+          res.send({
+            message: 'An email has been sent to the provided email with further instructions.'
+          });
+        } else {
+          return res.status(400).send({
+            message: 'Failure sending email'
+          });
+        }
+
+        done(err);
+      });
+
+
+    }
+  ], function(err) {
+    if (err) {
+      return next(err);
+    }
+  });
 };
 
 

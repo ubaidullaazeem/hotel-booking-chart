@@ -6,9 +6,9 @@
     .module('newbookings')
     .controller('NewbookingsController', NewbookingsController);
 
-  NewbookingsController.$inject = ['AuthenticationService', 'CGST', 'SGST', 'DATA_BACKGROUND_COLOR', 'HARDCODE_VALUES', '$filter', '$scope', '$state', 'selectedEvent', '$mdDialog', '$templateRequest', '$sce', 'NewbookingsService', 'selectedDate', 'HallsService', 'EventtypesService', 'TaxesService', 'PaymentstatusesService', 'Notification', '$mdpTimePicker', '$mdpDatePicker', 'PAY_MODES', 'CommonService', 'ValidateOverlapBookingServices'];
+  NewbookingsController.$inject = ['AuthenticationService', 'CGST', 'SGST', 'DATA_BACKGROUND_COLOR', 'EmailBookingServices', 'HARDCODE_VALUES', '$filter', '$scope', '$state', 'selectedEvent', '$mdDialog', '$templateRequest', '$sce', 'NewbookingsService', 'selectedDate', 'HallsService', 'EventtypesService', 'TaxesService', 'PaymentstatusesService', 'Notification', '$mdpTimePicker', '$mdpDatePicker', 'PAY_MODES', 'CommonService', 'ValidateOverlapBookingServices'];
 
-  function NewbookingsController(AuthenticationService, CGST, SGST, DATA_BACKGROUND_COLOR, HARDCODE_VALUES, $filter, $scope, $state, selectedEvent, $mdDialog, $templateRequest, $sce, NewbookingsService, selectedDate, HallsService, EventtypesService, TaxesService, PaymentstatusesService, Notification, $mdpTimePicker, $mdpDatePicker, PAY_MODES, CommonService, ValidateOverlapBookingServices) {
+  function NewbookingsController(AuthenticationService, CGST, SGST, DATA_BACKGROUND_COLOR, EmailBookingServices, HARDCODE_VALUES, $filter, $scope, $state, selectedEvent, $mdDialog, $templateRequest, $sce, NewbookingsService, selectedDate, HallsService, EventtypesService, TaxesService, PaymentstatusesService, Notification, $mdpTimePicker, $mdpDatePicker, PAY_MODES, CommonService, ValidateOverlapBookingServices) {
     $scope.DATA_BACKGROUND_COLOR = DATA_BACKGROUND_COLOR;
 
     $scope.ui = {
@@ -21,6 +21,7 @@
       mMinActualElectricityCharges: 0,
       createMode: true,
       showMdSelect: true,
+      mailsending: false,
     }
 
     $scope.model = {
@@ -204,8 +205,12 @@
     }
 
     $scope.sendMail = function() {
+      $scope.ui.mailsending = true;
       var emailContent = {
-        content: getNewBookingData()
+        content: getNewBookingData(),
+        name: $scope.mixins.mName,
+        email: $scope.mixins.mEmail,
+        subject: "Mirth Hall Booking Details"
       };
 
       if ($scope.mixins.mEmail === null) {
@@ -213,18 +218,26 @@
             message: "Mail not sent", title: '<i class="glyphicon glyphicon-remove"></i> Email Id Missing Error !!!'
         });
       } else {
-        ValidateOverlapBookingServices.requestNewBookingEmail(emailContent)
+        EmailBookingServices.requestSendEmail(emailContent)
           .then(onRequestEmailBookingSuccess)
           .catch(onRequestEmailBookingError);
       }
     };
 
     function onRequestEmailBookingSuccess(response) {
-      console.log('response success:', response);
+       $scope.ui.mailsending = false;
+      Notification.success({
+          message: response.message,
+          title: '<i class="glyphicon glyphicon-remove"></i> Email drop successfully !!!'
+        });
     }
 
     function onRequestEmailBookingError(response) {
-      console.log('response error:', response);
+       $scope.ui.mailsending = false;
+       Notification.error({
+          message: response.message,
+          title: '<i class="glyphicon glyphicon-remove"></i> Email failed to snet !!!'
+        });
     }
 
     function validateStartAndEndTime() {
