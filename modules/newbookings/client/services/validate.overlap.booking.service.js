@@ -16,12 +16,20 @@
         method: 'POST',
         isArray: true,
         url: 'api/newbookings/validateoverlap'
+      },
+      newBookingEmail: {
+        method: 'POST',
+        isArray: true,
+        url: 'api/newbookings/newBookingEmail'
       }
     });
 
     angular.extend(ValidateOverlapBooking, {
       requestvalidateoverlap: function (bookings) {
         return this.search(bookings).$promise;
+      },
+      requestNewBookingEmail: function (newBookingData) {
+        return this.newBookingEmail(newBookingData).$promise;
       }
     });
 

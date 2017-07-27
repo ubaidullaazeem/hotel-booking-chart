@@ -8,7 +8,9 @@ var path = require('path'),
   Newbooking = mongoose.model('Newbooking'),
   errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller')),
   async = require('async'),
-  _ = require('lodash');
+  _ = require('lodash'),
+  htmlToPdf = require('html-to-pdf');
+
 
 /**
  * Create a Newbooking
@@ -127,6 +129,23 @@ exports.validateoverlap = function(req, res) {
     }
   });
 };
+
+exports.newBookingEmail = function(req, res) {
+  htmlToPdf.convertHTMLString(req.body.content, 'path/to/destination.pdf',
+    function (error, success) {
+      if (error) {
+        console.log('Oh noes! Errorz!');
+        console.log('error', error);
+      } else {
+        console.log('Woot! Success!');
+        console.log(success);
+      }
+    }
+  );
+
+  console.log('htmlToPdf:', htmlToPdf);
+};
+
 
 /**
  * Search of Newbookings

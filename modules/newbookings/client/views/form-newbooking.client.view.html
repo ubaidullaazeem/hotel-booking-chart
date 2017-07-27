@@ -11,7 +11,7 @@
         </div>
     </div>
     <md-dialog-content>
-      <div class="md-dialog-content">
+      <div class="md-dialog-content" id="printThis">
         <div layout="row" flex>
           <md-input-container flex ng-show="!ui.showMdSelect">
             <label>Halls</label>           
@@ -374,8 +374,8 @@
       </div>
     </md-dialog-content>
 
-    <md-dialog-actions layout="row">  
-      <md-button class="btn btn-next btn-fill btn-rose btn-wd" ng-disabled="bookingForm.$invalid" flex ng-click="submit(bookingForm, mFormActions[0])" type="submit">Print</md-button>
+    <md-dialog-actions layout="row">
+      <md-button class="btn btn-next btn-fill btn-rose btn-wd" flex ng-disabled="bookingForm.$invalid" ng-click="printBooking(bookingForm)" type="submit">Print</md-button>
       <md-button class="btn btn-next btn-fill btn-primary btn-wd" ng-disabled="bookingForm.$invalid" flex ng-click="sendMail()" type="submit">Email</md-button>
       <md-button class="btn btn-next btn-fill btn-info btn-wd" ng-disabled="bookingForm.$invalid" flex ng-click="save(bookingForm)" type="submit">Confirm Booking</md-button>
     </md-dialog-actions>
