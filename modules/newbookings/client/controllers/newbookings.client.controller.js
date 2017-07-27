@@ -226,7 +226,7 @@
         $scope.ui.createMode = false;
         $scope.ui.showMdSelect = false;
       };
-      $scope.disabledSelectedHalls =  _.map($scope.mixins.mSelectedHalls, 'name');
+      $scope.disabledSelectedHalls = CommonService.makeFirstLetterCapitalizeinArray(_.map($scope.mixins.mSelectedHalls, 'name'));
       var hasContainsTaxName = CommonService.hasContainsTaxName($scope.model.taxes);
       if (!hasContainsTaxName) {
         Notification.error({
@@ -482,16 +482,8 @@
       if (res.mSelectedEventType.name === HARDCODE_VALUES[0]) {
         bookingTitle = res.mOtherEvent;
       }
-
-      var event = {
-        _id: res._id,
-        title: bookingTitle.charAt(0).toUpperCase() + bookingTitle.slice(1),
-        start: new Date(res.mStartDateTime),
-        end: new Date(res.mEndDateTime),
-        color: res.mSelectedPaymentStatus.colour.code,
-        stick: true
-      };
-      $mdDialog.hide(event);
+            
+      $mdDialog.hide(res);
     };
 
     function clearPaymentHistory() {

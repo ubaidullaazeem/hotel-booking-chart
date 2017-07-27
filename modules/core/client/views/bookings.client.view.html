@@ -2,9 +2,9 @@
 
 	<div layout="row">
 		<div style="float: right; margin-bottom: 10px;" class="btn-group">
-			<md-button class="md-raised md-primary nonecase" ng-click="changeView('agendaDay', myCalendar)">Day</md-button>
-			<md-button class="md-raised md-primary nonecase" ng-click="changeView('agendaWeek', myCalendar)">Week</md-button>
-			<md-button class="md-raised md-primary nonecase" ng-click="changeView('month', myCalendar)">Month</md-button>
+			<md-button class="md-raised md-primary nonecase" ng-click="changeView(CALENDAR_CHANGE_VIEW[0], myCalendar)">Day</md-button>
+			<md-button class="md-raised md-primary nonecase" ng-click="changeView(CALENDAR_CHANGE_VIEW[1], myCalendar)">Week</md-button>
+			<md-button class="md-raised md-primary nonecase" ng-click="changeView(CALENDAR_CHANGE_VIEW[2], myCalendar)">Month</md-button>
 		</div>
 		
 		<div layout="column">

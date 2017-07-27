@@ -31,6 +31,55 @@
             return _.includes(_.map(taxes, 'name'), CGST, SGST);
         };
 
+        CommonService.makeFirstLetterCapitalizeinArray = function(array) {
+            return array.map(function(str) {
+                return str.charAt(0).toUpperCase() + str.slice(1).replace(/ -/, ':');
+            });
+        };
+
+        CommonService.getPaymentCountFromBookedHall = function(bookedHalls, name) {
+            var paymentFromBookedHall = _.filter(bookedHalls, function(bookedHall) {
+                return bookedHall.mSelectedPaymentStatus.name === name;
+            });
+
+            return paymentFromBookedHall.length;
+        };
+
+        CommonService.getEventTypeCountFromBookedHall = function(bookedHalls, name) {
+            var eventTypeFromBookedHall = _.filter(bookedHalls, function(bookedHall) {
+                return bookedHall.mSelectedEventType.name === name;
+            });
+
+            return eventTypeFromBookedHall.length;
+        };
+
+        CommonService.findBookedHallsByMonth = function(bookedHalls, date) {
+            var monthHallList = _.filter(bookedHalls, function(bookedHall) {
+                var bookedHallStartTime = new Date(bookedHall.mStartDateTime);
+                return ((bookedHallStartTime.getFullYear() === date.getFullYear()) && (bookedHallStartTime.getMonth() === date.getMonth()));
+            });
+
+            return monthHallList;
+        };
+
+        CommonService.findBookedHallsByWeek = function(bookedHalls, date) {
+            var weekHallList = _.filter(bookedHalls, function(bookedHall) {
+                var bookedHallStartTime = new Date(bookedHall.mStartDateTime);
+                return ((bookedHallStartTime.getFullYear() === date.getFullYear()) && (bookedHallStartTime.getMonth() === date.getMonth()) && (getWeekEndOfTheMonth(bookedHallStartTime) === getWeekEndOfTheMonth(date)));
+            });
+
+            return weekHallList;
+        };
+
+        CommonService.findBookedHallsByDay = function(bookedHalls, date) {
+            var dayHallList = _.filter(bookedHalls, function(bookedHall) {
+                var bookedHallStartTime = new Date(bookedHall.mStartDateTime);
+                return ((bookedHallStartTime.getFullYear() === date.getFullYear()) && (bookedHallStartTime.getMonth() === date.getMonth()) && (bookedHallStartTime.getDate() === date.getDate()));
+            });
+
+            return dayHallList;
+        };
+
         function rateSummariesByDateImpl(rateSummaries, date) {
             var summaries = _.filter(rateSummaries, function(summary) {
                 var createdHallEffectiveDate = new Date(summary.effectiveDate);
@@ -39,6 +88,13 @@
 
             return summaries;
         }
+
+        function getWeekEndOfTheMonth(bookedDate) {
+            var date = bookedDate.getDate();
+            var day = bookedDate.getDay();
+            var weekOfMonth = Math.ceil((date - 1 - day) / 7);
+            return weekOfMonth;
+        };
 
         return CommonService;
 

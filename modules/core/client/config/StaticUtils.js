@@ -5,9 +5,10 @@
 	.constant('GOOGLE_CLIENT_ID', '228725713486-eng36vttlj0c1pt3nor8nti4j5i2laqu.apps.googleusercontent.com')
 	.constant('GOOGLE_SCOPES', 'https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/calendar.readonly')
 	.constant('GOOGLE_DISCOVERY_DOCS', ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"])
-	.constant('AUTHORISED_EMAIL', 'kumar@riverstonetech.com')
+	.constant('AUTHORISED_EMAIL', 'ubai.cse@gmail.com')
 	.constant('DATA_BACKGROUND_COLOR', 'rose')
 	.constant('HARDCODE_VALUES', ['others'])
+	.constant('CALENDAR_CHANGE_VIEW', ['agendaDay', 'agendaWeek', 'month'])
 	.constant('CGST', 'cgst')
     .constant('SGST', 'sgst')
 	.constant('API', {

@@ -40,6 +40,13 @@
         controllerAs: 'vm',
         data: {
           pageTitle: 'Bookings'
+        },
+        resolve: {
+          bookedHallsResolve: bookedHallData,
+          eventTypesResolve: eventTypesData,
+          paymentStatusesResolve: paymentStatusesData,
+          taxesResolve: taxesData,
+          hallsResolve: hallsData
         }
       })
       .state('reports', {
@@ -86,44 +93,37 @@
         data: {
           pageTitle: 'Events'
         }
-      })
-      /*.state('not-found', {
-        url: '/not-found',
-        templateUrl: '/modules/core/client/views/404.client.view.html',
-        controller: 'ErrorController',
-        controllerAs: 'vm',
-        params: {
-          message: function($stateParams) {
-            return $stateParams.message;
-          }
-        },
-        data: {
-          ignoreState: true,
-          pageTitle: 'Not Found'
-        }
-      })*/
-      /*.state('bad-request', {
-        url: '/bad-request',
-        templateUrl: '/modules/core/client/views/400.client.view.html',
-        controller: 'ErrorController',
-        controllerAs: 'vm',
-        params: {
-          message: function($stateParams) {
-            return $stateParams.message;
-          }
-        },
-        data: {
-          ignoreState: true,
-          pageTitle: 'Bad Request'
-        }
-      })*/
-      /*.state('forbidden', {
-        url: '/forbidden',
-        templateUrl: '/modules/core/client/views/403.client.view.html',
-        data: {
-          ignoreState: true,
-          pageTitle: 'Forbidden'
-        }
-      })*/;
+      });
+
+
+      bookedHallData.$inject = ['NewbookingsService'];
+
+      function bookedHallData(NewbookingsService) {
+        return NewbookingsService.query();
+      }
+
+      eventTypesData.$inject = ['EventtypesService'];
+
+      function eventTypesData(EventtypesService) {
+        return EventtypesService.query();
+      }
+
+      paymentStatusesData.$inject = ['PaymentstatusesService'];
+
+      function paymentStatusesData(PaymentstatusesService) {
+        return PaymentstatusesService.query();
+      }
+
+      taxesData.$inject = ['TaxesService'];
+
+      function taxesData(TaxesService) {
+        return TaxesService.query();
+      }
+
+      hallsData.$inject = ['HallsService'];
+
+      function hallsData(HallsService) {
+        return HallsService.query();
+      }
   }
 }());
