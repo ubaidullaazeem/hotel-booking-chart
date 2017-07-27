@@ -276,7 +276,10 @@
         $scope.mixins.mStartDateTime = new Date($scope.eventTime.mStartToServer);
         $scope.mixins.mEndDateTime = new Date($scope.eventTime.mEndToServer);  
         $scope.mixins.mExtraStartDateTime = addExtraHours($scope.eventTime.mStartToServer, 3);
-        $scope.mixins.mExtraEndDateTime = addExtraHours($scope.eventTime.mEndToServer, 3);    
+        $scope.mixins.mExtraEndDateTime = addExtraHours($scope.eventTime.mEndToServer, 3); 
+        $scope.mixins.date = new Date($scope.eventTime.mEndToServer).getDate();  
+        $scope.mixins.month = new Date($scope.eventTime.mEndToServer).getMonth() + 1; 
+        $scope.mixins.year = new Date($scope.eventTime.mEndToServer).getFullYear();   
       
         if($scope.ui.createMode) {
           $scope.mixins.mPaymentHistories.push($scope.mPaymentHistory);
@@ -291,8 +294,7 @@
        $scope.mixins.mSelectedHalls = _.uniqBy($scope.mixins.mSelectedHalls, '_id');
 
         var gmtDateTime = {
-          startGMT: moment(selectedDate).startOf('day').toDate().toISOString(),
-          endGMT: moment(selectedDate).endOf('day').toDate().toISOString()
+          selectedDate: $scope.ui.mSelectedDateToDisplay
         };
 
         var overlap = false;
@@ -307,7 +309,7 @@
           var mapEntriesBySelectedHalls = _.map(bookedHallsOnTheDay, 'mSelectedHalls');          
           angular.forEach(bookedHallsOnTheDay, function(bookedHallOnTheDay) {
             if (!overlap) {              
-              if (($scope.eventTime.mStartToServer <= bookedHallOnTheDay.mEndDateTime) && ($scope.eventTime.mEndToServer >= bookedHallOnTheDay.mStartDateTime)) {
+              if (($scope.eventTime.mStartToServer <= bookedHallOnTheDay.mExtraEndDateTime) && ($scope.eventTime.mEndToServer >= bookedHallOnTheDay.mExtraStartDateTime)) {
                 angular.forEach(mapEntriesBySelectedHalls, function(bookedHall) {
                   if (!overlap) {
                     var mapEntrySelectedHallByName = _.map(bookedHall, 'name');
