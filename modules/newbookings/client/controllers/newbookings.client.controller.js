@@ -307,31 +307,30 @@
 
     // Save Newbooking
    // Save Newbooking
-    $scope.save = function(form) {
+  $scope.save = function(form) {
 
       if (form.$valid) 
       {
-        if ($scope.mixins.mSelectedPaymentStatus.name.toLowerCase() == 'fully paid' && $scope.mixins.mBalanceDue !== 0)
-        {
+        if (($scope.mixins.mSelectedPaymentStatus.name.toLowerCase() == 'fully paid' && $scope.mixins.mBalanceDue !== 0) || $scope.mixins.mSelectedPaymentStatus.name.toLowerCase() == 'advance paid' && $scope.mixins.mBalanceDue <= 0) {
           Notification.error({
-              message: "Please check the payment status and payment received",
-              title: '<i class="glyphicon glyphicon-remove"></i> Payment Status Error !!!'
-            });
+            message: "Please check the payment status and payment received",
+            title: '<i class="glyphicon glyphicon-remove"></i> Payment Status Error !!!'
+          });
 
           return;
         }
-        /*else if ($scope.mixins.mSelectedPaymentStatus.name.toLowerCase() == 'advance paid' && $scope.mixins.mBalanceDue <= 0)
-        {
 
-        }*/
+        if ($scope.mixins.mBalanceDue < 0) {
+          Notification.error({
+            message: "Please enter valid data.",
+            title: '<i class="glyphicon glyphicon-remove"></i> Error !!!'
+          });
 
-        $scope.mixins.mStartDateTime = new Date($scope.eventTime.mStartToServer);
-        $scope.mixins.mEndDateTime = new Date($scope.eventTime.mEndToServer);  
-        $scope.mixins.mExtraStartDateTime = addExtraHours($scope.eventTime.mStartToServer, 3);
-        $scope.mixins.mExtraEndDateTime = addExtraHours($scope.eventTime.mEndToServer, 3); 
-        $scope.mixins.date = new Date($scope.eventTime.mEndToServer).getDate();  
-        $scope.mixins.month = new Date($scope.eventTime.mEndToServer).getMonth() + 1; 
-        $scope.mixins.year = new Date($scope.eventTime.mEndToServer).getFullYear();   
+          return;
+        }
+
+        $scope.mixins.mStartDateTime = $scope.eventTime.mStartToServer;
+        $scope.mixins.mEndDateTime = $scope.eventTime.mEndToServer;  
       
         if($scope.ui.createMode) {
           $scope.mixins.mPaymentHistories.push($scope.mPaymentHistory);
@@ -340,13 +339,17 @@
         }
 
         // Calculate Prorate Charges
-
         calculateProrateCharges();
 
-       $scope.mixins.mSelectedHalls = _.uniqBy($scope.mixins.mSelectedHalls, '_id');
+        $scope.mixins.mSelectedHalls = _.uniqBy($scope.mixins.mSelectedHalls, '_id');
 
+        var startOfTheDayInLocal = new Date(selectedDate);
+        startOfTheDayInLocal.setHours(0, 0, 0, 0);
+        var endOfTheDayInLocal = new Date(selectedDate);
+        endOfTheDayInLocal.setHours(23, 59, 59, 999);
         var gmtDateTime = {
-          selectedDate: $scope.ui.mSelectedDateToDisplay
+          startGMT: new Date(startOfTheDayInLocal.toUTCString()).toISOString(),
+          endGMT: new Date(endOfTheDayInLocal.toUTCString()).toISOString()
         };
 
         var overlap = false;
@@ -361,7 +364,7 @@
           var mapEntriesBySelectedHalls = _.map(bookedHallsOnTheDay, 'mSelectedHalls');          
           angular.forEach(bookedHallsOnTheDay, function(bookedHallOnTheDay) {
             if (!overlap) {              
-              if (($scope.eventTime.mStartToServer <= bookedHallOnTheDay.mExtraEndDateTime) && ($scope.eventTime.mEndToServer >= bookedHallOnTheDay.mExtraStartDateTime)) {
+              if (($scope.eventTime.mStartToServer <= bookedHallOnTheDay.mEndDateTime) && ($scope.eventTime.mEndToServer >= bookedHallOnTheDay.mStartDateTime)) {
                 angular.forEach(mapEntriesBySelectedHalls, function(bookedHall) {
                   if (!overlap) {
                     var mapEntrySelectedHallByName = _.map(bookedHall, 'name');
@@ -476,7 +479,7 @@
         };
 
       };
-    };
+  };
 
     function updateCalendarData(res)
     {

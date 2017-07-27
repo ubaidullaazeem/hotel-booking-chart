@@ -115,11 +115,17 @@ exports.list = function(req, res) {
  */
 
 exports.validateoverlap = function(req, res) {
-  var selectedDate = new Date(req.body.selectedDate);
-  var date = selectedDate.getDate();
-  var month = selectedDate.getMonth() + 1;
-  var year = selectedDate.getFullYear();
-  Newbooking.find({ 'date': date, 'month': month, 'year': year }, function(err, entries) {
+  Newbooking.find({
+    $and: [{
+      mStartDateTime: {
+        $gte: req.body.startGMT
+      }
+    }, {
+      mEndDateTime: {
+        $lte: req.body.endGMT
+      }
+    }]
+  }, function(err, entries) {
     if (err) {
       return res.status(400).send({
         message: errorHandler.getErrorMessage(err)
