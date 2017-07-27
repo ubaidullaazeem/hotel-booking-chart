@@ -12,6 +12,7 @@
 	.constant('CGST', 'cgst')
     .constant('SGST', 'sgst')
     .constant('CLEANING_HOURS', 3)
+    .constant('PAYMENT_STATUS', ['advance paid', 'fully paid'])
 	.constant('API', {
        	'CALENDAR_LIST_URL' : 'https://www.googleapis.com/calendar/v3/users/me/calendarList',
        	'CALENDAR_EVENT_LIST_URL' : 'https://www.googleapis.com/calendar/v3/calendars/',

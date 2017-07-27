@@ -6,9 +6,9 @@
     .module('newbookings')
     .controller('NewbookingsController', NewbookingsController);
 
-  NewbookingsController.$inject = ['AuthenticationService', 'CGST', 'SGST', 'DATA_BACKGROUND_COLOR', 'EmailBookingServices', 'HARDCODE_VALUES', '$filter', '$scope', '$state', 'selectedEvent', '$mdDialog', '$templateRequest', '$sce', 'NewbookingsService', 'selectedDate', 'HallsService', 'EventtypesService', 'TaxesService', 'PaymentstatusesService', 'Notification', '$mdpTimePicker', '$mdpDatePicker', 'PAY_MODES', 'CommonService', 'ValidateOverlapBookingServices'];
+  NewbookingsController.$inject = ['AuthenticationService', 'CGST', 'SGST', 'DATA_BACKGROUND_COLOR', 'EmailBookingServices', 'HARDCODE_VALUES', 'PAYMENT_STATUS', '$filter', '$scope', '$state', 'selectedEvent', '$mdDialog', '$templateRequest', '$sce', 'NewbookingsService', 'selectedDate', 'HallsService', 'EventtypesService', 'TaxesService', 'PaymentstatusesService', 'Notification', '$mdpTimePicker', '$mdpDatePicker', 'PAY_MODES', 'CommonService', 'ValidateOverlapBookingServices'];
 
-  function NewbookingsController(AuthenticationService, CGST, SGST, DATA_BACKGROUND_COLOR, EmailBookingServices, HARDCODE_VALUES, $filter, $scope, $state, selectedEvent, $mdDialog, $templateRequest, $sce, NewbookingsService, selectedDate, HallsService, EventtypesService, TaxesService, PaymentstatusesService, Notification, $mdpTimePicker, $mdpDatePicker, PAY_MODES, CommonService, ValidateOverlapBookingServices) {
+  function NewbookingsController(AuthenticationService, CGST, SGST, DATA_BACKGROUND_COLOR, EmailBookingServices, HARDCODE_VALUES, PAYMENT_STATUS, $filter, $scope, $state, selectedEvent, $mdDialog, $templateRequest, $sce, NewbookingsService, selectedDate, HallsService, EventtypesService, TaxesService, PaymentstatusesService, Notification, $mdpTimePicker, $mdpDatePicker, PAY_MODES, CommonService, ValidateOverlapBookingServices) {
     $scope.DATA_BACKGROUND_COLOR = DATA_BACKGROUND_COLOR;
 
     $scope.ui = {
@@ -21,7 +21,7 @@
       mMinActualElectricityCharges: 0,
       createMode: true,
       showMdSelect: true,
-      mailsending: false,
+      mailsending: false
     }
 
     $scope.model = {
@@ -204,7 +204,7 @@
       return '<html><head><link rel="stylesheet" type="text/css" href="style.css" /></head><body onload="window.print()"><html><head> <title>Mirth</title></head><body><html><head> <title>Mirth</title></head><body><div><div align="center"><img src="/modules/core/client/img/logo-bw.png" /></div><h2 align="center"><u>BOOKING DETAILS</u></h2><table style="width: 100%;" align="center"> <tbody> <tr> <td style="width: 50%;"> Name: </td> <td style="width: 50%;">' +  $scope.mixins.mName + ' </td> </tr> <tr> <td style="width: 50%;"> Address </td> <td style="width: 50%;"> ' +  $scope.mixins.mAddress + ' </td> </tr> <tr> <td style="width: 50%;"> Phone No./Mobile No.: </td> <td style="width: 50%;"> ' + $scope.mixins.mPhone + '</td> </tr> <tr> <td style="width: 50%;"> Email I.D: </td> <td style="width: 50%;"> ' + $scope.mixins.mEmail + '</td> </tr> <tr> <td style="width: 50%;"> Photo ID of the Person: </td> <td style="width: 50%;"> ' + $scope.mixins.mPhotoId + '</td> </tr> <tr> <td style="width: 50%;"> Purpose of which Auditorium required: </td> <td style="width: 50%;"> ' + $scope.mixins.mSelectedHalls[0].name + ' </td> </tr> <tr> <td style="width: 50%;"> Date/Time of Function: </td> <td style="width: 50%;"> ' + $scope.mixins.mSelectedEventType.createdAt +' </td> </tr> <tr> <td style="width: 50%;"> Mode of Payment Cheque/DD/Cash/NEFT: </td> <td style="width: 50%;"> ' + $scope.mPaymentHistory.paymentMode + '</td> </tr> <tr> <td style="width: 50%;"> Halls: </td> <td style="width: 50%;"> ' + $scope.mixins.mSelectedHalls.name + '</td> </tr> <tr> <td style="width: 50%;"> Description: </td> <td style="width: 50%;"> ' + $scope.mixins.mDescription + ' </td> </tr></tbody></table><h2 align="center"><u>DETAILS OF CHARGES</u></h2><table style="width: 100%;" align="center"> <tbody> <tr> <td style="width: 100%;" colspan="2"> <u>Service Code 997212:</u> </td> </tr> <tr> <td style="width: 50%;"> Rent(Ruby, Opal) + Electricity/Cleaning/Generator/Miscellaneous charges: </td> <td style="width: 50%;"> ' + $scope.mixins.mElectricityCharges  + ' </td> </tr> <tr> <td style="width: 50%;"> CGST @ 9%: </td> <td style="width: 50%;"> ' + $scope.mixins.mCGST + ' </td> </tr> <tr> <td style="width: 50%;"> SGST @ 9%: </td> <td style="width: 50%;"> ' + $scope.mixins.mSGST + '</td> </tr> <tr> <td style="width: 50%;"> Grand Total: </td> <td style="width: 50%;"> ' + $scope.mixins.mGrandTotal + '</td> </tr> <tr> <td style="width: 50%;"> Advance Received: </td> <td style="width: 50%;"> ' + $scope.mixins.mBasicCost + '</td> </tr> <tr> <td style="width: 50%;"> Balance Due: </td> <td style="width: 50%;"> ' + $scope.mixins.mBalanceDue + '</td> </tr> </tbody></table><br/><br/><br/><br/><table style="width:100%"><tbody><tr><td style="width: 33%; text-align: left">Signature of the Manager</td><td style="width: 67%; text-align: right"> Signature of the Guest</td></tr></tbody></table></div><br/><br/><br/>' + $scope.termsAndConditions + '</body></html></body></html></body></html>';
     }
 
-    $scope.sendMail = function() {
+$scope.sendMail = function() {
       $scope.ui.mailsending = true;
       var emailContent = {
         content: getNewBookingData(),
@@ -324,7 +324,7 @@
 
       if (form.$valid) 
       {
-        if (($scope.mixins.mSelectedPaymentStatus.name.toLowerCase() == 'fully paid' && $scope.mixins.mBalanceDue !== 0) || $scope.mixins.mSelectedPaymentStatus.name.toLowerCase() == 'advance paid' && $scope.mixins.mBalanceDue <= 0) {
+        if (($scope.mixins.mSelectedPaymentStatus.name.toLowerCase() == PAYMENT_STATUS[1] && $scope.mixins.mBalanceDue !== 0) || $scope.mixins.mSelectedPaymentStatus.name.toLowerCase() == PAYMENT_STATUS[0] && $scope.mixins.mBalanceDue <= 0) {
           Notification.error({
             message: "Please check the payment status and payment received",
             title: '<i class="glyphicon glyphicon-remove"></i> Payment Status Error !!!'
@@ -365,36 +365,37 @@
           endGMT: new Date(endOfTheDayInLocal.toUTCString()).toISOString()
         };
 
-        var overlap = false;
-        var mapSelectedHallsByName = _.map($scope.mixins.mSelectedHalls, 'name');        
+        ValidateOverlapBookingServices.requestvalidateoverlap(gmtDateTime).then(function(eventsOfTheDay) {
 
-        ValidateOverlapBookingServices.requestvalidateoverlap(gmtDateTime).then(function(bookedHallsOnTheDay) {
-          if(!$scope.ui.createMode) {
-            bookedHallsOnTheDay = _.reject(bookedHallsOnTheDay, function(hallonday) {
+          if (!$scope.ui.createMode) {
+            eventsOfTheDay = _.reject(eventsOfTheDay, function(hallonday) {
               return hallonday._id === $scope.mixins._id;
             });
           }
-          var mapEntriesBySelectedHalls = _.map(bookedHallsOnTheDay, 'mSelectedHalls');          
-          angular.forEach(bookedHallsOnTheDay, function(bookedHallOnTheDay) {
-            if (!overlap) {              
-              if (($scope.eventTime.mStartToServer <= bookedHallOnTheDay.mEndDateTime) && ($scope.eventTime.mEndToServer >= bookedHallOnTheDay.mStartDateTime)) {
-                angular.forEach(mapEntriesBySelectedHalls, function(bookedHall) {
-                  if (!overlap) {
-                    var mapEntrySelectedHallByName = _.map(bookedHall, 'name');
-                    var commonHallsFromArrays = _.intersection(mapEntrySelectedHallByName, mapSelectedHallsByName);
-                    if (commonHallsFromArrays.length > 0) {
-                      overlap = true;
-                      Notification.error({
-                        message: "Halls '" + commonHallsFromArrays + "' are already booked on the date between startdate: " + convertDate($scope.eventTime.mStartToServer) + " enddate: " + convertDate($scope.eventTime.mEndToServer),
-                        title: '<i class="glyphicon glyphicon-remove"></i> Hall Booking Overlap !!!'
-                      });
-                    };
-                  }
+
+          var isEventOverlaps = false;
+          for (var i = 0; i < eventsOfTheDay.length; i++) {
+            var eventItem = eventsOfTheDay[i];
+
+            var commonHallIdsArray = _.intersection(_.map(eventItem.mSelectedHalls, '_id'), _.map($scope.mixins.mSelectedHalls, '_id'));
+            var commonHallNamesArray = _.intersection(_.map(eventItem.mSelectedHalls, 'name'), _.map($scope.mixins.mSelectedHalls, 'name'));
+
+            if (commonHallIdsArray.length > 0) {
+              //already booked hall selected
+              if (($scope.eventTime.mStartToServer < addHours(eventItem.mEndDateTime, 3)) && ($scope.eventTime.mEndToServer > subtractHours(eventItem.mStartDateTime, 3))) { // overlaps
+                isEventOverlaps = true;
+
+                Notification.error({
+                  message: "Halls '" + commonHallNamesArray + "' are already booked on the date between startdate: " + convertDate($scope.eventTime.mStartToServer) + " enddate: " + convertDate($scope.eventTime.mEndToServer),
+                  title: '<i class="glyphicon glyphicon-remove"></i> Hall Booking Overlap !!!'
                 });
+
+                break;
               }
             }
-          });
-          if (!overlap) {
+          }
+
+          if (!isEventOverlaps) {
             if ($scope.mixins._id) {
               NewbookingsService.update($scope.mixins, successCallback, errorCallback);
             } else {
@@ -553,7 +554,7 @@
         bookingTitle = res.mOtherEvent;
       }
             
-      $mdDialog.hide(res);
+      //$mdDialog.hide(res);
     };
 
     function clearPaymentHistory() {
@@ -599,10 +600,27 @@
      * Add hours
      */
 
-    function addExtraHours(date, hours) {
-      var dateTime = new Date(date);
-      var addExtraTime = dateTime.setHours(dateTime.getHours() + hours);
-      return addExtraTime;
+    function addHours(dateTime, hours) {
+
+      var addedLocalTime = new Date(dateTime);
+      addedLocalTime.setHours(addedLocalTime.getHours() + hours);
+
+      var addedGMT = new Date(addedLocalTime.toUTCString()).toISOString();
+      return addedGMT;
+
+    }
+
+    /**
+     * Subtract hours
+     */
+
+    function subtractHours(dateTime, hours) {     
+
+      var subtractedLocalTime = new Date(dateTime);
+      subtractedLocalTime.setHours(subtractedLocalTime.getHours() - hours);
+
+      var subtractedGMT = new Date(subtractedLocalTime.toUTCString()).toISOString();
+      return subtractedGMT;
     }
 
     function calculateProrateCharges() {
