@@ -1,16 +1,99 @@
-<!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
-
-<head>
-  <title></title>
-</head>
-
-<body>
-  <p>Hello {{customerName}},</p>
-  <p>We would like to wish you a happy!</p>
-   <br />
-  <p>Regards,</p>
-  <p>Mirth Support Team</p>
-</body>
-
+<html>
+   <head>
+      <title>Mirth</title>
+   </head>
+   <body>
+      <body>
+         <div>
+            <div align="center"><img src="{{mirthLogo}}" /></div>
+            <h2 align="center"><u>BOOKING DETAILS</u></h2>
+            <table style="width: 100%;" align="center">
+               <tbody>
+                  <tr>
+                     <td style="width: 50%;"> Name: </td>
+                     <td style="width: 50%;"> {{ newBooking.mName }} </td>
+                  </tr>
+                  <tr>
+                     <td style="width: 50%;"> Address </td>
+                     <td style="width: 50%;"> {{ newBooking.mAddress }} </td>
+                  </tr>
+                  <tr>
+                     <td style="width: 50%;"> Phone No./Mobile No.: </td>
+                     <td style="width: 50%;"> {{ newBooking.mPhone }} </td>
+                  </tr>
+                  <tr>
+                     <td style="width: 50%;"> Email I.D: </td>
+                     <td style="width: 50%;"> {{ newBooking.mEmail }}</td>
+                  </tr>
+                  <tr>
+                     <td style="width: 50%;"> Photo ID of the Person: </td>
+                     <td style="width: 50%;"> {{ newBooking.mPhotoId }}</td>
+                  </tr>
+                  <tr>
+                     <td style="width: 50%;"> Purpose of which Auditorium required: </td>
+                     <td style="width: 50%;"></td>
+                  </tr>
+                  <tr>
+                     <td style="width: 50%;"> Date/Time of Function: </td>
+                     <td style="width: 50%;"> {{ newBooking.mSelectedEventType.createdAt }} </td>
+                  </tr>
+                  <tr>
+                     <td style="width: 50%;"> Mode of Payment Cheque/DD/Cash/NEFT: </td>
+                     <td style="width: 50%;"> </td>
+                  </tr>
+                  <tr>
+                     <td style="width: 50%;"> Halls: </td>
+                     <td style="width: 50%;"> {{ newBooking.mSelectedHalls.name }} </td>
+                  </tr>
+                  <tr>
+                     <td style="width: 50%;"> Description: </td>
+                     <td style="width: 50%;"> {{ newBooking.mDescription }} </td>
+                  </tr>
+               </tbody>
+            </table>
+            <h2 align="center"><u>DETAILS OF CHARGES</u></h2>
+            <table style="width: 100%;" align="center">
+               <tbody>
+                  <tr>
+                     <td style="width: 100%;" colspan="2"> <u>Service Code 997212:</u> </td>
+                  </tr>
+                  <tr>
+                     <td style="width: 50%;"> Rent(Ruby, Opal) + Electricity/Cleaning/Generator/Miscellaneous charges: </td>
+                     <td style="width: 50%;"> {{ newBooking.mElectricityCharges  }} </td>
+                  </tr>
+                  <tr>
+                     <td style="width: 50%;"> CGST @ 9%: </td>
+                     <td style="width: 50%;"> {{ newBooking.mCGST }} </td>
+                  </tr>
+                  <tr>
+                     <td style="width: 50%;"> SGST @ 9%: </td>
+                     <td style="width: 50%;"> {{ newBooking.mSGST }} </td>
+                  </tr>
+                  <tr>
+                     <td style="width: 50%;"> Grand Total: </td>
+                     <td style="width: 50%;"> {{ newBooking.mGrandTotal }} </td>
+                  </tr>
+                  <tr>
+                     <td style="width: 50%;"> Advance Received: </td>
+                     <td style="width: 50%;"> {{ newBooking.mBasicCost }}</td>
+                  </tr>
+                  <tr>
+                     <td style="width: 50%;"> Balance Due: </td>
+                     <td style="width: 50%;"> {{ newBooking.mBalanceDue }}</td>
+                  </tr>
+               </tbody>
+            </table>
+            <br/><br/><br/><br/>
+            <table style="width:100%">
+               <tbody>
+                  <tr>
+                     <td style="width: 33%; text-align: left">Signature of the Manager</td>
+                     <td style="width: 67%; text-align: right"> Signature of the Guest</td>
+                  </tr>
+               </tbody>
+            </table>
+         </div>
+   </body>
+   </body>
 </html>
+

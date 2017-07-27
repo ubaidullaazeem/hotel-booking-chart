@@ -160,7 +160,8 @@ exports.sendEmail = function(req, res, next) {
       var templateURL = 'modules/newbookings/server/templates/customer-booking-email';
 
       res.render(path.resolve(templateURL), {
-        customerName: req.body.name,
+        mirthLogo: baseUrl + '/modules/core/client/img/logo-bw.png',
+        newBooking: req.body.newBooking,
         appName: config.app.title,
         currentTime: new Date()
       }, function(err, emailHTML) {
@@ -171,7 +172,7 @@ exports.sendEmail = function(req, res, next) {
     function(emailHTML, req, done) {
       var path = 'modules/newbookings/server/templates/booking-details.pdf';
       var mailOptions = {
-        to: req.body.email,
+        to: req.body.newBooking.mEmail,
         from: config.mailer.from,
         subject: req.body.subject,
         html: emailHTML,
