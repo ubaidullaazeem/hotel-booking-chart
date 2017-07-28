@@ -168,7 +168,8 @@ exports.sendEmail = function(req, res, next) {
         totalCharges:  req.body.totalCharges,
         halls: req.body.halls,
         appName: config.app.title,
-        paymentMode: req.body.paymentMode,
+        paymentMode: req.body.paymentMode !== null ? req.body.paymentMode : '--',
+        eventDateTime: req.body.eventDateTime !== null ? req.body.eventDateTime : '-',
         currentTime: new Date()
       }, function(err, emailHTML) {
         done(err, emailHTML, req);
