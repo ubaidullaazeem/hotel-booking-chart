@@ -144,6 +144,7 @@ exports.validateoverlap = function(req, res) {
  * Email template to Booking Report
  */
 exports.sendEmail = function(req, res, next) {
+  var newBooking = req.body.newBooking;
   async.waterfall([
 
     function(done) {
@@ -161,8 +162,13 @@ exports.sendEmail = function(req, res, next) {
 
       res.render(path.resolve(templateURL), {
         mirthLogo: baseUrl + '/modules/core/client/img/logo-bw.png',
-        newBooking: req.body.newBooking,
+        newBooking: newBooking,
+        mAddress: newBooking.mAddress !== null ? newBooking.mAddress : '--',
+        mPhotoId: newBooking.mPhotoId !== null ? newBooking.mPhotoId : '--',
+        totalCharges:  req.body.totalCharges,
+        halls: req.body.halls,
         appName: config.app.title,
+        paymentMode: req.body.paymentMode,
         currentTime: new Date()
       }, function(err, emailHTML) {
         done(err, emailHTML, req);
@@ -172,7 +178,7 @@ exports.sendEmail = function(req, res, next) {
     function(emailHTML, req, done) {
       var path = 'modules/newbookings/server/templates/booking-details.pdf';
       var mailOptions = {
-        to: req.body.newBooking.mEmail,
+        to: newBooking.mEmail,
         from: config.mailer.from,
         subject: req.body.subject,
         html: emailHTML,

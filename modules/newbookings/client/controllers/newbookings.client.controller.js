@@ -6,9 +6,9 @@
     .module('newbookings')
     .controller('NewbookingsController', NewbookingsController);
 
-  NewbookingsController.$inject = ['AuthenticationService', 'CGST', 'SGST', 'DATA_BACKGROUND_COLOR', 'EmailBookingServices', 'HARDCODE_VALUES', 'PAYMENT_STATUS', '$filter', '$scope', '$state', 'selectedEvent', '$mdDialog', '$templateRequest', '$sce', 'NewbookingsService', 'selectedDate', 'HallsService', 'EventtypesService', 'TaxesService', 'PaymentstatusesService', 'Notification', '$mdpTimePicker', '$mdpDatePicker', 'PAY_MODES', 'CommonService', 'ValidateOverlapBookingServices'];
+  NewbookingsController.$inject = ['AuthenticationService', 'CGST', 'SGST', 'DATA_BACKGROUND_COLOR', 'EmailBookingServices', 'HARDCODE_VALUES', 'PAYMENT_STATUS', '$filter', '$scope', '$state', 'selectedEvent', '$location', '$mdDialog', '$templateRequest', '$sce', 'NewbookingsService', 'selectedDate', 'HallsService', 'EventtypesService', 'TaxesService', 'PaymentstatusesService', 'Notification', '$mdpTimePicker', '$mdpDatePicker', 'PAY_MODES', 'CommonService', 'ValidateOverlapBookingServices'];
 
-  function NewbookingsController(AuthenticationService, CGST, SGST, DATA_BACKGROUND_COLOR, EmailBookingServices, HARDCODE_VALUES, PAYMENT_STATUS, $filter, $scope, $state, selectedEvent, $mdDialog, $templateRequest, $sce, NewbookingsService, selectedDate, HallsService, EventtypesService, TaxesService, PaymentstatusesService, Notification, $mdpTimePicker, $mdpDatePicker, PAY_MODES, CommonService, ValidateOverlapBookingServices) {
+  function NewbookingsController(AuthenticationService, CGST, SGST, DATA_BACKGROUND_COLOR, EmailBookingServices, HARDCODE_VALUES, PAYMENT_STATUS, $filter, $scope, $state, selectedEvent, $location, $mdDialog, $templateRequest, $sce, NewbookingsService, selectedDate, HallsService, EventtypesService, TaxesService, PaymentstatusesService, Notification, $mdpTimePicker, $mdpDatePicker, PAY_MODES, CommonService, ValidateOverlapBookingServices) {
     $scope.DATA_BACKGROUND_COLOR = DATA_BACKGROUND_COLOR;
 
     $scope.ui = {
@@ -181,7 +181,7 @@
           var printContents = document.getElementById("printSection").innerHTML;
           var popupWin = window.open('', '_blank', 'width=300,height=300');
           popupWin.document.open();
-          popupWin.document.write(getNewBookingData());
+          popupWin.document.write(getNewBookingData(form));
           popupWin.document.close();
       }
     }
@@ -200,27 +200,43 @@
       $printSection.appendChild(domClone);
     }
 
-    function getNewBookingData() {
-      return '<html><head><link rel="stylesheet" type="text/css" href="style.css" /></head><body onload="window.print()"><html><head> <title>Mirth</title></head><body><html><head> <title>Mirth</title></head><body><div><div align="center"><img src="/modules/core/client/img/logo-bw.png" /></div><h2 align="center"><u>BOOKING DETAILS</u></h2><table style="width: 100%;" align="center"> <tbody> <tr> <td style="width: 50%;"> Name: </td> <td style="width: 50%;">' +  $scope.mixins.mName + ' </td> </tr> <tr> <td style="width: 50%;"> Address </td> <td style="width: 50%;"> ' +  $scope.mixins.mAddress + ' </td> </tr> <tr> <td style="width: 50%;"> Phone No./Mobile No.: </td> <td style="width: 50%;"> ' + $scope.mixins.mPhone + '</td> </tr> <tr> <td style="width: 50%;"> Email I.D: </td> <td style="width: 50%;"> ' + $scope.mixins.mEmail + '</td> </tr> <tr> <td style="width: 50%;"> Photo ID of the Person: </td> <td style="width: 50%;"> ' + $scope.mixins.mPhotoId + '</td> </tr> <tr> <td style="width: 50%;"> Purpose of which Auditorium required: </td> <td style="width: 50%;"> ' + $scope.mixins.mSelectedHalls[0].name + ' </td> </tr> <tr> <td style="width: 50%;"> Date/Time of Function: </td> <td style="width: 50%;"> ' + $scope.mixins.mSelectedEventType.createdAt +' </td> </tr> <tr> <td style="width: 50%;"> Mode of Payment Cheque/DD/Cash/NEFT: </td> <td style="width: 50%;"> ' + $scope.mPaymentHistory.paymentMode + '</td> </tr> <tr> <td style="width: 50%;"> Halls: </td> <td style="width: 50%;"> ' + $scope.mixins.mSelectedHalls.name + '</td> </tr> <tr> <td style="width: 50%;"> Description: </td> <td style="width: 50%;"> ' + $scope.mixins.mDescription + ' </td> </tr></tbody></table><h2 align="center"><u>DETAILS OF CHARGES</u></h2><table style="width: 100%;" align="center"> <tbody> <tr> <td style="width: 100%;" colspan="2"> <u>Service Code 997212:</u> </td> </tr> <tr> <td style="width: 50%;"> Rent(Ruby, Opal) + Electricity/Cleaning/Generator/Miscellaneous charges: </td> <td style="width: 50%;"> ' + $scope.mixins.mElectricityCharges  + ' </td> </tr> <tr> <td style="width: 50%;"> CGST @ 9%: </td> <td style="width: 50%;"> ' + $scope.mixins.mCGST + ' </td> </tr> <tr> <td style="width: 50%;"> SGST @ 9%: </td> <td style="width: 50%;"> ' + $scope.mixins.mSGST + '</td> </tr> <tr> <td style="width: 50%;"> Grand Total: </td> <td style="width: 50%;"> ' + $scope.mixins.mGrandTotal + '</td> </tr> <tr> <td style="width: 50%;"> Advance Received: </td> <td style="width: 50%;"> ' + $scope.mixins.mBasicCost + '</td> </tr> <tr> <td style="width: 50%;"> Balance Due: </td> <td style="width: 50%;"> ' + $scope.mixins.mBalanceDue + '</td> </tr> </tbody></table><br/><br/><br/><br/><table style="width:100%"><tbody><tr><td style="width: 33%; text-align: left">Signature of the Manager</td><td style="width: 67%; text-align: right"> Signature of the Guest</td></tr></tbody></table></div><br/><br/><br/>' + $scope.termsAndConditions + '</body></html></body></html></body></html>';
+    function getNewBookingData(form) {
+      var baseUrl = $location.$$absUrl.replace($location.$$url, '');
+      var halls = _.map($scope.mixins.mSelectedHalls, 'name').join(',');
+
+      return '<html><head><link rel="stylesheet" type="text/css" href="style.css" /></head><body onload="window.print()"><html><head> <title>Mirth</title></head><body><html><head> <title>Mirth</title></head><body><div style="border-style: solid; padding: 10px;"><div align="center"><div align="center"><img src="' + baseUrl + '/modules/core/client/img/logo-bw.png" /></div><h2 align="center"><u>BOOKING DETAILS</u></h2><table style="width: 100%;" align="center"> <tbody> <tr> <td style="width: 50%;"> Name: </td> <td style="width: 50%;">' +  getValidValue($scope.mixins.mName) + ' </td> </tr> <tr> <td style="width: 50%;"> Address </td> <td style="width: 50%;"> ' +  getValidValue($scope.mixins.mAddress) + ' </td> </tr> <tr> <td style="width: 50%;"> Phone No./Mobile No.: </td> <td style="width: 50%;"> ' + getValidValue($scope.mixins.mPhone) + '</td> </tr> <tr> <td style="width: 50%;"> Email I.D: </td> <td style="width: 50%;"> ' + getValidValue($scope.mixins.mEmail) + '</td> </tr> <tr> <td style="width: 50%;"> Photo ID of the Person: </td> <td style="width: 50%;"> ' + getValidValue($scope.mixins.mPhotoId) + '</td> </tr> <tr> <td style="width: 50%;"> Purpose of which Auditorium required: </td> <td style="width: 50%;"> ' + getValidValue(halls) + ' </td> </tr> <tr> <td style="width: 50%;"> Date/Time of Function: </td> <td style="width: 50%;"> ' + getValidValue(convertDate($scope.mixins.mSelectedEventType.createdAt)) +' </td> </tr> <tr> <td style="width: 50%;"> Mode of Payment Cheque/DD/Cash/NEFT: </td> <td style="width: 50%;"> ' + getValidValue($scope.mPaymentHistory.paymentMode) + '</td> </tr> <tr> <td style="width: 50%;"> Halls: </td> <td style="width: 50%;"> ' + getValidValue(halls) + '</td> </tr> <tr> <td style="width: 50%;"> Description: </td> <td style="width: 50%;"> ' + getValidValue($scope.mixins.mDescription) + ' </td> </tr></tbody></table><h2 align="center"><u>DETAILS OF CHARGES</u></h2><table style="width: 100%;" align="center"> <tbody> <tr> <td style="width: 100%;" colspan="2"> <u>Service Code 997212:</u> </td> </tr> <tr> <td style="width: 50%;"> Rent(Ruby, Opal) + Electricity/Cleaning/Generator/Miscellaneous charges: </td> <td style="width: 50%;"> ' + getTotalCharges()  + ' </td> </tr> <tr> <td style="width: 50%;"> CGST @ 9%: </td> <td style="width: 50%;"> ' + getValidValue($scope.mixins.mCGST) + ' </td> </tr> <tr> <td style="width: 50%;"> SGST @ 9%: </td> <td style="width: 50%;"> ' + getValidValue($scope.mixins.mSGST) + '</td> </tr> <tr> <td style="width: 50%;"> Grand Total: </td> <td style="width: 50%;"> ' + getValidValue($scope.mixins.mGrandTotal) + '</td> </tr> <tr> <td style="width: 50%;"> Advance Received: </td> <td style="width: 50%;"> ' + getValidValue($scope.mixins.mBasicCost) + '</td> </tr> <tr> <td style="width: 50%;"> Balance Due: </td> <td style="width: 50%;"> ' + getValidValue($scope.mixins.mBalanceDue) + '</td> </tr> </tbody></table><br/><br/><br/><br/><table style="width:100%"><tbody><tr><td style="width: 33%; text-align: left">Signature of the Manager</td><td style="width: 67%; text-align: right"> Signature of the Guest</td></tr></tbody></table></div><br/><br/><br/>' + $scope.termsAndConditions + '</div></body></html></body></html></body></html>';
     }
 
-$scope.sendMail = function() {
-      $scope.ui.mailsending = true;
-      var emailContent = {
-        content: getNewBookingData(),
-        name: $scope.mixins.mName,
-        email: $scope.mixins.mEmail,
-        subject: "Mirth Hall Booking Details"
-      };
+    function getTotalCharges() {
+      return $scope.mixins.mBasicCost + $scope.mixins.mElectricityCharges + $scope.mixins.mCleaningCharges + $scope.mixins.mGeneratorCharges + $scope.mixins.mMiscellaneousCharges;
+    }
 
-      if ($scope.mixins.mEmail === null) {
-        Notification.error({
-            message: "Mail not sent", title: '<i class="glyphicon glyphicon-remove"></i> Email Id Missing Error !!!'
-        });
-      } else {
-        EmailBookingServices.requestSendEmail(emailContent)
-          .then(onRequestEmailBookingSuccess)
-          .catch(onRequestEmailBookingError);
+    function getValidValue(data) {
+      return (data !== null && data !== undefined) ?  data : '--';
+    }
+
+    $scope.sendMail = function(form) {
+      if (form.$valid && $scope.mixins.mEmail) {
+        $scope.ui.mailsending = true;
+        var emailContent = {
+          content: getNewBookingData(),
+          newBooking: $scope.mixins,
+          totalCharges: getTotalCharges(),
+          halls: _.map($scope.mixins.mSelectedHalls, 'name').join(', '),
+          paymentMode: $scope.mPaymentHistory.paymentMode,
+          subject: "Mirth Hall Booking Details"
+        };
+
+        if ($scope.mixins.mEmail === null) {
+          Notification.error({
+            message: "Mail not sent",
+            title: '<i class="glyphicon glyphicon-remove"></i> Email Id Missing Error !!!'
+          });
+        } else {
+          EmailBookingServices.requestSendEmail(emailContent)
+            .then(onRequestEmailBookingSuccess)
+            .catch(onRequestEmailBookingError);
+        }
       }
     };
 
