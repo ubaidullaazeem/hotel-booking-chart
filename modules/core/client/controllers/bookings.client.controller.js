@@ -152,44 +152,34 @@
 
 
     //with this you can handle the click on the events
-    $scope.eventClick = function(event) {
-      var oldShow = $mdDialog.show;
-        $mdDialog.show = function(options) {
-          if (options.hasOwnProperty("skipHide")) {
-            options.multiple = options.skipHide;
-          }
-          return oldShow(options);
-        };
+    $scope.eventClick = function(event) {      
       NewbookingsService.get({
         newbookingId: event._id
       }, function(data) {
         $mdDialog.show({
-            controller: 'NewbookingsController',
-            templateUrl: 'modules/newbookings/client/views/form-newbooking.client.view.html',
+            controller: 'BookingDetailsController',
+            templateUrl: 'modules/newbookings/client/views/bookingdetails.client.view.html',
             parent: angular.element(document.body),
             clickOutsideToClose: false,
             fullscreen: true,
             resolve: {
-              selectedDate: function() {
-                return event.start;
-              },
               selectedEvent: function() {
                 return data;
               }
             },
           })
-          .then(function(updatedItem) {
-            var index = _.indexOf($scope.model.events, event);
-            $scope.model.events[index] = updatedItem;
+          .then(function(answer) {
+            console.log('answer');
           }, function() {
             console.log('You cancelled the dialog.');
           });
       }, function(error) {
-         Notification.error({
-            message: error.data.message,
-            title: '<i class="glyphicon glyphicon-remove"></i> Edit Halls Error !!!'
-          });
+        Notification.error({
+          message: error.data.message,
+          title: '<i class="glyphicon glyphicon-remove"></i> Booking Detail Error !!!'
+        });
       });
+
     };
 
 

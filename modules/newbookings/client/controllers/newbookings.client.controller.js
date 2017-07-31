@@ -575,7 +575,7 @@
         bookingTitle = res.mOtherEvent;
       }
             
-      //$mdDialog.hide(res);
+      $mdDialog.hide(res);
     };
 
     function clearPaymentHistory() {
