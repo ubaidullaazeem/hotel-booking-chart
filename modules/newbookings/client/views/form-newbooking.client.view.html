@@ -175,7 +175,7 @@
          <div layout="column" flex ng-if="!ui.createMode">
           <md-input-container flex>
             <label>Actual Electricity Charges</label>
-            <input name="actualelectricity" ng-model="mixins.mActualElectricityCharges" type="number" min="{{ui.mMinElectricityCharges}}" ng-change="calculateBalanceDue()" ng-pattern="ui.mNumberPattern"/>
+            <input name="actualelectricity" ng-model="mixins.mActualElectricityCharges" type="number" min="{{ui.mMinActualElectricityCharges}}" ng-change="calculateBalanceDue()" ng-pattern="ui.mNumberPattern"/>
             <div ng-messages="bookingForm.electricity.$error">
               <div ng-message="required">Actual Electricity Charges is required.</div>
             </div>

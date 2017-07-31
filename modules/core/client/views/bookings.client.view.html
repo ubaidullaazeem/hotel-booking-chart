@@ -25,7 +25,8 @@
 	        <md-select  multiple style="text-transform: capitalize"
 	                    name="halls"
 	                    ng-model="searchParams.selectedHalls"
-	                    ng-change="selectedHallsChanged()">                
+	                    ng-change="selectedHallsChanged()"
+	                    ng-model-options= "{trackBy: '$value._id'}">
 	          <md-optgroup label="Halls">
 	            <md-option style="text-transform: capitalize" ng-value="hall" ng-repeat="hall in halls.mAllHalls">{{hall.name}}</md-option>
 	          </md-optgroup>
