@@ -219,7 +219,9 @@
     <md-dialog-actions layout="row">
       <md-button class="btn btn-next btn-fill btn-rose btn-wd" flex ng-disabled="bookingForm.$invalid" ng-click="printBooking(bookingForm)" type="submit">Delete</md-button>
       <md-button class="btn btn-next btn-fill btn-rose btn-wd" flex ng-disabled="bookingForm.$invalid" ng-click="printBooking(bookingForm)" type="submit">Print</md-button>
-      <md-button class="btn btn-next btn-fill btn-primary btn-wd" ng-disabled="bookingForm.$invalid" flex ng-click="sendMail()" ng-hide="ui.mailsending" type="submit">Email</md-button>
+      <md-button class="btn btn-next btn-fill btn-primary btn-wd" ng-disabled="bookingForm.$invalid && !mixins.mEmail" flex ng-click="sendMail(bookingForm)" ng-hide="ui.mailsending" type="submit">Email</md-button>
+      <md-button class="btn btn-next btn-fill btn-primary btn-wd" ng-disabled="true" flex ng-click="sendMail()" ng-show="ui.mailsending" type="submit"><i class="fa fa-spinner fa-spin"></i> Sending...</md-button>
+
       <md-button ng-hide="mixins.isPastEvent" class="btn btn-next btn-fill btn-info btn-wd" ng-disabled="bookingForm.$invalid" flex ng-click="editBooking()" type="submit">Edit Booking</md-button>
     </md-dialog-actions>
   </form>
