@@ -219,8 +219,72 @@ exports.sendEmail = function(req, res, next) {
  */
 exports.search = function(req, res) {
   var mapSelectedHallsByName = _.map(req.body.selectedHalls, 'name');
-  if (req.body.selectedHalls.length > 0) {
+  Newbooking.find({
+    mSelectedHalls: {
+      $elemMatch: {
+        name: {
+          $in: mapSelectedHallsByName
+        }
+      }
+    }
+  }, function(err, searchResults) {
+    if (err) {
+      return res.status(400).send({
+        message: errorHandler.getErrorMessage(err)
+      });
+    } else {
+      res.jsonp(searchResults);
+    }
+
+  });
+  // if (req.body.selectedHalls.length > 0) {
+  //   Newbooking.find({
+  //     mSelectedHalls: {
+  //       $elemMatch: {
+  //         name: {
+  //           $in: mapSelectedHallsByName
+  //         }
+  //       }
+  //     }
+  //   }, function(err, searchResults) {
+  //     if (err) {
+  //       return res.status(400).send({
+  //         message: errorHandler.getErrorMessage(err)
+  //       });
+  //     } else {
+  //       res.jsonp(searchResults);
+  //     }
+
+  //   });
+  // } else {
+  //   Newbooking.find().sort('-created').populate('user', 'displayName').exec(function(err, newbookings) {
+  //     if (err) {
+  //       return res.status(400).send({
+  //         message: errorHandler.getErrorMessage(err)
+  //       });
+  //     } else {
+  //       res.jsonp(newbookings);
+  //     }
+  //   });
+  // }
+
+};
+
+/**
+ * Search of Reports
+ */
+exports.searchReports = function(req, res) {
+  var mapSelectedHallsByName = _.map(req.body.selectedHalls, 'name');
     Newbooking.find({
+      $and: [{
+        mStartDateTime: {
+          $gte: req.body.startDate
+        }
+      }, {
+        mEndDateTime: {
+          $lte: req.body.endDate
+        }
+      }],
       mSelectedHalls: {
         $elemMatch: {
           name: {
@@ -238,18 +302,6 @@ exports.search = function(req, res) {
       }
 
     });
-  } else {
-    Newbooking.find().sort('-created').populate('user', 'displayName').exec(function(err, newbookings) {
-      if (err) {
-        return res.status(400).send({
-          message: errorHandler.getErrorMessage(err)
-        });
-      } else {
-        res.jsonp(newbookings);
-      }
-    });
-  }
-
 };
 
 

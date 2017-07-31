@@ -22,6 +22,15 @@ var NewbookingSchema = new Schema({
   mEndDateTime: {
     type: Date
   },
+  date: {
+    type: Number
+  },
+  month: {
+    type: Number
+  },
+  year: {
+    type: Number
+  },
   mSelectedEventType: {
     type: Object,
     default: '',

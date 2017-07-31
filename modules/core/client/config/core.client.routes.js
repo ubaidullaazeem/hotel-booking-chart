@@ -56,6 +56,9 @@
         controllerAs: 'vm',
         data: {
           pageTitle: 'Reports'
+        },
+        resolve: {
+          hallsResolve: hallsData
         }
       })
       .state('tax', {

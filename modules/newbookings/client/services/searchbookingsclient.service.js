@@ -16,12 +16,20 @@
         method: 'POST',
         isArray: true,
         url: 'api/newbookings/search'
+      },
+      searchReports: {
+        method: 'POST',
+        isArray: true,
+        url: 'api/newbookings/searchreports'
       }
     });
 
     angular.extend(SearchBooking, {
       requestsearch: function (halls) {
         return this.search(halls).$promise;
+      },
+      requestSearchReports: function (searchParams) {
+        return this.searchReports(searchParams).$promise;
       }
     });
 

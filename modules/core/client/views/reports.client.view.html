@@ -1,1 +1,62 @@
-<h1>Reports</h1>
+<div class="row">
+	<div class="col-md-12">
+		<div class="card">
+			<form name="reports" id="reportSearch" action="" method="" novalidate="novalidate">
+				<div class="card-header card-header-icon" data-background-color="{{DATA_BACKGROUND_COLOR}}">
+					<i class="material-icons">search</i>
+				</div>
+				<div class="card-content">
+					<h4 class="card-title">Search</h4>
+					<div layout="row">
+						<md-input-container flex=30>
+							<label>Halls</label>
+							<md-select required multiple style="text-transform: capitalize"
+							name="halls"
+							ng-model="searchParams.selectedHalls"
+							ng-change="selectedHallsChanged()"
+							ng-model-options= "{trackBy: '$value._id'}">
+								<md-optgroup label="Halls">
+								<md-option style="text-transform: capitalize" ng-value="hall" ng-selected="{{ selectHallsByDefault(hall) }}" ng-repeat="hall in model.halls">{{hall.name}}</md-option>
+								</md-optgroup>
+							</md-select>
+						</md-input-container>
+
+						<div flex></div>
+						<md-input-container flex=30>
+							<label>Start Date</label>
+							<div ng-click="showStartDatePicker($event)">
+								<input class="form-control datepicker" required name="start" ng-model="model.startDate" onfocus="this.blur()"></input>
+							</div>
+						</md-input-container>
+						<md-input-container flex=30>
+							<label>End Date</label>
+							<div ng-click="showEndDatePicker($event)">
+								<input class="form-control datepicker" required name="start" ng-model="model.endDate" onfocus="this.blur()"></input>
+							</div>
+						</md-input-container>
+						<div flex></div>
+						<md-input-container flex=11  style="margin-top: 0px">
+							<md-button class="btn btn-{{DATA_BACKGROUND_COLOR}} btn-sm" ng-hide="ui.searching" ng-click="searchReports()"><span class="glyphicon glyphicon-search"></span> Search</md-button>
+							<md-button class="btn btn-{{DATA_BACKGROUND_COLOR}} btn-sm" ng-disabled="true" ng-show="ui.searching"><i class="fa fa-spinner fa-spin"></i> Searching</md-button>
+						</md-input-container>
+					</div>
+				</div>
+			</form>	
+		</div>
+	</div>
+</div>
+<div class="row">
+	<div class="col-md-6">
+		<div class="card">
+			<div class="card-header card-header-icon" data-background-color="rose">
+				<i class="material-icons">insert_chart</i>
+			</div>
+			<div class="card-content">
+				<h4 class="card-title">Multiple Bars Chart
+				<small>- Bar Chart</small>
+				</h4>
+			</div>
+			<canvas class="chart chart-bar" chart-colors="colors" chart-data="chart.data" chart-labels="labels" chart-options="options" chart-series="series"></canvas>
+		</div>
+	</div>
+</div>

@@ -26,7 +26,7 @@
     };
 
     $scope.searchParams = {
-      selectedHalls: []
+      selectedHalls: hallsResolve
     };
 
 
@@ -72,6 +72,7 @@
         angular.forEach(searchResults, function(searchResult) {
           eventsPush(searchResult);
         });
+        chartSummary(searchResults);
       });
     };
 
