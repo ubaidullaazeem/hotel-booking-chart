@@ -155,15 +155,15 @@
 						$scope.chart.data[count].push(totalTaxes);
 
 						if(fromMonthValue === toMonthValue) {
-							getColumnWiseData($scope.chart.data);
+							buildColumnWiseData($scope.chart.data);
 						}
+						count++;
 					}
-					count++;
 				}
 			});
 		};
 
-		function getColumnWiseData(data) {
+		function buildColumnWiseData(data) {
 			$scope.chart = {
 				data: [
 					[],
