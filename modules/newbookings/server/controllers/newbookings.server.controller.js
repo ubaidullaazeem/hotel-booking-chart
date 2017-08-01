@@ -213,6 +213,55 @@ exports.sendEmail = function(req, res, next) {
   });
 };
 
+/**
+ * Email template to Mirth Report
+ */
+exports.sendReport = function(req, res, next) {
+  var newBooking = req.body.newBooking;
+  async.waterfall([
+    // If valid email, send reset email using service
+    function(done) {
+      var httpTransport = 'http://';
+      if (config.secure && config.secure.ssl === true) {
+        httpTransport = 'https://';
+      }
+
+      var mailOptions = {
+        to: req.body.to,
+        from: config.mailer.from,
+        subject: req.body.subject,
+        //html: req.body.content,
+        attachments: [{
+          filename: "Reports.png",
+          path: req.body.content,
+          contentType: 'image/png'
+        }]
+      };
+      smtpTransport.sendMail(mailOptions, function(err) {
+        if (!err) {
+         // fs.unlink(path);
+          res.send({
+            message: 'An email has been sent to the provided email with further instructions.'
+          });
+        } else {
+          return res.status(400).send({
+            message: 'Failure sending email'
+          });
+        }
+
+        done(err);
+      });
+
+
+    }
+  ], function(err) {
+    if (err) {
+      return next(err);
+    }
+  });
+};
+
+
 
 /**
  * Search of Newbookings

@@ -26,6 +26,9 @@ module.exports = function(app) {
   app.route('/api/newbookings/sendmail')
     .post(newbookings.sendEmail);
 
+  app.route('/api/newbookings/sendReport')
+    .post(newbookings.sendReport);
+
   app.route('/api/newbookings/searchreports')
     .post(newbookings.searchReports);
 

@@ -5,9 +5,9 @@
 		.module('core')
 		.controller('ReportsController', ReportsController);
 
-	ReportsController.$inject = ['CommonService', 'DATA_BACKGROUND_COLOR', 'hallsResolve', '$filter', '$scope', 'Notification', '$rootScope', '$mdpDatePicker', 'SearchBookingServices'];
+	ReportsController.$inject = ['CommonService', 'EmailBookingServices', 'DATA_BACKGROUND_COLOR', 'hallsResolve', '$filter', '$scope', 'Notification', '$rootScope', '$mdpDatePicker', 'SearchBookingServices'];
 
-	function ReportsController(CommonService, DATA_BACKGROUND_COLOR, hallsResolve, $filter, $scope, Notification, $rootScope, $mdpDatePicker, SearchBookingServices) {
+	function ReportsController(CommonService, EmailBookingServices, DATA_BACKGROUND_COLOR, hallsResolve, $filter, $scope, Notification, $rootScope, $mdpDatePicker, SearchBookingServices) {
 
 		$scope.DATA_BACKGROUND_COLOR = DATA_BACKGROUND_COLOR;
 
@@ -203,6 +203,47 @@
 			return d2.getMonth() - d1.getMonth() + (12 * (d2.getFullYear() - d1.getFullYear()));
 		};
 
+		$scope.exportReport = function () {
+			html2canvas(document.getElementById('exportData'), {
+				onrendered: function(canvas) {
+					var canvasdata = canvas.toDataURL("image/png");
+					var a = document.createElement("a");
+					a.download = "Report.png";
+					a.href = canvasdata;
+					a.click();
+				}
+			});
+		}
 
-	}
+		$scope.emailReport = function() {
+			html2canvas(document.getElementById('exportData'), {
+				onrendered: function(canvas) {
+					var canvasdata = canvas.toDataURL("image/png");
+					var emailContent = {
+						to: $rootScope.globals.currentUser.email,
+						content: canvasdata,
+						subject: "Mirth Report between " + $scope.model.startDate + ' and ' + $scope.model.endDate
+	        };
+
+					EmailBookingServices.requestSendReport(emailContent)
+					.then(onRequestEmailReportSuccess)
+					.catch(onRequestEmailReportError);
+				}
+			});
+		}
+
+		function onRequestEmailReportSuccess(response) {
+			Notification.success({
+				message: response.message,
+				title: '<i class="glyphicon glyphicon-remove"></i> Email drop successfully !!!'
+			});
+    }
+
+    function onRequestEmailReportError(response) {
+			Notification.error({
+				message: response.message,
+				title: '<i class="glyphicon glyphicon-remove"></i> Email failed to snet !!!'
+			});
+		}
+  }
 }());
