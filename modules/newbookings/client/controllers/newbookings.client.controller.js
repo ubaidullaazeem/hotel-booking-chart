@@ -38,6 +38,8 @@
       paymentMode: null
     };
 
+    $scope.hallRateSummaries = [];
+
     $scope.mixins = {
       _id: selectedEvent ? selectedEvent._id : undefined, 
       mSelectedHalls: selectedEvent ? selectedEvent.mSelectedHalls : [],
@@ -51,20 +53,13 @@
       mPhotoId: selectedEvent ? selectedEvent.mPhotoId : null,
       mSelectedPaymentStatus: selectedEvent ? selectedEvent.mSelectedPaymentStatus : null,
       mManagerName: selectedEvent ? selectedEvent.mManagerName : null,
-      mBasicCost: selectedEvent ? selectedEvent.mBasicCost : 0,
-      mElectricityCharges: selectedEvent ? selectedEvent.mElectricityCharges : 0,
-      mCleaningCharges: selectedEvent ? selectedEvent.mCleaningCharges : 0,
-      mGeneratorCharges: selectedEvent ? selectedEvent.mGeneratorCharges : 0,
-      mMiscellaneousCharges: selectedEvent ? selectedEvent.mMiscellaneousCharges : 0,
       mDiscount: selectedEvent ? selectedEvent.mDiscount : 0,
       mSubTotal: selectedEvent ? selectedEvent.mSubTotal : 0,
       mCGST: selectedEvent ? selectedEvent.mCGST : 0,
       mSGST: selectedEvent ? selectedEvent.mSGST : 0,
       mGrandTotal: selectedEvent ? selectedEvent.mGrandTotal : 0,
       mPaymentHistories: selectedEvent ? selectedEvent.mPaymentHistories : [],
-      mBalanceDue: selectedEvent ? selectedEvent.mBalanceDue : 0,
-      mDamages: selectedEvent ? selectedEvent.mDamages : 0,
-      mActualElectricityCharges: selectedEvent ? selectedEvent.mActualElectricityCharges : 0,
+      mBalanceDue: selectedEvent ? selectedEvent.mBalanceDue : 0
     };
 
     $scope.eventTime = {
@@ -92,16 +87,35 @@
     
     $scope.selectedHallsChanged = function() 
     {
+      $scope.hallRateSummaries.length = 0;
       selectedHallsTotalBasicCost = 0, selectedHallsTotalEBCharges=0, selectedHallsTotalCleaningCharges=0;
 
       $scope.mixins.mSelectedHalls = _.uniqBy($scope.mixins.mSelectedHalls, '_id');
       
-      angular.forEach($scope.mixins.mSelectedHalls, function(hall) {        
-        
+      angular.forEach($scope.mixins.mSelectedHalls, function(hall) {  
+        /** Ubai New Code Start **/
+        var selectedHalls = undefined;
+        if (selectedEvent) {
+          selectedHalls = _.filter(selectedEvent.mSelectedHalls, function(mSelectedHall) {
+            return mSelectedHall.name === hall.name;
+          });
+        }
+       /** End **/
         var effectiveSummaries = CommonService.findRateSummariesByDate(hall.rateSummaries, new Date());
-
         if (effectiveSummaries.length > 0) 
         {
+          /** Ubai New Code Start **/
+          $scope.hallRateSummaries.push({
+            labelName: hall.name,
+            mBasicCost: selectedHalls ? selectedHalls[0].mRate : effectiveSummaries[0].rate,
+            mElectricityCharges: selectedHalls ? selectedHalls[0].mElectricityCharges : effectiveSummaries[0].powerConsumpationCharges,
+            mActualElectricityCharges: selectedHalls ? selectedHalls[0].mActualElectricityCharges : 0,
+            mDamages: selectedHalls ? selectedHalls[0].mDamages : 0,
+            mCleaningCharges: selectedHalls ? selectedHalls[0].mCleaningCharges : effectiveSummaries[0].cleaningCharges,
+            mGeneratorCharges: selectedHalls ? selectedHalls[0].mGeneratorCharges : 0,
+            mMiscellaneousCharges: selectedHalls ? selectedHalls[0].mMiscellaneousCharges : 0
+          }); 
+          /** End **/         
           selectedHallsTotalBasicCost = selectedHallsTotalBasicCost + effectiveSummaries[0].rate;
           selectedHallsTotalEBCharges = selectedHallsTotalEBCharges + effectiveSummaries[0].powerConsumpationCharges;
           selectedHallsTotalCleaningCharges = selectedHallsTotalCleaningCharges + effectiveSummaries[0].cleaningCharges;
@@ -651,17 +665,24 @@
     function calculateProrateCharges() {
       for (var i = 0; i < $scope.mixins.mSelectedHalls.length; i++) {
         var effectiveSummaries = CommonService.findRateSummariesByDate($scope.mixins.mSelectedHalls[i].rateSummaries, new Date());
-
+        /** Ubai New Code Start **/
+        var hallRateSummaryArray = _.filter($scope.hallRateSummaries, function(hallRateSummary) {
+          return hallRateSummary.labelName === $scope.mixins.mSelectedHalls[i].name;
+        });
+        /** End **/
         if (effectiveSummaries.length > 0) {
           var effectiveSummary = effectiveSummaries[0];
 
           //Prorating basic cost, generator, miscellaneous and discount is based on hall's basic cost and electricity, cleaning is based hall's electricity and cleaning charges
-          $scope.mixins.mSelectedHalls[i].mRate = (effectiveSummary.rate / selectedHallsTotalBasicCost) * $scope.mixins.mBasicCost;
-          $scope.mixins.mSelectedHalls[i].mElectricityCharges = (effectiveSummary.powerConsumpationCharges / selectedHallsTotalEBCharges) * $scope.mixins.mElectricityCharges;
-          $scope.mixins.mSelectedHalls[i].mActualElectricityCharges = 0; //updated while editing the booking
-          $scope.mixins.mSelectedHalls[i].mCleaningCharges = (effectiveSummary.cleaningCharges / selectedHallsTotalCleaningCharges) * $scope.mixins.mCleaningCharges;
-          $scope.mixins.mSelectedHalls[i].mGeneratorCharges = (effectiveSummary.rate / selectedHallsTotalBasicCost) * $scope.mixins.mGeneratorCharges;
-          $scope.mixins.mSelectedHalls[i].mMiscellaneousCharges = (effectiveSummary.rate / selectedHallsTotalBasicCost) * $scope.mixins.mMiscellaneousCharges;
+          /** Ubai New Code Start **/
+          $scope.mixins.mSelectedHalls[i].mRate = hallRateSummaryArray[0].mBasicCost;
+          $scope.mixins.mSelectedHalls[i].mElectricityCharges = hallRateSummaryArray[0].mElectricityCharges;
+          $scope.mixins.mSelectedHalls[i].mActualElectricityCharges = hallRateSummaryArray[0].mActualElectricityCharges; //updated while editing the booking
+          $scope.mixins.mSelectedHalls[i].mDamages = hallRateSummaryArray[0].mDamages;
+          $scope.mixins.mSelectedHalls[i].mCleaningCharges = hallRateSummaryArray[0].mCleaningCharges;
+          $scope.mixins.mSelectedHalls[i].mGeneratorCharges = hallRateSummaryArray[0].mGeneratorCharges;
+          $scope.mixins.mSelectedHalls[i].mMiscellaneousCharges = hallRateSummaryArray[0].mMiscellaneousCharges;
+          /** End **/
           $scope.mixins.mSelectedHalls[i].mDiscount = (effectiveSummary.rate / selectedHallsTotalBasicCost) * $scope.mixins.mDiscount;
 
           $scope.mixins.mSelectedHalls[i].mCGST = (effectiveSummary.rate / selectedHallsTotalBasicCost) * $scope.mixins.mCGST;

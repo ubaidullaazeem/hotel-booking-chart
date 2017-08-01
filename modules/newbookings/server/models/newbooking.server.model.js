@@ -86,36 +86,6 @@ var NewbookingSchema = new Schema({
     required: 'Please enter manager name',
     trim: true
   },
-  mBasicCost: {
-    type: Number,
-    default: '',
-    required: 'Please enter rent amount',
-    trim: true
-  },
-  mElectricityCharges: {
-    type: Number,
-    default: '',
-    required: 'Please enter electricity charges',
-    trim: true
-  },
-  mCleaningCharges: {
-    type: Number,
-    default: '',
-    required: 'Please enter cleaning charges',
-    trim: true
-  },
-  mGeneratorCharges: {
-    type: Number,
-    default: '',
-    required: 'Please enter generator charges',
-    trim: true
-  },
-  mMiscellaneousCharges: {
-    type: Number,
-    default: '',
-    required: 'Please enter miscellaneous charges',
-    trim: true
-  },
   mDiscount: {
     type: Number,
     default: '',
