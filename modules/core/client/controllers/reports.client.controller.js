@@ -30,6 +30,7 @@
 		$scope.months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 		$scope.colors = ['#45b7cd', '#ff6384', '#ff8e72', '#ff0000', '#333333'];
 		$scope.labels = [];
+
 		$scope.type = 'StackedBar';
 		$scope.series = ['Collection', 'Revenue', 'Discount', 'ActualElectricityCharges', 'Taxes'];
 		$scope.options = {
@@ -44,7 +45,7 @@
 		};
 
 		$scope.chart = {
-			data: [
+			monthData: [
 				[],
 				[],
 				[],
@@ -81,19 +82,24 @@
 		};
 
 		$scope.searchReports = function() {
+			$scope.labels = [];
+			var fromMonthValue = new Date($scope.model.startDate).getMonth();
+			var toMonthValue = new Date($scope.model.endDate).getMonth();
+
 			if((Date.parse($scope.model.startDate) > Date.parse($scope.model.endDate))) {
 				swal("End date should be greater than start date!")
 				return false;
 			};
+
 			if(monthDiff(new Date($scope.model.startDate), new Date($scope.model.endDate)) > 11) {
 				swal("Report generated in between 12 months.")
 				return false;
 			};
-			$scope.chart.data[0].length = 0;
-			$scope.chart.data[1].length = 0;
-			$scope.chart.data[2].length = 0;
-			$scope.chart.data[3].length = 0;
-			$scope.chart.data[4].length = 0;
+			// $scope.chart.data[0].length = 0;
+			// $scope.chart.data[1].length = 0;
+			// $scope.chart.data[2].length = 0;
+			// $scope.chart.data[3].length = 0;
+			// $scope.chart.data[4].length = 0;
 			$scope.ui.searching = true;
 			var searchParams = {
 				selectedHalls: $scope.searchParams.selectedHalls,
@@ -102,8 +108,84 @@
 			};
 			SearchBookingServices.requestSearchReports(searchParams).then(function(searchResults) {
 				$scope.ui.searching = false;
+				var fromMonthValue = new Date($scope.model.startDate).getMonth();
+				var toMonthValue = new Date($scope.model.endDate).getMonth();
+
+				$scope.chart = {
+					data: [
+						[],
+						[],
+						[],
+						[],
+						[]
+					]
+				};
+
+				var count = 0;
+				for (var iter = fromMonthValue;  fromMonthValue <= toMonthValue; fromMonthValue ++)  {
+					var monthArray = _.filter(searchResults, function(searchResult) {
+						return new Date(searchResult.mStartDateTime).getMonth() === fromMonthValue;
+          });
+
+					if (monthArray.length > 0) {
+						$scope.fromMonth = $filter('date')(new Date(2014, fromMonthValue), 'MMMM');
+						$scope.labels.push($scope.fromMonth);
+
+						var totalCollection = 0;
+						var totalRevenue = 0;
+						var totalDiscount = 0;
+						var totalElectricityCharges = 0;
+						var totalTaxes = 0;
+
+						for(var idx = 0; idx < monthArray.length; idx ++) {
+							var selectedHalls = monthArray[idx].mSelectedHalls;
+							for(var index = 0; index < selectedHalls.length; index ++) {
+								totalCollection += selectedHalls[index].mCollection;
+								totalRevenue += selectedHalls[index].mRevenue;
+								totalDiscount += selectedHalls[index].mDiscount;
+								totalElectricityCharges += selectedHalls[index].mElectricityCharges;
+								totalTaxes += (selectedHalls[index].mCGST + selectedHalls[index].mSGST);
+							}
+						}
+
+						$scope.chart.data[count].push(totalCollection);
+						$scope.chart.data[count].push(totalRevenue);
+						$scope.chart.data[count].push(totalDiscount);
+						$scope.chart.data[count].push(totalElectricityCharges);
+						$scope.chart.data[count].push(totalTaxes);
+
+						if(fromMonthValue === toMonthValue) {
+							getColumnWiseData($scope.chart.data);
+						}
+					}
+					count++;
+				}
 			});
 		};
+
+		function getColumnWiseData(data) {
+			$scope.chart = {
+				data: [
+					[],
+					[],
+					[],
+					[],
+					[]
+				]
+			};
+
+			for(var array = 0;  array <  4; array ++) {
+				if(data[array].length > 0) {
+					$scope.chart.data[0].push(data[array][0]);
+					$scope.chart.data[1].push(data[array][1]);
+					$scope.chart.data[2].push(data[array][2]);
+					$scope.chart.data[3].push(data[array][3]);
+					$scope.chart.data[4].push(data[array][4]);
+				}
+			}
+
+			$scope.chart.monthData = $scope.chart.data;
+		}
 
 		function fromBrightening() {
 			var startOfTheDayInLocal = new Date($scope.model.startDate);
