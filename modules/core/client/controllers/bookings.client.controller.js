@@ -200,7 +200,8 @@
               var date = new Date(moment.format());
               chartViewByAgenda(view.name, date);
             } else {
-              $scope.model.events[index] = updatedItem;
+              $scope.model.events.splice(index, 1);
+              eventsPush(updatedItem);
              }
           }, function() {
             console.log('You cancelled the dialog.');
