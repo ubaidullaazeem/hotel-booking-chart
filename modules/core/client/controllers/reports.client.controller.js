@@ -63,21 +63,29 @@
 		});
 
 		$scope.showStartDatePicker = function(ev) {
-			$mdpDatePicker($scope.model.startDate, {
-					targetEvent: ev,
-				})
-				.then(function(dateTime) {
-					$scope.model.startDate = moment(dateTime).format('YYYY-MM-DD');
-				});
+			new MaterialDatepicker('#reportStartDatePicker', {
+				type: "month",
+				closeAfterClick: true,
+				onNewDate: function(dateTime) {
+					var date = new Date(dateTime);
+					var firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+					$scope.model.startDate = $filter('date')(firstDay, "yyyy-MM-dd");
+					angular.element("#reportStartDatePicker").val($scope.model.startDate);
+				}
+			});
 		};
 
 		$scope.showEndDatePicker = function(ev) {
-			$mdpDatePicker($scope.model.endDate, {
-					targetEvent: ev,
-				})
-				.then(function(dateTime) {
-					$scope.model.endDate = moment(dateTime).format('YYYY-MM-DD');
-				});
+			new MaterialDatepicker('#reportEndDatePicker', {
+				type: "month",
+				closeAfterClick: true,
+				onNewDate: function(dateTime) {
+					var date = new Date(dateTime);
+					var lastDayOfMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+					$scope.model.endDate = $filter('date')(lastDayOfMonth, "yyyy-MM-dd");
+					angular.element("#reportEndDatePicker").val($scope.model.endDate);
+				}
+			});
 		};
 
 		$scope.selectHallsByDefault = function(hall) {
@@ -86,11 +94,11 @@
 		};
 
 		$scope.searchReports = function() {
-			if((Date.parse($scope.model.startDate) > Date.parse($scope.model.endDate))) {
+			if ((Date.parse($scope.model.startDate) > Date.parse($scope.model.endDate))) {
 				swal("End date should be greater than start date!")
 				return false;
 			};
-			if(monthDiff(new Date($scope.model.startDate), new Date($scope.model.endDate)) > 11) {
+			if (monthDiff(new Date($scope.model.startDate), new Date($scope.model.endDate)) > 11) {
 				swal("Report generated in between 12 months.")
 				return false;
 			};
@@ -107,9 +115,9 @@
 				endDate: toMidNight()
 			};
 			SearchBookingServices.requestSearchReports(searchParams).then(function(searchResults) {
-				$scope.ui.searching = false;				
+				$scope.ui.searching = false;
 				var startDate = new Date($scope.model.startDate);
-				var endDate = new Date($scope.model.endDate);				
+				var endDate = new Date($scope.model.endDate);
 
 				var dateStart = moment(startDate);
 				var dateEnd = moment(endDate).add(1, 'month');
@@ -121,7 +129,7 @@
 
 				/** 
 				 * Group by month
-				 */ 
+				 */
 				var groupByMonthHalls = _.groupBy(searchResults, 'month');
 				/**
 				 * When getting mSelectedHalls object array from groupByMonthHalls we're using _.map
@@ -175,7 +183,7 @@
 			return d2.getMonth() - d1.getMonth() + (12 * (d2.getFullYear() - d1.getFullYear()));
 		};
 
-		$scope.exportReport = function () {
+		$scope.exportReport = function() {
 			$("div").scrollTop(1000);
 			html2canvas(document.getElementById('exportData'), {
 				onrendered: function(canvas) {
@@ -197,11 +205,11 @@
 						to: $rootScope.globals.currentUser.email,
 						content: canvasdata,
 						subject: "Mirth Report between " + $scope.model.startDate + ' and ' + $scope.model.endDate
-	        };
+					};
 
 					EmailBookingServices.requestSendReport(emailContent)
-					.then(onRequestEmailReportSuccess)
-					.catch(onRequestEmailReportError);
+						.then(onRequestEmailReportSuccess)
+						.catch(onRequestEmailReportError);
 				}
 			});
 		}
@@ -211,13 +219,13 @@
 				message: response.message,
 				title: '<i class="glyphicon glyphicon-remove"></i> Email drop successfully !!!'
 			});
-    	}
+		}
 
-    	function onRequestEmailReportError(response) {
+		function onRequestEmailReportError(response) {
 			Notification.error({
 				message: response.message,
 				title: '<i class="glyphicon glyphicon-remove"></i> Email failed to snet !!!'
 			});
 		}
-  }
+	}
 }());

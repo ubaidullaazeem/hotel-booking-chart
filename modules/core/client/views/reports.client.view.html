@@ -25,13 +25,13 @@
 						<md-input-container flex=30>
 							<label>Start Date</label>
 							<div ng-click="showStartDatePicker($event)">
-								<input class="form-control datepicker" required name="start" ng-model="model.startDate" onfocus="this.blur()"></input>
+								<input class="form-control datepicker" required name="start" id="reportStartDatePicker" ng-model="model.startDate" onfocus="this.blur()"></input>
 							</div>
 						</md-input-container>
 						<md-input-container flex=30>
 							<label>End Date</label>
 							<div ng-click="showEndDatePicker($event)">
-								<input class="form-control datepicker" required name="start" ng-model="model.endDate" onfocus="this.blur()"></input>
+								<input class="form-control datepicker" required name="start" id="reportEndDatePicker"  ng-model="model.endDate" onfocus="this.blur()"></input>
 							</div>
 						</md-input-container>
 						<div flex></div>
