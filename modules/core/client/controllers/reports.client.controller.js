@@ -21,7 +21,8 @@
 		};
 
 		$scope.ui = {
-			searching: false
+			searching: false,
+			email: false
 		}
 
 		$scope.searchParams = {
@@ -198,6 +199,7 @@
 		}
 
 		$scope.emailReport = function() {
+			$scope.ui.email = true;
 			$("div").scrollTop(1000);
 			html2canvas(document.getElementById('exportData'), {
 				onrendered: function(canvas) {
@@ -220,6 +222,7 @@
 				message: response.message,
 				title: '<i class="glyphicon glyphicon-remove"></i> Email drop successfully !!!'
 			});
+			$scope.ui.email = false;
 		}
 
 		function onRequestEmailReportError(response) {
@@ -227,6 +230,7 @@
 				message: response.message,
 				title: '<i class="glyphicon glyphicon-remove"></i> Email failed to snet !!!'
 			});
+			$scope.ui.email = false;
 		}
 	}
 }());
