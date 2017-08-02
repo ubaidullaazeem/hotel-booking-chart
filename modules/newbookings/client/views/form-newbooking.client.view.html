@@ -70,7 +70,7 @@
         <div layout="row" flex>
           <md-input-container flex>
             <label>Time</label>
-              <div ng-click="showStartTimePicker($event)">
+              <div ng-click="!ui.viewMode ? showStartTimePicker($event) : ''">
                 <input class="form-control timepicker" required name="start" ng-model="eventTime.mStartToDisplay" onfocus="this.blur()" ng-disabled="ui.viewMode" readonly></input>
               </div>
               <div ng-messages="bookingForm.start.$error">
@@ -81,7 +81,7 @@
 
           <md-input-container flex>
             <label>To</label>
-              <div ng-click="showEndTimePicker($event)">
+              <div ng-click="!ui.viewMode ? showEndTimePicker($event) : ''">
                 <input required name="end" ng-model="eventTime.mEndToDisplay" onfocus="this.blur()" ng-disabled="ui.viewMode" readonly></input>
               </div>
               <div ng-messages="bookingForm.end.$error">
@@ -304,7 +304,7 @@
               
               <md-input-container flex>
                 <label>Paid Date</label>
-                  <div ng-click="showPaidDatePicker($event)">
+                  <div ng-click="!ui.viewMode ? showPaidDatePicker($event) : ''">
                     <input type="date" ng-required="ui.createMode" ng-disabled="ui.viewMode" name="paidDate" ng-model="mPaymentHistory.paidDate"></input>
                   </div>                  
                   <div ng-messages="bookingForm.paidDate.$error">
@@ -340,7 +340,7 @@
               
               <md-input-container flex>
                 <label>Paid Date</label>
-                  <div ng-click="showPaidDatePicker($event)">
+                  <div>
                     <input mo-date-input="YYYY-MM-DD" name="paidDate" ng-model="mPaymentHistory.paidDate" ng-disabled="true"></input>
                   </div>
               </md-input-container>

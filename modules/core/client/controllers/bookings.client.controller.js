@@ -63,7 +63,9 @@
     };
 
     $scope.model.paymentStatuses.$promise.then(function(result) {
-      $scope.loadinitial();
+      setTimeout(function() {
+        $scope.loadinitial();
+      }, 0);
     });
 
     $scope.selectedHallsChanged = function() {

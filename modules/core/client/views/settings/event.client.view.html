@@ -1,19 +1,14 @@
 <div layout="column" style="margin-top: 15px" ng-init="loadInitial()">
-
 	<div class="row">
-	   <div class="col-md-12">
+		<div class="col-md-12">
 			<div class="card">
-				<div class="card-header" data-background-color="{{DATA_BACKGROUND_COLOR}}">
-					<h4 class="title">Event</h4>
-					<p class="category">To set events type</p>
-					<div flex=30 style="float: right; margin-top: -35px">
-						<md-button class="md-raised md-primary nonecase" ng-click="mShowEventTypePopup($event)">Add</md-button>
-					</div>
+				<div class="card-header card-header-icon" data-background-color="{{DATA_BACKGROUND_COLOR}}">
+					<i class="material-icons">assignment</i>
 				</div>
 				<div class="card-content">
-					<h4 class="card-title" ng-hide="eventTypes.length">No event found.</h4>
-				</div>
-				<div class="card-content table-responsive">
+					<h4 class="card-title">List of events</h4>
+					<span class="pull-right" style="margin-top: -50px"><md-button class="btn btn-{{DATA_BACKGROUND_COLOR}} btn-sm md-button" ng-click="mShowEventTypePopup($event)">Create Event</md-button></span>
+					<h4 class="card-title" style="text-align: center" ng-hide="eventTypes.length">Events not found.</h4>
 					<table class="table table-bordered" ng-show="eventTypes.length">
 						<tr>
 							<th style="text-align: center" width="30%">Event name</th>
@@ -32,7 +27,6 @@
 					</table>
 				</div>
 			</div>
-	   </div>
+		</div>
 	</div>
-
 </div>

@@ -67,8 +67,8 @@
     $scope.eventTime = {
       mStartClock: new Date('1991-05-04T06:00:00'),
       mEndClock: new Date('1991-05-04T13:00:00'),
-      mStartToDisplay: getTimeToDisplay(new Date('1991-05-04T06:00:00')),
-      mEndToDisplay: getTimeToDisplay(new Date('1991-05-04T13:00:00')),
+      mStartToDisplay: selectedEvent ? getTimeToDisplay(new Date(selectedEvent.mStartDateTime)) : getTimeToDisplay(new Date('1991-05-04T06:00:00')),
+      mEndToDisplay: selectedEvent ? getTimeToDisplay(new Date(selectedEvent.mEndDateTime)) : getTimeToDisplay(new Date('1991-05-04T13:00:00')),
       mStartToServer: getTimeToServer(new Date('1991-05-04T06:00:00')),
       mEndToServer: getTimeToServer(new Date('1991-05-04T13:00:00'))
     };

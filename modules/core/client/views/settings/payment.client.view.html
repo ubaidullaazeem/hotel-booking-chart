@@ -1,19 +1,14 @@
 <div layout="column" style="margin-top: 15px" ng-init="loadInitial()">
-
 	<div class="row">
-	   <div class="col-md-12">
+		<div class="col-md-12">
 			<div class="card">
-				<div class="card-header" data-background-color="{{DATA_BACKGROUND_COLOR}}">
-					<h4 class="title">Payment</h4>
-					<p class="category">To set payment type</p>
-					<div flex=30 style="float: right; margin-top: -35px" ng-hide="paymentStatuses.length >= 2">
-						<md-button class="md-raised md-primary nonecase" ng-click="mShowPaymentStatusPopup($event)">Add</md-button>
-					</div>
+				<div class="card-header card-header-icon" data-background-color="{{DATA_BACKGROUND_COLOR}}">
+					<i class="material-icons">payment</i>
 				</div>
 				<div class="card-content">
-					<h4 class="card-title" ng-hide="paymentStatuses.length">No payment status found.</h4>
-				</div>
-				<div class="card-content table-responsive">
+					<h4 class="card-title">List of payment types</h4>
+					<span class="pull-right" style="margin-top: -50px" ng-hide="paymentStatuses.length >= 2"><md-button class="btn btn-{{DATA_BACKGROUND_COLOR}} btn-sm md-button" ng-click="mShowPaymentStatusPopup($event)">Add Payment Type</md-button></span>
+					<h4 class="card-title" style="text-align: center" ng-hide="paymentStatuses.length">Payment types not found.</h4>
 					<table class="table table-bordered" ng-show="paymentStatuses.length">
 						<tr>
 							<th style="text-align: center" width="30%">Field</th>
@@ -31,7 +26,6 @@
 					</table>
 				</div>
 			</div>
-	   </div>
+		</div>
 	</div>
-
 </div>

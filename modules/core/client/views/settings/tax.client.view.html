@@ -1,19 +1,14 @@
 <div layout="column" style="margin-top: 15px" ng-init="loadInitial()">
-
 	<div class="row">
-	   <div class="col-md-12">
+		<div class="col-md-12">
 			<div class="card">
-				<div class="card-header" data-background-color="{{DATA_BACKGROUND_COLOR}}">
-					<h4 class="title">Tax</h4>
-					<p class="category">To set tax rate</p>
-					<div flex=30 style="float: right; margin-top: -35px"  ng-hide="taxes.length >= 2">
-						<md-button class="md-raised md-primary nonecase" ng-click="mShowTaxPopup($event)">Add</md-button>
-					</div>
+				<div class="card-header card-header-icon" data-background-color="{{DATA_BACKGROUND_COLOR}}">
+					<i class="material-icons">assessment</i>
 				</div>
 				<div class="card-content">
-					<h4 class="card-title" ng-hide="taxes.length">No taxes rate found.</h4>
-				</div>
-				<div class="card-content table-responsive">
+					<h4 class="card-title">List of taxes</h4>
+					<span class="pull-right" style="margin-top: -50px" ng-hide="taxes.length >= 2"><md-button class="btn btn-{{DATA_BACKGROUND_COLOR}} btn-sm md-button" ng-click="mShowTaxPopup($event)">Add Tax Rate</md-button></span>
+					<h4 class="card-title" style="text-align: center" ng-hide="taxes.length">Tax rate not found.</h4>
 					<table class="table table-bordered" ng-show="taxes.length">
 						<tr>
 							<th style="text-align: center" width="30%">Field</th>
@@ -32,7 +27,6 @@
 					</table>
 				</div>
 			</div>
-	   </div>
+		</div>
 	</div>
-
 </div>
