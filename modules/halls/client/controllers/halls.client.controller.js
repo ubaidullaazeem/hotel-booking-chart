@@ -122,13 +122,26 @@
       $mdDialog.cancel();
     }
 
-    $scope.showStartDatePicker = function(ev) {
-      $mdpDatePicker($scope.model.hall.effectiveDate, {
-          targetEvent: ev,
-        })
-        .then(function(dateTime) {
-          $scope.model.hall.effectiveDate = moment(dateTime).format('DD, MMM YYYY');
-        });
+    // $scope.showStartDatePicker = function(ev) {
+    //   $mdpDatePicker($scope.model.hall.effectiveDate, {
+    //       targetEvent: ev,
+    //     })
+    //     .then(function(dateTime) {
+    //       $scope.model.hall.effectiveDate = moment(dateTime).format('DD, MMM YYYY');
+    //     });
+    // }
+
+    $scope.showStartDatePicker = function() {
+      new MaterialDatepicker('#hallEffectiveDatePicker', {
+        type: "month",
+        closeAfterClick: true,
+        onNewDate: function(dateTime) {
+          var date = new Date(dateTime);
+          var firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+          $scope.model.hall.effectiveDate = moment(firstDay).format('DD, MMM YYYY');
+          angular.element("#hallEffectiveDatePicker").val(moment(firstDay).format('DD, MMM YYYY'));
+        }
+      });
     }
 
     function dateConvertion(date) {

@@ -86,13 +86,26 @@
       $mdDialog.cancel();
     }
 
-    $scope.showStartDatePicker = function(ev) {
-      $mdpDatePicker($scope.model.tax.effectiveDate, {
-          targetEvent: ev,
-        })
-        .then(function(dateTime) {
+    // $scope.showStartDatePicker = function(ev) {
+    //   $mdpDatePicker($scope.model.tax.effectiveDate, {
+    //       targetEvent: ev,
+    //     })
+    //     .then(function(dateTime) {
+    //       $scope.model.tax.effectiveDate = moment(dateTime).format('DD, MMM YYYY');
+    //     });
+    // }
+
+    $scope.showStartDatePicker = function() {
+      new MaterialDatepicker('#taxEffectiveDatePicker', {
+        type: "month",
+        closeAfterClick: true,
+        onNewDate: function(dateTime) {
+          var date = new Date(dateTime);
+          var firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
           $scope.model.tax.effectiveDate = moment(dateTime).format('DD, MMM YYYY');
-        });
+          angular.element("#taxEffectiveDatePicker").val(moment(firstDay).format('DD, MMM YYYY'));
+        }
+      });
     }
 
     function dateConvertion(date) {

@@ -14,7 +14,8 @@ module.exports = {
         'public/lib/angular-bootstrap/ui-bootstrap-csp.css',
         'modules/core/client/css/mdPickers.css',
         'public/lib/perfect-scrollbar/css/perfect-scrollbar.min.css',
-        'public/lib/sweetalert/dist/sweetalert.css'
+        'public/lib/sweetalert/dist/sweetalert.css',
+        'modules/core/client/css/material-datepicker.css'
         // endbower
       ],
       js: [
@@ -37,14 +38,15 @@ module.exports = {
         'public/lib/lodash/lodash.js',
         'public/lib/moment/min/moment.min.js',
         'public/lib/angular-ui-calendar/src/calendar.js',
-        'modules/core/client/js/dist/fullcalendar.min.js',
+        'modules/core/client/js/fullcalendar.min.js',
         'public/lib/fullcalendar/dist/gcal.js',
         'public/lib/chart.js/dist/Chart.min.js',
         'public/lib/angular-chart.js/dist/angular-chart.min.js',
         'modules/core/client/js/mdPickers.js',
         'public/lib/perfect-scrollbar/js/perfect-scrollbar.jquery.min.js',
         'public/lib/angular-perfect-scrollbar/src/angular-perfect-scrollbar.js',
-        'public/lib/sweetalert/dist/sweetalert.min.js'
+        'public/lib/sweetalert/dist/sweetalert.min.js',
+        'modules/core/client/js/material-datepicker.min.js',
         // endbower
       ],
       tests: ['public/lib/angular-mocks/angular-mocks.js']

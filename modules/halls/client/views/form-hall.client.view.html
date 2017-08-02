@@ -77,8 +77,8 @@
 
               <md-input-container flex>
                 <label>Effective Date</label>
-                <div ng-click="showStartDatePicker($event)">
-                  <input class="form-control datepicker" required name="start" ng-model="model.hall.effectiveDate" onfocus="this.blur()"></input>
+                <div ng-click="showStartDatePicker()">
+                  <input class="form-control datepicker" id="hallEffectiveDatePicker" required name="start" ng-model="model.hall.effectiveDate" onfocus="this.blur()"></input>
                 </div>
               </md-input-container>               
 

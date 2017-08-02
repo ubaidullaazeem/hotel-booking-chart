@@ -6900,6 +6900,7 @@ h2.title {
 body {
   background-color: #EEEEEE;
   color: #3C4858;
+  overflow: hidden;
 }
 body.inverse {
   background: #333333;

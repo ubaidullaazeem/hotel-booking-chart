@@ -79,3 +79,8 @@ th{
     position: relative; /* relative or absolute positioning required by Perfect Scrollbar */
     max-height: 430px;  /* height must be limited to induce scrolling behavior */
 }
+
+.mainscroller {
+    position: relative; /* relative or absolute positioning required by Perfect Scrollbar */
+    max-height: 700px;  /* height must be limited to induce scrolling behavior */
+}
