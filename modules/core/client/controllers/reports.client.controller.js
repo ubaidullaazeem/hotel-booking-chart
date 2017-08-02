@@ -13,10 +13,11 @@
 
 		$rootScope.isUserLoggedIn = true;
 
+		var today = new Date();
 		$scope.model = {
 			halls: hallsResolve,
-			startDate: $filter('date')(new Date(), "yyyy-MM-dd"),
-			endDate: $filter('date')(new Date(), "yyyy-MM-dd"),
+			startDate: $filter('date')(new Date(today.getFullYear(), today.getMonth(), 1), "yyyy-MM-dd"), // Get the first day of current month
+			endDate: $filter('date')(new Date(today.getFullYear(), today.getMonth() + 1, 0), "yyyy-MM-dd"), // Get the last day of current month
 		};
 
 		$scope.ui = {
@@ -120,7 +121,7 @@
 				var endDate = new Date($scope.model.endDate);
 
 				var dateStart = moment(startDate);
-				var dateEnd = moment(endDate).add(1, 'month');
+				var dateEnd = moment(endDate).add(0, 'month');
 
 				while (dateEnd > dateStart) {
 					$scope.labels.push(dateStart.format('MMMM'));
