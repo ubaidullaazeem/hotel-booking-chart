@@ -86,24 +86,20 @@
 		};
 
 		$scope.searchReports = function() {
-			$scope.labels = [];
-			var fromMonthValue = new Date($scope.model.startDate).getMonth();
-			var toMonthValue = new Date($scope.model.endDate).getMonth();
-
 			if((Date.parse($scope.model.startDate) > Date.parse($scope.model.endDate))) {
 				swal("End date should be greater than start date!")
 				return false;
 			};
-
 			if(monthDiff(new Date($scope.model.startDate), new Date($scope.model.endDate)) > 11) {
 				swal("Report generated in between 12 months.")
 				return false;
 			};
-			// $scope.chart.data[0].length = 0;
-			// $scope.chart.data[1].length = 0;
-			// $scope.chart.data[2].length = 0;
-			// $scope.chart.data[3].length = 0;
-			// $scope.chart.data[4].length = 0;
+			$scope.chart.monthData[0].length = 0;
+			$scope.chart.monthData[1].length = 0;
+			$scope.chart.monthData[2].length = 0;
+			$scope.chart.monthData[3].length = 0;
+			$scope.chart.monthData[4].length = 0;
+			$scope.labels.length = 0;
 			$scope.ui.searching = true;
 			var searchParams = {
 				selectedHalls: $scope.searchParams.selectedHalls,
@@ -111,85 +107,58 @@
 				endDate: toMidNight()
 			};
 			SearchBookingServices.requestSearchReports(searchParams).then(function(searchResults) {
-				$scope.ui.searching = false;
-				var fromMonthValue = new Date($scope.model.startDate).getMonth();
-				var toMonthValue = new Date($scope.model.endDate).getMonth();
+				$scope.ui.searching = false;				
+				var startDate = new Date($scope.model.startDate);
+				var endDate = new Date($scope.model.endDate);				
 
-				$scope.chart = {
-					data: [
-						[],
-						[],
-						[],
-						[],
-						[]
-					]
+				var dateStart = moment(startDate);
+				var dateEnd = moment(endDate).add(1, 'month');
+
+				while (dateEnd > dateStart) {
+					$scope.labels.push(dateStart.format('MMMM'));
+					dateStart.add(1, 'month');
 				};
 
-				var count = 0;
-				for (var iter = fromMonthValue;  fromMonthValue <= toMonthValue; fromMonthValue ++)  {
-					var monthArray = _.filter(searchResults, function(searchResult) {
-						return new Date(searchResult.mStartDateTime).getMonth() === fromMonthValue;
-          });
-
-					if (monthArray.length > 0) {
-						$scope.fromMonth = $filter('date')(new Date(2014, fromMonthValue), 'MMMM');
-						$scope.labels.push($scope.fromMonth);
-
-						var totalCollection = 0;
-						var totalRevenue = 0;
-						var totalDiscount = 0;
-						var totalElectricityCharges = 0;
-						var totalTaxes = 0;
-
-						for(var idx = 0; idx < monthArray.length; idx ++) {
-							var selectedHalls = monthArray[idx].mSelectedHalls;
-							for(var index = 0; index < selectedHalls.length; index ++) {
-								totalCollection += selectedHalls[index].mCollection;
-								totalRevenue += selectedHalls[index].mRevenue;
-								totalDiscount += selectedHalls[index].mDiscount;
-								totalElectricityCharges += selectedHalls[index].mElectricityCharges;
-								totalTaxes += (selectedHalls[index].mCGST + selectedHalls[index].mSGST);
-							}
-						}
-
-						$scope.chart.data[count].push(totalCollection);
-						$scope.chart.data[count].push(totalRevenue);
-						$scope.chart.data[count].push(totalDiscount);
-						$scope.chart.data[count].push(totalElectricityCharges);
-						$scope.chart.data[count].push(totalTaxes);
-
-						if(fromMonthValue === toMonthValue) {
-							buildColumnWiseData($scope.chart.data);
-						}
-						count++;
+				alert(JSON.stringify($scope.labels));
+				/** 
+				 * Group by month
+				 */ 
+				var groupByMonthHalls = _.groupBy(searchResults, 'month');
+				/**
+				 * When getting mSelectedHalls object array from groupByMonthHalls we're using _.map
+				 * After _.map mSelectedHalls array looks like [[][]], after we convert into single array [] with help of _.flatten
+				 * similarly we're getting name object from $scope.searchParams.selectedHalls, because we need to reject extra halls apart from searched halls
+				 * Because for single booking we select multiple halls. 
+				 */
+				angular.forEach($scope.labels, function(month) {
+					var indexMonth = _.indexOf($scope.months, month);
+					var mapsearchResultsHalls = _.flatten(_.map(groupByMonthHalls[indexMonth + 1], 'mSelectedHalls'));
+					var mapSelectedHalls = _.map($scope.searchParams.selectedHalls, 'name');
+					var rejectHalls = _.filter(mapsearchResultsHalls, function(mapsearchResultsHall) {
+						return _.includes(mapSelectedHalls, mapsearchResultsHall.name);
+					});
+					var mCollection = CommonService.sumOfArray(_.map(rejectHalls, 'mBasicCost'));
+					var mRevenue = CommonService.sumOfArray(_.map(rejectHalls, 'mBasicCost'));
+					var mDiscount = CommonService.sumOfArray(_.map(rejectHalls, 'mTotalDiscount'));
+					var mActualElectricityCharges = CommonService.sumOfArray(_.map(rejectHalls, 'mActualElectricityCharges'));
+					var taxes = CommonService.sumOfArray(_.map(rejectHalls, 'mTotalCGST')) + CommonService.sumOfArray(_.map(rejectHalls, 'mTotalSGST'));
+					if (_.includes($scope.labels, $scope.months[indexMonth])) {
+						$scope.chart.monthData[0].push(mCollection);
+						$scope.chart.monthData[1].push(mRevenue);
+						$scope.chart.monthData[2].push(mDiscount);
+						$scope.chart.monthData[3].push(mActualElectricityCharges);
+						$scope.chart.monthData[4].push(taxes);
+					} else {
+						$scope.chart.monthData[0].push(0);
+						$scope.chart.monthData[1].push(0);
+						$scope.chart.monthData[2].push(0);
+						$scope.chart.monthData[3].push(0);
+						$scope.chart.monthData[4].push(0);
 					}
-				}
+				});
+
 			});
 		};
-
-		function buildColumnWiseData(data) {
-			$scope.chart = {
-				data: [
-					[],
-					[],
-					[],
-					[],
-					[]
-				]
-			};
-
-			for(var array = 0;  array <  4; array ++) {
-				if(data[array].length > 0) {
-					$scope.chart.data[0].push(data[array][0]);
-					$scope.chart.data[1].push(data[array][1]);
-					$scope.chart.data[2].push(data[array][2]);
-					$scope.chart.data[3].push(data[array][3]);
-					$scope.chart.data[4].push(data[array][4]);
-				}
-			}
-
-			$scope.chart.monthData = $scope.chart.data;
-		}
 
 		function fromBrightening() {
 			var startOfTheDayInLocal = new Date($scope.model.startDate);
@@ -241,9 +210,9 @@
 				message: response.message,
 				title: '<i class="glyphicon glyphicon-remove"></i> Email drop successfully !!!'
 			});
-    }
+    	}
 
-    function onRequestEmailReportError(response) {
+    	function onRequestEmailReportError(response) {
 			Notification.error({
 				message: response.message,
 				title: '<i class="glyphicon glyphicon-remove"></i> Email failed to snet !!!'
