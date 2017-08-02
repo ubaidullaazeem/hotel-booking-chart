@@ -176,6 +176,7 @@
 		};
 
 		$scope.exportReport = function () {
+			$("div").scrollTop(1000);
 			html2canvas(document.getElementById('exportData'), {
 				onrendered: function(canvas) {
 					var canvasdata = canvas.toDataURL("image/png");
@@ -188,6 +189,7 @@
 		}
 
 		$scope.emailReport = function() {
+			$("div").scrollTop(1000);
 			html2canvas(document.getElementById('exportData'), {
 				onrendered: function(canvas) {
 					var canvasdata = canvas.toDataURL("image/png");
