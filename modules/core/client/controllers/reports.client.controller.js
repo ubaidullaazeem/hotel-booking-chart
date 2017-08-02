@@ -41,6 +41,10 @@
 				yAxes: [{
 					stacked: true
 				}]
+			},
+			legend: {
+				display: true,
+				position: "bottom"
 			}
 		};
 
