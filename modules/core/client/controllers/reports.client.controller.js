@@ -119,7 +119,6 @@
 					dateStart.add(1, 'month');
 				};
 
-				alert(JSON.stringify($scope.labels));
 				/** 
 				 * Group by month
 				 */ 
