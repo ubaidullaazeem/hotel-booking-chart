@@ -358,13 +358,7 @@
         $scope.mixins.mEndDateTime = $scope.eventTime.mEndToServer;
         $scope.mixins.date = new Date($scope.eventTime.mStartToServer).getDate();
         $scope.mixins.month = new Date($scope.eventTime.mStartToServer).getMonth() + 1;
-        $scope.mixins.year = new Date($scope.eventTime.mStartToServer).getFullYear();
-
-        if ($scope.ui.createMode) {
-          $scope.mixins.mPaymentHistories.push($scope.mPaymentHistory);
-        } else {
-          pushPayment();
-        }
+        $scope.mixins.year = new Date($scope.eventTime.mStartToServer).getFullYear();      
 
         // Calculate Prorate Charges
         calculateProrateCharges();
@@ -411,6 +405,11 @@
           }
 
           if (!isEventOverlaps) {
+            if ($scope.ui.createMode) {
+              $scope.mixins.mPaymentHistories.push($scope.mPaymentHistory);
+            } else {
+              pushPayment();
+            }
             if ($scope.mixins._id) {
               NewbookingsService.update($scope.mixins, successCallback, errorCallback);
             } else {

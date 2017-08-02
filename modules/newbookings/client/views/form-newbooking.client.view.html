@@ -140,7 +140,7 @@
         <div layout="column" flex>
           <md-input-container flex>
             <label>Photo ID of the Person</label>
-            <input ng-model="mixins.mPhotoId" ng-pattern="mPattern"/>
+            <input ng-model="mixins.mPhotoId" ng-pattern="mPattern" ng-disabled="ui.viewMode"/>
           </md-input-container>  
         </div>
                         
@@ -293,10 +293,10 @@
        
         <div layout="column" flex>
             <label>Payment Received</label>  
-            <div layout="row" flex>
+            <div layout="row" ng-hide="ui.viewMode" flex>
               <md-input-container flex>
                 <label>Amount Paid</label>
-                <input ng-required="ui.createMode" name="amountPaid" ng-model="mPaymentHistory.amountPaid" type="number" min="1" ng-change="calculateBalanceDue()" ng-disabled="ui.viewMode" ng-pattern="ui.mNumberPattern"/>
+                <input ng-required="ui.createMode" name="amountPaid" ng-model="mPaymentHistory.amountPaid" type="number" min="1" ng-change="calculateBalanceDue()" ng-pattern="ui.mNumberPattern"/>
                 <div ng-messages="bookingForm.amountPaid.$error">
                   <div ng-message="required">Amount paid is required.</div>
                 </div>
@@ -305,7 +305,7 @@
               <md-input-container flex>
                 <label>Paid Date</label>
                   <div ng-click="!ui.viewMode ? showPaidDatePicker($event) : ''">
-                    <input type="date" ng-required="ui.createMode" ng-disabled="ui.viewMode" name="paidDate" ng-model="mPaymentHistory.paidDate"></input>
+                    <input type="date" ng-required="ui.createMode" name="paidDate" ng-model="mPaymentHistory.paidDate"></input>
                   </div>                  
                   <div ng-messages="bookingForm.paidDate.$error">
                     <div ng-message="required">Paid date is required.</div>
@@ -317,8 +317,7 @@
                   <md-select  ng-required="ui.createMode"
                               name="payMode"
                               ng-model="mPaymentHistory.paymentMode"
-                              ng-change="onPaymentModeChanged()"
-                              ng-disabled="ui.viewMode">
+                              ng-change="onPaymentModeChanged()">
                     <md-optgroup label="Payment Mode">
                       <md-option ng-value="paymentMode" ng-repeat="paymentMode in model.paymentModes">{{paymentMode}}</md-option>
                     </md-optgroup>
