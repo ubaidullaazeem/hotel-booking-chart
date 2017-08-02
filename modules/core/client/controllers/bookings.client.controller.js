@@ -122,6 +122,9 @@
                     },
                     selectedEvent: function() {
                       return null;
+                    },
+                    viewMode: function() {
+                      return false;
                     }
                   },
                 })
@@ -157,34 +160,52 @@
 
 
     //with this you can handle the click on the events
-    $scope.eventClick = function(event) {      
+    $scope.eventClick = function(event) {
+      var oldShow = $mdDialog.show;
+        $mdDialog.show = function(options) {
+          if (options.hasOwnProperty("skipHide")) {
+            options.multiple = options.skipHide;
+          }
+          return oldShow(options);
+        };
       NewbookingsService.get({
         newbookingId: event._id
       }, function(data) {
         $mdDialog.show({
-            controller: 'BookingDetailsController',
-            templateUrl: 'modules/newbookings/client/views/bookingdetails.client.view.html',
+            controller: 'NewbookingsController',
+            templateUrl: 'modules/newbookings/client/views/form-newbooking.client.view.html',
             parent: angular.element(document.body),
             clickOutsideToClose: false,
             fullscreen: true,
             resolve: {
+              selectedDate: function() {
+                return event.start;
+              },
               selectedEvent: function() {
                 return data;
+              },
+              viewMode: function() {
+                return true;
               }
             },
           })
-          .then(function(answer) {
-            console.log('answer');
+          .then(function(updatedItem) {
+            var index = findIndexByID($scope.model.events, event._id);
+            if(updatedItem.isDelete) {
+              var bookingIndex = findIndexByID($scope.model.newBookings, data._id);
+              $scope.model.events.splice(index, 1);
+              $scope.model.newBookings.splice(bookingIndex, 1);
+              var view = $scope.ui.renderView;
+              var moment = view.calendar.getDate();
+              var date = new Date(moment.format());
+              chartViewByAgenda(view.name, date);
+            } else {
+              $scope.model.events[index] = updatedItem;
+             }
           }, function() {
             console.log('You cancelled the dialog.');
           });
-      }, function(error) {
-        Notification.error({
-          message: error.data.message,
-          title: '<i class="glyphicon glyphicon-remove"></i> Booking Detail Error !!!'
-        });
       });
-
     };
 
 
@@ -307,6 +328,10 @@
         var bookedHalls = CommonService.findBookedHallsByMonth($scope.model.newBookings, date);
         chartSummary(bookedHalls);
       }
+    };
+
+    function findIndexByID(array, id) {
+      return _.findIndex(array, function(o) { return o._id == id; });
     };
 
 

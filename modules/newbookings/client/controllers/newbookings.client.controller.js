@@ -6,9 +6,9 @@
     .module('newbookings')
     .controller('NewbookingsController', NewbookingsController);
 
-  NewbookingsController.$inject = ['AuthenticationService', 'CGST', 'SGST', 'DATA_BACKGROUND_COLOR', 'EmailBookingServices', 'HARDCODE_VALUES', 'PAYMENT_STATUS', '$filter', '$scope', '$state', 'selectedEvent', '$location', '$mdDialog', '$templateRequest', '$sce', 'NewbookingsService', 'selectedDate', 'HallsService', 'EventtypesService', 'TaxesService', 'PaymentstatusesService', 'Notification', '$mdpTimePicker', '$mdpDatePicker', 'PAY_MODES', 'CommonService', 'ValidateOverlapBookingServices'];
+  NewbookingsController.$inject = ['AuthenticationService', 'CGST', 'SGST', 'DATA_BACKGROUND_COLOR', 'EmailBookingServices', 'HARDCODE_VALUES', 'PAYMENT_STATUS', '$filter', '$scope', '$state', 'selectedEvent', '$location', '$mdDialog', '$templateRequest', '$sce', 'NewbookingsService', 'selectedDate', 'HallsService', 'EventtypesService', 'TaxesService', 'PaymentstatusesService', 'Notification', '$mdpTimePicker', '$mdpDatePicker', 'PAY_MODES', 'CommonService', 'ValidateOverlapBookingServices', 'viewMode'];
 
-  function NewbookingsController(AuthenticationService, CGST, SGST, DATA_BACKGROUND_COLOR, EmailBookingServices, HARDCODE_VALUES, PAYMENT_STATUS, $filter, $scope, $state, selectedEvent, $location, $mdDialog, $templateRequest, $sce, NewbookingsService, selectedDate, HallsService, EventtypesService, TaxesService, PaymentstatusesService, Notification, $mdpTimePicker, $mdpDatePicker, PAY_MODES, CommonService, ValidateOverlapBookingServices) {
+  function NewbookingsController(AuthenticationService, CGST, SGST, DATA_BACKGROUND_COLOR, EmailBookingServices, HARDCODE_VALUES, PAYMENT_STATUS, $filter, $scope, $state, selectedEvent, $location, $mdDialog, $templateRequest, $sce, NewbookingsService, selectedDate, HallsService, EventtypesService, TaxesService, PaymentstatusesService, Notification, $mdpTimePicker, $mdpDatePicker, PAY_MODES, CommonService, ValidateOverlapBookingServices, viewMode) {
     $scope.DATA_BACKGROUND_COLOR = DATA_BACKGROUND_COLOR;
 
     var totalCostToDiscountProrate = 0;
@@ -19,7 +19,9 @@
       mEmailPattern: /^.+@.+\..+$/,
       createMode: true,
       showMdSelect: true,
-      mailsending: false
+      mailsending: false,
+      viewMode: viewMode,
+      isPastEvent : selectedEvent ? moment(selectedEvent.mStartDateTime) < moment(new Date().setHours(0, 0, 0, 0)) : true
     }
 
     $scope.model = {
@@ -89,7 +91,7 @@
       
       angular.forEach($scope.mixins.mSelectedHalls, function(hall) {  
         /** Ubai New Code Start **/
-        var selectedHalls = undefined;
+        var selectedHalls = [];
         if (selectedEvent) {
           selectedHalls = _.filter(selectedEvent.mSelectedHalls, function(mSelectedHall) {
             return mSelectedHall.name === hall.name;
@@ -100,13 +102,13 @@
         if (effectiveSummaries.length > 0) 
         {
           /** Ubai New Code Start **/
-            hall.mBasicCost = selectedHalls ? selectedHalls[0].mBasicCost : effectiveSummaries[0].rate,
-            hall.mElectricityCharges = selectedHalls ? selectedHalls[0].mElectricityCharges : effectiveSummaries[0].powerConsumpationCharges,
-            hall.mActualElectricityCharges = selectedHalls ? selectedHalls[0].mActualElectricityCharges : 0,
-            hall.mDamages = selectedHalls ? selectedHalls[0].mDamages : 0,
-            hall.mCleaningCharges = selectedHalls ? selectedHalls[0].mCleaningCharges : effectiveSummaries[0].cleaningCharges,
-            hall.mGeneratorCharges = selectedHalls ? selectedHalls[0].mGeneratorCharges : 0,
-            hall.mMiscellaneousCharges = selectedHalls ? selectedHalls[0].mMiscellaneousCharges : 0
+            hall.mBasicCost = selectedHalls.length > 0 ? selectedHalls[0].mBasicCost : effectiveSummaries[0].rate,
+            hall.mElectricityCharges = selectedHalls.length > 0 ? selectedHalls[0].mElectricityCharges : effectiveSummaries[0].powerConsumpationCharges,
+            hall.mActualElectricityCharges = selectedHalls.length > 0 ? selectedHalls[0].mActualElectricityCharges : 0,
+            hall.mDamages = selectedHalls.length > 0 ? selectedHalls[0].mDamages : 0,
+            hall.mCleaningCharges = selectedHalls.length > 0 ? selectedHalls[0].mCleaningCharges : effectiveSummaries[0].cleaningCharges,
+            hall.mGeneratorCharges = selectedHalls.length > 0 ? selectedHalls[0].mGeneratorCharges : 0,
+            hall.mMiscellaneousCharges = selectedHalls.length > 0 ? selectedHalls[0].mMiscellaneousCharges : 0
           /** End **/                   
         }
         else
@@ -554,6 +556,39 @@
             $scope.ui.showMdSelect = true;  
             $scope.$apply(); 
           }                         
+        });
+    };
+
+    $scope.editBooking = function() {
+      $scope.ui.viewMode = false;
+    }
+
+    $scope.deleteBooking = function() {
+       swal({
+          title: "Do you want to delete the booking?",
+          text: "Booking detail will be deleted permanently.",
+          type: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#DD6B55",
+          confirmButtonText: "Yes",
+          closeOnConfirm: true
+        },
+        function(isConfirm) {
+          if(isConfirm) {
+            selectedEvent.$remove(successCallback, errorCallback);
+
+            function successCallback(res) {
+              res.isDelete = true;
+              $mdDialog.hide(res);
+            }
+
+            function errorCallback(res) {
+              Notification.error({
+                message: res.data.message,
+                title: '<i class="glyphicon glyphicon-remove"></i> Delete Booking Detail Error !!!'
+              });
+            }
+          }
         });
     };
 
