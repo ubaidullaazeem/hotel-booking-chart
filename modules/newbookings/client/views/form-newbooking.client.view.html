@@ -145,26 +145,26 @@
         <div layout="column" flex>
           <md-input-container flex>
             <label>Manager Name</label>
-            <input required name="managerName" ng-model="mixins.mManagerName" ng-pattern="mPattern"/>
+            <input required name="managerName" ng-model="mixins.mManagerName" ng-pattern="mPattern" />
             <div ng-messages="bookingForm.managerName.$error">
               <div ng-message="required">Manager Name is required.</div>
             </div>
           </md-input-container>  
         </div>
         <!-- Ubai New Code Start  -->
-        <div ng-repeat="hallRateSummary in hallRateSummaries track by $index">
+        <div ng-repeat="hallRateSummary in mixins.mSelectedHalls track by $index">
           <div layout="row" flex>
             <md-input-container flex>
-              <label style="text-transform: capitalize;">{{hallRateSummary.labelName}}'s Basic Cost</label>
-              <input required name="basicCost" ng-model="hallRateSummary.mBasicCost" type="number" min="{{ui.mMinBasicCost}}" ng-change="calculateBalanceDue()" ng-pattern="ui.mNumberPattern"/>
+              <label style="text-transform: capitalize;">{{hallRateSummary.name}}'s Basic Cost</label>
+              <input required name="basicCost" ng-model="hallRateSummary.mBasicCost" type="number" min="0" ng-pattern="ui.mNumberPattern"/>
               <div ng-messages="bookingForm.basicCost.$error">
                 <div ng-message="required">Basic cost is required.</div>
               </div>
             </md-input-container>  
 
             <md-input-container flex>
-              <label style="text-transform: capitalize;">{{hallRateSummary.labelName}}'s  Electricity Charges</label>
-              <input required name="electricity" ng-model="hallRateSummary.mElectricityCharges" type="number" min="{{ui.mMinElectricityCharges}}" ng-change="calculateBalanceDue()" ng-pattern="ui.mNumberPattern"/>
+              <label style="text-transform: capitalize;">{{hallRateSummary.name}}'s  Electricity Charges</label>
+              <input required name="electricity" ng-model="hallRateSummary.mElectricityCharges" type="number" min="0" ng-pattern="ui.mNumberPattern"/>
               <div ng-messages="bookingForm.electricity.$error">
                 <div ng-message="required">Electricity Charges is required.</div>
               </div>
@@ -173,16 +173,16 @@
 
           <div layout="row" flex ng-if="!ui.createMode">
             <md-input-container flex>
-              <label style="text-transform: capitalize;">{{hallRateSummary.labelName}}'s  Actual Electricity Charges</label>
-              <input name="actualelectricity" ng-model="hallRateSummary.mActualElectricityCharges" type="number" min="{{ui.mMinActualElectricityCharges}}" ng-change="calculateBalanceDue()" ng-pattern="ui.mNumberPattern"/>
+              <label style="text-transform: capitalize;">{{hallRateSummary.name}}'s  Actual Electricity Charges</label>
+              <input name="actualelectricity" ng-model="hallRateSummary.mActualElectricityCharges" type="number" min="0" ng-pattern="ui.mNumberPattern"/>
               <div ng-messages="bookingForm.electricity.$error">
                 <div ng-message="required">Actual Electricity Charges is required.</div>
               </div>
             </md-input-container>  
 
             <md-input-container flex>
-              <label style="text-transform: capitalize;">{{hallRateSummary.labelName}}'s  Damages</label>
-              <input name="damages" ng-model="hallRateSummary.mDamages" type="number" min="0" ng-change="calculateBalanceDue()" ng-pattern="ui.mNumberPattern"/>
+              <label style="text-transform: capitalize;">{{hallRateSummary.name}}'s  Damages</label>
+              <input name="damages" ng-model="hallRateSummary.mDamages" type="number" min="0" ng-pattern="ui.mNumberPattern"/>
               <div ng-messages="bookingForm.miscellaneous.$error">
                 <div ng-message="required">Damages Charges is required.</div>
               </div>
@@ -191,24 +191,24 @@
 
           <div layout="row" flex>
             <md-input-container flex>
-              <label style="text-transform: capitalize;">{{hallRateSummary.labelName}}'s  Cleaning Charges</label>
-              <input required name="cleaning" ng-model="hallRateSummary.mCleaningCharges" type="number" min="{{ui.mMinCleaningCharges}}" ng-change="calculateBalanceDue()" ng-pattern="ui.mNumberPattern"/>
+              <label style="text-transform: capitalize;">{{hallRateSummary.name}}'s  Cleaning Charges</label>
+              <input required name="cleaning" ng-model="hallRateSummary.mCleaningCharges" type="number" min="0" ng-pattern="ui.mNumberPattern"/>
               <div ng-messages="bookingForm.cleaning.$error">
                 <div ng-message="required">Cleaning Charges is required.</div>
               </div>
             </md-input-container> 
 
             <md-input-container flex>
-              <label style="text-transform: capitalize;">{{hallRateSummary.labelName}}'s  Generator Charges</label>
-              <input required name="generator" ng-model="hallRateSummary.mGeneratorCharges" type="number" min="0" ng-change="calculateBalanceDue()" ng-pattern="ui.mNumberPattern"/>
+              <label style="text-transform: capitalize;">{{hallRateSummary.name}}'s  Generator Charges</label>
+              <input required name="generator" ng-model="hallRateSummary.mGeneratorCharges" type="number" min="0" ng-pattern="ui.mNumberPattern"/>
               <div ng-messages="bookingForm.generator.$error">
                 <div ng-message="required">Generator Charges is required.</div>
               </div>
             </md-input-container>
 
             <md-input-container flex>
-              <label style="text-transform: capitalize;">{{hallRateSummary.labelName}}'s  Miscellaneous Charges</label>
-              <input required name="miscellaneous" ng-model="hallRateSummary.mMiscellaneousCharges" type="number" min="0" ng-change="calculateBalanceDue()" ng-pattern="ui.mNumberPattern"/>
+              <label style="text-transform: capitalize;">{{hallRateSummary.name}}'s  Miscellaneous Charges</label>
+              <input required name="miscellaneous" ng-model="hallRateSummary.mMiscellaneousCharges" type="number" min="0" ng-pattern="ui.mNumberPattern"/>
               <div ng-messages="bookingForm.miscellaneous.$error">
                 <div ng-message="required">Miscellaneous Charges is required.</div>
               </div>

@@ -119,7 +119,9 @@ var NewbookingSchema = new Schema({
   mPaymentHistories: [{
     amountPaid : Number,
     paidDate : Date,
-    paymentMode : String
+    paymentMode : String,
+    CGSTPercent : Number,
+    SGSTPercent : Number
   }],
   mBalanceDue: {
     type: Number,

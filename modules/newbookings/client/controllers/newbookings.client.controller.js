@@ -11,14 +11,12 @@
   function NewbookingsController(AuthenticationService, CGST, SGST, DATA_BACKGROUND_COLOR, EmailBookingServices, HARDCODE_VALUES, PAYMENT_STATUS, $filter, $scope, $state, selectedEvent, $location, $mdDialog, $templateRequest, $sce, NewbookingsService, selectedDate, HallsService, EventtypesService, TaxesService, PaymentstatusesService, Notification, $mdpTimePicker, $mdpDatePicker, PAY_MODES, CommonService, ValidateOverlapBookingServices) {
     $scope.DATA_BACKGROUND_COLOR = DATA_BACKGROUND_COLOR;
 
+    var totalCostToDiscountProrate = 0;
+
     $scope.ui = {
       mSelectedDateToDisplay: selectedDate.format('DD-MMMM-YYYY'),
       mNumberPattern: /^[0-9]*$/,
       mEmailPattern: /^.+@.+\..+$/,
-      mMinBasicCost : 0,
-      mMinElectricityCharges : 0,
-      mMinCleaningCharges : 0,
-      mMinActualElectricityCharges: 0,
       createMode: true,
       showMdSelect: true,
       mailsending: false
@@ -35,10 +33,12 @@
     $scope.mPaymentHistory = {
       amountPaid: null,
       paidDate: new Date(),
-      paymentMode: null
+      paymentMode: null,
+      CGSTPercent: 0,
+      SGSTPercent: 0
     };
 
-    $scope.hallRateSummaries = [];
+    $scope.taxableChargesBeforeDiscount = 0;
 
     $scope.mixins = {
       _id: selectedEvent ? selectedEvent._id : undefined, 
@@ -71,9 +71,10 @@
       mEndToServer: getTimeToServer(new Date('1991-05-04T13:00:00'))
     };
 
-    // $scope.$watch('mPaymentHistory.paidDate', function(newValue) {
-    //   $scope.mPaymentHistory.paidDate = $filter('date')(newValue, 'yyyy/MM/dd');
-    // });
+    $scope.$watch('mixins.mSelectedHalls', function(newValue) {
+      calculateHallsRate();
+      $scope.calculateBalanceDue();
+    }, true);
 
     // Fetch the Terms and conditions
     var templateUrl = $sce.getTrustedResourceUrl('/modules/newbookings/client/views/templates/newbookings-terms-and-conditions.html');
@@ -81,15 +82,9 @@
     $templateRequest(templateUrl).then(function(template) {
       $scope.termsAndConditions = template;
     });
-
-
-    var selectedHallsTotalBasicCost=0, selectedHallsTotalEBCharges=0, selectedHallsTotalCleaningCharges=0;
     
     $scope.selectedHallsChanged = function() 
     {
-      $scope.hallRateSummaries.length = 0;
-      selectedHallsTotalBasicCost = 0, selectedHallsTotalEBCharges=0, selectedHallsTotalCleaningCharges=0;
-
       $scope.mixins.mSelectedHalls = _.uniqBy($scope.mixins.mSelectedHalls, '_id');
       
       angular.forEach($scope.mixins.mSelectedHalls, function(hall) {  
@@ -101,24 +96,18 @@
           });
         }
        /** End **/
-        var effectiveSummaries = CommonService.findRateSummariesByDate(hall.rateSummaries, new Date());
+        var effectiveSummaries = CommonService.findRateSummariesByDate(hall.rateSummaries, new Date(selectedDate));
         if (effectiveSummaries.length > 0) 
         {
           /** Ubai New Code Start **/
-          $scope.hallRateSummaries.push({
-            labelName: hall.name,
-            mBasicCost: selectedHalls ? selectedHalls[0].mRate : effectiveSummaries[0].rate,
-            mElectricityCharges: selectedHalls ? selectedHalls[0].mElectricityCharges : effectiveSummaries[0].powerConsumpationCharges,
-            mActualElectricityCharges: selectedHalls ? selectedHalls[0].mActualElectricityCharges : 0,
-            mDamages: selectedHalls ? selectedHalls[0].mDamages : 0,
-            mCleaningCharges: selectedHalls ? selectedHalls[0].mCleaningCharges : effectiveSummaries[0].cleaningCharges,
-            mGeneratorCharges: selectedHalls ? selectedHalls[0].mGeneratorCharges : 0,
-            mMiscellaneousCharges: selectedHalls ? selectedHalls[0].mMiscellaneousCharges : 0
-          }); 
-          /** End **/         
-          selectedHallsTotalBasicCost = selectedHallsTotalBasicCost + effectiveSummaries[0].rate;
-          selectedHallsTotalEBCharges = selectedHallsTotalEBCharges + effectiveSummaries[0].powerConsumpationCharges;
-          selectedHallsTotalCleaningCharges = selectedHallsTotalCleaningCharges + effectiveSummaries[0].cleaningCharges;
+            hall.mBasicCost = selectedHalls ? selectedHalls[0].mBasicCost : effectiveSummaries[0].rate,
+            hall.mElectricityCharges = selectedHalls ? selectedHalls[0].mElectricityCharges : effectiveSummaries[0].powerConsumpationCharges,
+            hall.mActualElectricityCharges = selectedHalls ? selectedHalls[0].mActualElectricityCharges : 0,
+            hall.mDamages = selectedHalls ? selectedHalls[0].mDamages : 0,
+            hall.mCleaningCharges = selectedHalls ? selectedHalls[0].mCleaningCharges : effectiveSummaries[0].cleaningCharges,
+            hall.mGeneratorCharges = selectedHalls ? selectedHalls[0].mGeneratorCharges : 0,
+            hall.mMiscellaneousCharges = selectedHalls ? selectedHalls[0].mMiscellaneousCharges : 0
+          /** End **/                   
         }
         else
         {
@@ -128,21 +117,9 @@
           });
           $mdDialog.cancel();
         }        
-      });
+      });      
       
-      console.log("$scope.mixins.mBasicCost1  "+$scope.mixins.mBasicCost);
-      console.log("selectedHallsTotalBasicCost  "+selectedHallsTotalBasicCost);
-
-      $scope.ui.mMinBasicCost = selectedHallsTotalBasicCost;
-      $scope.ui.mMinElectricityCharges = selectedHallsTotalEBCharges;
-      $scope.ui.mMinCleaningCharges = selectedHallsTotalCleaningCharges;
-
-      $scope.mixins.mBasicCost = selectedHallsTotalBasicCost;
-      $scope.mixins.mElectricityCharges = selectedHallsTotalEBCharges;
-      $scope.mixins.mCleaningCharges = selectedHallsTotalCleaningCharges;
-
-      console.log("$scope.mixins.mBasicCost2  "+$scope.mixins.mBasicCost);
-
+      calculateHallsRate();
       $scope.calculateBalanceDue();
     };
 
@@ -297,23 +274,22 @@
 
     //var divideRate;
     var cgstPercent, sgstPercent;
-    var cgstString, sgstString;
 
-    $scope.calculateBalanceDue = function() {   
+    $scope.calculateBalanceDue = function() {    
 
-      var subTotal = Number($scope.mixins.mBasicCost) + Number($scope.mixins.mElectricityCharges) + Number($scope.mixins.mCleaningCharges) +
-        Number($scope.mixins.mGeneratorCharges) + Number($scope.mixins.mMiscellaneousCharges) - Number($scope.mixins.mDiscount);      
+      var subTotal =  $scope.taxableChargesBeforeDiscount - Number($scope.mixins.mDiscount);   
 
       var cgst = Number(Number(Number(subTotal) * cgstPercent).toFixed(2));
       var sgst = Number(Number(Number(subTotal) * sgstPercent).toFixed(2));
       var grandTot = Number(Number(Math.round(Number(subTotal) + Number(cgst) + Number(sgst))).toFixed(2));      
-      var balance = Number(Number(Math.round(Number(grandTot) - Number($scope.mPaymentHistory.amountPaid))).toFixed(2));      
+      var receivedPayment = CommonService.sumOfArray(_.map($scope.mixins.mPaymentHistories, 'amountPaid')); 
+      var balance = Number(Number(Math.round(Number(grandTot) - Number($scope.mPaymentHistory.amountPaid))).toFixed(2));
       
       $scope.mixins.mSubTotal = subTotal;
       $scope.mixins.mCGST = cgst;
       $scope.mixins.mSGST = sgst;
       $scope.mixins.mGrandTotal = grandTot;
-      $scope.mixins.mBalanceDue = balance;
+      $scope.mixins.mBalanceDue = $scope.ui.createMode ? balance : balance - receivedPayment;
 
       console.log("$scope.mSubTotal " + $scope.mixins.mSubTotal);
       console.log("$scope.mCGST " + $scope.mixins.mCGST);
@@ -335,15 +311,15 @@
           title: '<i class="glyphicon glyphicon-remove"></i> Tax Missing Error !!!'
         });
         $mdDialog.cancel();
-      } else {
+      } else {       
+        var cgst = CommonService.findRateSummariesByDate(CommonService.getTaxRateByName($scope.model.taxes, CGST).rateSummaries, new Date(selectedDate));
+        var sgst = CommonService.findRateSummariesByDate(CommonService.getTaxRateByName($scope.model.taxes, SGST).rateSummaries, new Date(selectedDate));
 
-        var cgst = CommonService.getTaxRateByName($scope.model.taxes, CGST);
-        var sgst = CommonService.getTaxRateByName($scope.model.taxes, SGST);
+        $scope.mPaymentHistory.CGSTPercent = cgst[0].percentage;
+        $scope.mPaymentHistory.SGSTPercent = sgst[0].percentage;
 
-        cgstPercent = Number(cgst) / 100;
-        sgstPercent = Number(sgst) / 100;
-        cgstString = cgst + '%';
-        sgstString = sgst + '%';
+        cgstPercent = Number(cgst[0].percentage) / 100;
+        sgstPercent = Number(sgst[0].percentage) / 100;
       }
 
       $scope.calculateBalanceDue();   
@@ -354,7 +330,6 @@
       init();
     });
 
-    // Save Newbooking
    // Save Newbooking
   $scope.save = function(form) {
 
@@ -664,43 +639,67 @@
 
     function calculateProrateCharges() {
       for (var i = 0; i < $scope.mixins.mSelectedHalls.length; i++) {
-        var effectiveSummaries = CommonService.findRateSummariesByDate($scope.mixins.mSelectedHalls[i].rateSummaries, new Date());
-        /** Ubai New Code Start **/
-        var hallRateSummaryArray = _.filter($scope.hallRateSummaries, function(hallRateSummary) {
-          return hallRateSummary.labelName === $scope.mixins.mSelectedHalls[i].name;
-        });
-        /** End **/
-        if (effectiveSummaries.length > 0) {
-          var effectiveSummary = effectiveSummaries[0];
 
-          //Prorating basic cost, generator, miscellaneous and discount is based on hall's basic cost and electricity, cleaning is based hall's electricity and cleaning charges
-          /** Ubai New Code Start **/
-          $scope.mixins.mSelectedHalls[i].mRate = hallRateSummaryArray[0].mBasicCost;
-          $scope.mixins.mSelectedHalls[i].mElectricityCharges = hallRateSummaryArray[0].mElectricityCharges;
-          $scope.mixins.mSelectedHalls[i].mActualElectricityCharges = hallRateSummaryArray[0].mActualElectricityCharges; //updated while editing the booking
-          $scope.mixins.mSelectedHalls[i].mDamages = hallRateSummaryArray[0].mDamages;
-          $scope.mixins.mSelectedHalls[i].mCleaningCharges = hallRateSummaryArray[0].mCleaningCharges;
-          $scope.mixins.mSelectedHalls[i].mGeneratorCharges = hallRateSummaryArray[0].mGeneratorCharges;
-          $scope.mixins.mSelectedHalls[i].mMiscellaneousCharges = hallRateSummaryArray[0].mMiscellaneousCharges;
-          /** End **/
-          $scope.mixins.mSelectedHalls[i].mDiscount = (effectiveSummary.rate / selectedHallsTotalBasicCost) * $scope.mixins.mDiscount;
+        //individual discounts
+        $scope.mixins.mSelectedHalls[i].Discount = {
+          mRateDiscount : ($scope.mixins.mSelectedHalls[i].mBasicCost / totalCostToDiscountProrate) * $scope.mixins.mDiscount,
+          mElectricityDiscount : ($scope.mixins.mSelectedHalls[i].mElectricityCharges / totalCostToDiscountProrate) * $scope.mixins.mDiscount,
+          mCleaningDiscount : ($scope.mixins.mSelectedHalls[i].mCleaningCharges / totalCostToDiscountProrate) * $scope.mixins.mDiscount
+        };    
 
-          $scope.mixins.mSelectedHalls[i].mCGST = (effectiveSummary.rate / selectedHallsTotalBasicCost) * $scope.mixins.mCGST;
-          $scope.mixins.mSelectedHalls[i].mSGST = (effectiveSummary.rate / selectedHallsTotalBasicCost) * $scope.mixins.mSGST;
+        //Total discount
+        var sHall = $scope.mixins.mSelectedHalls[i];
+        var discounts = sHall.Discount;
+        $scope.mixins.mSelectedHalls[i].mTotalDiscount = discounts.mRateDiscount + discounts.mElectricityDiscount + discounts.mCleaningDiscount;
 
-          //All rate before applying the discount 
-          $scope.mixins.mSelectedHalls[i].mRevenue = $scope.mixins.mSelectedHalls[i].mRate + $scope.mixins.mSelectedHalls[i].mElectricityCharges + $scope.mixins.mSelectedHalls[i].mCleaningCharges + $scope.mixins.mSelectedHalls[i].mGeneratorCharges + $scope.mixins.mSelectedHalls[i].mMiscellaneousCharges + $scope.mixins.mSelectedHalls[i].mCGST + $scope.mixins.mSelectedHalls[i].mSGST;
+        $scope.mixins.mSelectedHalls[i].GST = {
+            mRateCGST: (sHall.mBasicCost - discounts.mRateDiscount) * cgstPercent,
+            mRateSGST: (sHall.mBasicCost - discounts.mRateDiscount) * sgstPercent,
+            mElectricityCGST: (sHall.mElectricityCharges - discounts.mElectricityDiscount) * cgstPercent,
+            mElectricitySGST: (sHall.mElectricityCharges - discounts.mElectricityDiscount) * sgstPercent,
+            mCleaningCGST: (sHall.mCleaningCharges - discounts.mCleaningDiscount) * cgstPercent,
+            mCleaningSGST: (sHall.mCleaningCharges - discounts.mCleaningDiscount) * sgstPercent,
+            mGeneratorCGST: sHall.mGeneratorCharges * cgstPercent,
+            mGeneratorSGST: sHall.mGeneratorCharges * sgstPercent,
+            mMiscellaneousCGST: sHall.mMiscellaneousCharges * cgstPercent,
+            mMiscellaneousSGST: sHall.mMiscellaneousCharges * sgstPercent,
+            mDamagesCGST: sHall.mDamages * cgstPercent,
+            mDamagesSGST: sHall.mDamages * sgstPercent
+          };
 
-          $scope.mixins.mSelectedHalls[i].mCollection = (effectiveSummary.rate / selectedHallsTotalBasicCost) * $scope.mPaymentHistory.amountPaid;
-        } else {
-          Notification.error({
-            message: "Effective date is not found for " + hall.name,
-            title: '<i class="glyphicon glyphicon-remove"></i> Effective date Error !!!'
-          });
-          $mdDialog.cancel();
-          break;
-        }
+        var GSTs = $scope.mixins.mSelectedHalls[i].GST;
+        $scope.mixins.mSelectedHalls[i].mTotalCGST = GSTs.mRateCGST + GSTs.mElectricityCGST + GSTs.mCleaningCGST 
+                                                    + GSTs.mGeneratorCGST + GSTs.mMiscellaneousCGST + GSTs.mDamagesCGST;
+
+        $scope.mixins.mSelectedHalls[i].mTotalSGST = GSTs.mRateSGST + GSTs.mElectricitySGST + GSTs.mCleaningSGST 
+                                                      + GSTs.mGeneratorSGST + GSTs.mMiscellaneousSGST + GSTs.mDamagesSGST;
+         
+        //All rate before applying the discount 
+        //$scope.mixins.mSelectedHalls[i].mRevenue = $scope.mixins.mSelectedHalls[i].mRate + $scope.mixins.mSelectedHalls[i].mElectricityCharges + $scope.mixins.mSelectedHalls[i].mCleaningCharges + $scope.mixins.mSelectedHalls[i].mGeneratorCharges + $scope.mixins.mSelectedHalls[i].mMiscellaneousCharges + $scope.mixins.mSelectedHalls[i].mCGST + $scope.mixins.mSelectedHalls[i].mSGST;
+        //$scope.mixins.mSelectedHalls[i].mCollection = (effectiveSummary.rate / selectedHallsTotalBasicCost) * $scope.mPaymentHistory.amountPaid;        
       }
+    }
+
+    function calculateHallsRate() {
+      var basicCost = CommonService.sumOfArray(_.map($scope.mixins.mSelectedHalls, 'mBasicCost'));
+      var electricityCost = CommonService.sumOfArray(_.map($scope.mixins.mSelectedHalls, 'mElectricityCharges'));
+      var cleaningCost = CommonService.sumOfArray(_.map($scope.mixins.mSelectedHalls, 'mCleaningCharges'));
+      var generatorCost = CommonService.sumOfArray(_.map($scope.mixins.mSelectedHalls, 'mGeneratorCharges'));
+      var miscellaneousCost = CommonService.sumOfArray(_.map($scope.mixins.mSelectedHalls, 'mMiscellaneousCharges'));
+      var damageCost = CommonService.sumOfArray(_.map($scope.mixins.mSelectedHalls, 'mDamages'));
+
+      $scope.taxableChargesBeforeDiscount = Number(basicCost) + Number(electricityCost) + Number(cleaningCost) +
+        Number(generatorCost) + Number(miscellaneousCost) + Number(damageCost);
+
+      totalCostToDiscountProrate = Number(basicCost) + Number(electricityCost) + Number(cleaningCost);
+
+      console.log("basicCost " + basicCost);
+      console.log("electricityCost " + electricityCost);
+      console.log("cleaningCost " + cleaningCost);
+      console.log("miscellaneousCost " + miscellaneousCost);
+      console.log("$scope.generatorCost " + generatorCost);
+      console.log("damageCost " + damageCost);
+      console.log("taxableChargesBeforeDiscount " + $scope.taxableChargesBeforeDiscount);
     }
   }
 }());

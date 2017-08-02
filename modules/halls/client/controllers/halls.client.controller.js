@@ -58,8 +58,10 @@
 
     $scope.calculateTaxRate = function() {
       var totalCost = Number($scope.model.rate) + Number($scope.model.powerConsumpationCharges) + Number($scope.model.cleaningCharges);
-      var cgstPercent = Number(CommonService.getTaxRateByName($scope.model.taxes, CGST)) / 100;
-      var sgstPercent = Number(CommonService.getTaxRateByName($scope.model.taxes, SGST)) / 100;
+      var cgst = CommonService.findRateSummariesByDate(CommonService.getTaxRateByName($scope.model.taxes, CGST).rateSummaries, new Date());
+      var sgst = CommonService.findRateSummariesByDate(CommonService.getTaxRateByName($scope.model.taxes, SGST).rateSummaries, new Date());
+      var cgstPercent = cgst[0].percentage / 100;
+      var sgstPercent = sgst[0].percentage / 100;
       $scope.model.CGSTTax = Number(Number(Number(totalCost) * cgstPercent).toFixed(2));
       $scope.model.SGSTTax = Number(Number(Number(totalCost) * sgstPercent).toFixed(2));
     };

@@ -24,7 +24,7 @@
             var taxArray = _.filter(taxes, function(tax) {
                 return tax.name === name;
             });
-            return taxArray[0].percentage;
+            return taxArray[0];
         };
 
         CommonService.hasContainsTaxName = function(taxes) {
@@ -78,6 +78,12 @@
             });
 
             return dayHallList;
+        };
+
+        CommonService.sumOfArray = function(array) {
+            return _.reduce(array, function(sum, n) {
+                return sum + n;
+            }, 0);
         };
 
         function rateSummariesByDateImpl(rateSummaries, date) {
