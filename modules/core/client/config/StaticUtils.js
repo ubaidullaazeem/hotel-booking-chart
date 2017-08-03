@@ -14,6 +14,7 @@
     .constant('CLEANING_HOURS', 3)
     .constant('PAYMENT_STATUS', ['Advance Paid', 'Fully Paid'])
     .constant('TAX_TYPES', ['CGST', 'SGST'])
+    .constant('GOOGLE_CALENDAR_COLOR_IDS', {'GREEN':10, "RED":11})
 	.constant('API', {
        	'CALENDAR_LIST_URL' : 'https://www.googleapis.com/calendar/v3/users/me/calendarList',
        	'CALENDAR_EVENT_LIST_URL' : 'https://www.googleapis.com/calendar/v3/calendars/',
