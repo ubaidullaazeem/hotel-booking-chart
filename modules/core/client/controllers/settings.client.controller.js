@@ -5,9 +5,9 @@
     .module('core')
     .controller('SettingsController', SettingsController);
 
-  SettingsController.$inject = ['COLOURS', 'CommonService', 'DATA_BACKGROUND_COLOR', '$scope', '$state', '$rootScope', '$mdDialog', 'HallsService', 'Notification', 'EventtypesService', 'TaxesService', 'PaymentstatusesService'];
+  SettingsController.$inject = ['COLOURS', 'CommonService', 'DATA_BACKGROUND_COLOR', '$scope', '$state', '$rootScope', '$mdDialog', 'HallsService', 'Notification', 'EventtypesService', 'TaxesService', 'PaymentstatusesService', 'PAYMENT_STATUS', 'TAX_TYPES'];
 
-  function SettingsController(COLOURS, CommonService, DATA_BACKGROUND_COLOR, $scope, $state, $rootScope, $mdDialog, HallsService, Notification, EventtypesService, TaxesService, PaymentstatusesService) 
+  function SettingsController(COLOURS, CommonService, DATA_BACKGROUND_COLOR, $scope, $state, $rootScope, $mdDialog, HallsService, Notification, EventtypesService, TaxesService, PaymentstatusesService, PAYMENT_STATUS, TAX_TYPES) 
   {
     
     $scope.DATA_BACKGROUND_COLOR = DATA_BACKGROUND_COLOR;
@@ -79,7 +79,12 @@
 
      /** CRUD Functionality for Tax **/
 
-    $scope.mShowTaxPopup = function(ev, index = null, tax = null) {
+    $scope.mShowTaxPopup = function(ev, index = null, tax = null) { 
+      var taxTypes = TAX_TYPES;
+      var savedTaxTypes = _.map($scope.taxes, 'name');
+      if (!tax) {
+        taxTypes =  _.pullAll(TAX_TYPES, savedTaxTypes);
+      }
       var oldShow = $mdDialog.show;
         $mdDialog.show = function(options) {
           if (options.hasOwnProperty("skipHide")) {
@@ -97,6 +102,9 @@
           resolve: {
             taxResolve: function() {
               return tax;
+            },
+            taxTypeResolve: function() {
+              return taxTypes;
             }
           },
         })
@@ -186,7 +194,9 @@
     $scope.mShowPaymentStatusPopup = function(ev, index = null, paymentStatus = null) {
 
       var savedColors = _.map($scope.paymentStatuses, 'colour');
+      var savedPaymentTypes = _.map($scope.paymentStatuses, 'name');      
       var colours = [];
+      var paymentTypes = PAYMENT_STATUS;
       var colors = _.map(COLOURS, function(o) {
         return _.pick(o, ['name', 'code']);
       });
@@ -197,6 +207,7 @@
         colours = _.pullAllBy(colors, paymentColors, 'name');
       } else {
         colours = _.pullAllBy(colors, savedColors, 'name');
+        paymentTypes =  _.pullAll(PAYMENT_STATUS, savedPaymentTypes);
       }
 
       $mdDialog.show({
@@ -212,6 +223,9 @@
             },
             colorsResolve: function() {
               return colours
+            },
+            paymentTypesResolve: function() {
+              return paymentTypes;
             }
           },
         })

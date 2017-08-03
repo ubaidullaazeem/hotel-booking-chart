@@ -14,8 +14,7 @@ var PaymentstatusSchema = new Schema({
     type: String,
     unique: true,
     required: 'Please fill Paymentstatus name',
-    trim: true,
-    lowercase: true    
+    trim: true
   },
   colour:{
     name:{

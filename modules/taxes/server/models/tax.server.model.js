@@ -14,8 +14,7 @@ var TaxSchema = new Schema({
     type: String,
     unique: true,
     required: 'Please fill tax name',
-    trim: true,
-    lowercase: true
+    trim: true
   },
   rateSummaries: [{
     percentage: Number,

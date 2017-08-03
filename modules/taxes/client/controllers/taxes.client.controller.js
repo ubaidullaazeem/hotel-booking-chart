@@ -6,9 +6,9 @@
     .module('taxes')
     .controller('TaxesController', TaxesController);
 
-  TaxesController.$inject = ['CommonService', 'DATA_BACKGROUND_COLOR', '$scope', '$state', '$rootScope', '$window', 'Authentication', '$mdDialog', 'Notification', 'taxResolve', 'TaxesService', '$mdpDatePicker'];
+  TaxesController.$inject = ['CommonService', 'DATA_BACKGROUND_COLOR', '$scope', '$state', '$rootScope', '$window', 'Authentication', '$mdDialog', 'Notification', 'taxResolve', 'TaxesService', '$mdpDatePicker', 'taxTypeResolve'];
 
-  function TaxesController (CommonService, DATA_BACKGROUND_COLOR, $scope, $state, $rootScope, $window, Authentication, $mdDialog, Notification, tax, TaxesService, $mdpDatePicker) 
+  function TaxesController (CommonService, DATA_BACKGROUND_COLOR, $scope, $state, $rootScope, $window, Authentication, $mdDialog, Notification, tax, TaxesService, $mdpDatePicker, taxTypeResolve) 
   {   
     $scope.model = {
       tax: {
@@ -18,6 +18,7 @@
         rateSummaries: tax ? tax.rateSummaries : [],
       },
       percentage: undefined,
+      taxTypes: taxTypeResolve
     };
 
     $scope.ui = {

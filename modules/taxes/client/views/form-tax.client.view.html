@@ -5,7 +5,7 @@
         <div class="md-toolbar-tools">        
           <span flex="100" align="left"><h1>{{model.tax._id ? 'Edit Tax' : 'Add Tax'}}</h1></span>
           <md-button class="md-icon-button" ng-click="cancel()">
-            <md-icon md-svg-src="modules/core/client/img/icons/ic_close_24px.svg" aria-label="Close dialog"></md-icon>
+            <i class="material-icons">close</i>
           </md-button>
         </div>
       </div>
@@ -17,7 +17,14 @@
 
               <md-input-container flex>
                 <label>Name</label>
-                <input style="text-transform: uppercase" required name="name" ng-model="model.tax.name" ng-disabled="model.tax._id"/>
+                <md-select required
+                  name="name"
+                  ng-model="model.tax.name"
+                  ng-disabled="model.tax._id">
+                  <md-optgroup label="Name">
+                    <md-option ng-value="taxType" ng-repeat="taxType in model.taxTypes">{{taxType}}</md-option>
+                  </md-optgroup>
+                </md-select> 
                 <div ng-messages="taxForm.name.$error">
                   <div ng-message="required">Tax name is required.</div>
                 </div>
