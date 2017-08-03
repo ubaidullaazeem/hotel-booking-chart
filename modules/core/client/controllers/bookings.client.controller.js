@@ -193,18 +193,21 @@
           })
           .then(function(updatedItem) {
             var index = findIndexByID($scope.model.events, event._id);
+            var bookingIndex = findIndexByID($scope.model.newBookings, data._id);
+            $scope.model.events.splice(index, 1);
             if(updatedItem.isDelete) {
-              var bookingIndex = findIndexByID($scope.model.newBookings, data._id);
-              $scope.model.events.splice(index, 1);
               $scope.model.newBookings.splice(bookingIndex, 1);
-              var view = $scope.ui.renderView;
-              var moment = view.calendar.getDate();
-              var date = new Date(moment.format());
-              chartViewByAgenda(view.name, date);
             } else {
-              $scope.model.events.splice(index, 1);
-              eventsPush(updatedItem);
+              $scope.model.newBookings[bookingIndex] = updatedItem;
+              $timeout(function() {
+                eventsPush(updatedItem);
+                $scope.$apply();
+              })
              }
+            var view = $scope.ui.renderView;
+            var moment = view.calendar.getDate();
+            var date = new Date(moment.format());
+            chartViewByAgenda(view.name, date);
           }, function() {
             console.log('You cancelled the dialog.');
           });

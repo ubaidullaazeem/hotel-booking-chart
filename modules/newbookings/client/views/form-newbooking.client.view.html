@@ -296,7 +296,7 @@
             <div layout="row" ng-hide="ui.viewMode" flex>
               <md-input-container flex>
                 <label>Amount Paid</label>
-                <input ng-required="ui.createMode || mixins.mPaymentHistories.length <= 0" name="amountPaid" ng-model="mPaymentHistory.amountPaid" type="number" min="1" ng-change="calculateBalanceDue()" ng-pattern="ui.mNumberPattern"/>
+                <input ng-required="ui.createMode || mixins.mPaymentHistories.length <= 0 || mPaymentHistory.paymentMode" name="amountPaid" ng-model="mPaymentHistory.amountPaid" type="number" min="1" ng-change="calculateBalanceDue()" ng-pattern="ui.mNumberPattern"/>
                 <div ng-messages="bookingForm.amountPaid.$error">
                   <div ng-message="required">Amount paid is required.</div>
                 </div>
@@ -314,7 +314,7 @@
 
               <md-input-container flex>
                   <label>Payment Mode</label>
-                  <md-select  ng-required="ui.createMode || mixins.mPaymentHistories.length <= 0"
+                  <md-select  ng-required="ui.createMode || mixins.mPaymentHistories.length <= 0 || mPaymentHistory.amountPaid"
                               name="payMode"
                               ng-model="mPaymentHistory.paymentMode"
                               ng-change="onPaymentModeChanged()">
