@@ -280,6 +280,7 @@
               <md-select style="text-transform: capitalize;" required
                           name="payStatus" 
                           ng-model="mixins.mSelectedPaymentStatus"
+                          ng-change="onPaymentStatusChanged()"
                           ng-disabled="ui.viewMode">
                 <md-optgroup label="Payment Status">
                   <md-option style="text-transform: capitalize;" ng-value="paymentStatus" ng-selected="{{ paymentStatus.name === mixins.mSelectedPaymentStatus.name ? 'true' : 'false' }}" ng-repeat="paymentStatus in model.paymentStatuses">{{paymentStatus.name}}</md-option>

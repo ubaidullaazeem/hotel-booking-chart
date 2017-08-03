@@ -6,9 +6,9 @@
     .module('newbookings')
     .controller('NewbookingsController', NewbookingsController);
 
-  NewbookingsController.$inject = ['AuthenticationService', 'CGST', 'SGST', 'DATA_BACKGROUND_COLOR', 'EmailBookingServices', 'HARDCODE_VALUES', 'PAYMENT_STATUS', '$filter', '$scope', '$state', 'selectedEvent', '$location', '$mdDialog', '$templateRequest', '$sce', 'NewbookingsService', 'selectedDate', 'HallsService', 'EventtypesService', 'TaxesService', 'PaymentstatusesService', 'Notification', '$mdpTimePicker', '$mdpDatePicker', 'PAY_MODES', 'CommonService', 'ValidateOverlapBookingServices', 'viewMode'];
+  NewbookingsController.$inject = ['AuthenticationService', 'CGST', 'SGST', 'DATA_BACKGROUND_COLOR', 'EmailBookingServices', 'HARDCODE_VALUES', 'PAYMENT_STATUS', '$filter', '$scope', '$state', 'selectedEvent', '$location', '$mdDialog', '$templateRequest', '$sce', 'NewbookingsService', 'selectedDate', 'HallsService', 'EventtypesService', 'TaxesService', 'PaymentstatusesService', 'Notification', '$mdpTimePicker', '$mdpDatePicker', 'PAY_MODES', 'CommonService', 'ValidateOverlapBookingServices', 'viewMode', 'GOOGLE_CALENDAR_COLOR_IDS'];
 
-  function NewbookingsController(AuthenticationService, CGST, SGST, DATA_BACKGROUND_COLOR, EmailBookingServices, HARDCODE_VALUES, PAYMENT_STATUS, $filter, $scope, $state, selectedEvent, $location, $mdDialog, $templateRequest, $sce, NewbookingsService, selectedDate, HallsService, EventtypesService, TaxesService, PaymentstatusesService, Notification, $mdpTimePicker, $mdpDatePicker, PAY_MODES, CommonService, ValidateOverlapBookingServices, viewMode) {
+  function NewbookingsController(AuthenticationService, CGST, SGST, DATA_BACKGROUND_COLOR, EmailBookingServices, HARDCODE_VALUES, PAYMENT_STATUS, $filter, $scope, $state, selectedEvent, $location, $mdDialog, $templateRequest, $sce, NewbookingsService, selectedDate, HallsService, EventtypesService, TaxesService, PaymentstatusesService, Notification, $mdpTimePicker, $mdpDatePicker, PAY_MODES, CommonService, ValidateOverlapBookingServices, viewMode, GOOGLE_CALENDAR_COLOR_IDS) {
     $scope.DATA_BACKGROUND_COLOR = DATA_BACKGROUND_COLOR;
 
     var totalCostToDiscountProrate = 0;
@@ -67,6 +67,10 @@
       mPaymentHistories: selectedEvent ? selectedEvent.mPaymentHistories : [],
       mBalanceDue: selectedEvent ? selectedEvent.mBalanceDue : 0
     };
+
+    $scope.googleCalendar = {
+      colorCode : selectedEvent ? ((selectedEvent.mSelectedPaymentStatus.name === PAYMENT_STATUS[1]) ? GOOGLE_CALENDAR_COLOR_IDS.RED : GOOGLE_CALENDAR_COLOR_IDS.GREEN) : GOOGLE_CALENDAR_COLOR_IDS.GREEN
+    }
 
     $scope.eventTime = {
       mStartClock: selectedEvent ? new Date(selectedEvent.mStartDateTime) : new Date('1991-05-04T06:00:00'),
@@ -127,6 +131,10 @@
 
       calculateHallsRate();
       $scope.calculateBalanceDue();
+    };
+
+    $scope.onPaymentStatusChanged = function() {
+        $scope.googleCalendar.colorCode = ($scope.mixins.mSelectedPaymentStatus.name === PAYMENT_STATUS[1]) ? GOOGLE_CALENDAR_COLOR_IDS.RED : GOOGLE_CALENDAR_COLOR_IDS.GREEN;
     };
 
     $scope.getOtherEvents = function() {
@@ -485,7 +493,8 @@
                   dateTime: $scope.eventTime.mEndToServer
                 },
                 description: $scope.mixins.mDescription,
-                summary: eventName
+                summary: eventName,
+                colorId: $scope.googleCalendar.colorCode
               });
 
               insertEventReq.execute(function(insertEventRes) {
@@ -597,7 +606,8 @@
                   dateTime: $scope.eventTime.mEndToServer
                 },
                 description: $scope.mixins.mDescription,
-                summary: eventName
+                summary: eventName,
+                colorId: $scope.googleCalendar.colorCode
               });
               updateEventReq.execute(function(updateEventRes) {
                 processedHalls++;
@@ -639,7 +649,8 @@
                     dateTime: $scope.eventTime.mEndToServer
                   },
                   description: $scope.mixins.mDescription,
-                  summary: eventName
+                  summary: eventName,
+                  colorId: $scope.googleCalendar.colorCode
                 });
 
                 insertEventReq.execute(function(insertEventRes) {
