@@ -720,20 +720,13 @@
     };
 
     $scope.showMdselect = function() {
-      swal({
-          title: "Do you want to change the hall?",
-          text: "If you change the hall, new rate will be applied.",
-          type: "warning",
-          showCancelButton: true,
-          confirmButtonColor: "#DD6B55",
-          confirmButtonText: "Yes",
-          closeOnConfirm: true
+      var confirm = $mdDialog.confirm().title('Do you want to change the hall?').textContent('If you change the hall, new rate will be applied.').ok('Yes').cancel('No').multiple(true);
+      $mdDialog.show(confirm).then(function() {
+          $scope.ui.showMdSelect = true;
+          $scope.$apply();
         },
-        function(isConfirm) {
-          if (isConfirm) {
-            $scope.ui.showMdSelect = true;
-            $scope.$apply();
-          }
+        function() {
+          console.log("no");
         });
     };
 
@@ -742,57 +735,50 @@
     }
 
     $scope.deleteBooking = function() {
-      swal({
-          title: "Do you want to delete the booking?",
-          text: "Booking detail will be deleted permanently.",
-          type: "warning",
-          showCancelButton: true,
-          confirmButtonColor: "#DD6B55",
-          confirmButtonText: "Yes",
-          closeOnConfirm: true
-        },
-        function(isConfirm) {
-          if (isConfirm) {
-            selectedEvent.$remove(deleteSuccessCallback, deleteErrorCallback);
+      var confirm = $mdDialog.confirm().title('Do you want to delete the booking?').textContent('Booking detail will be deleted permanently.').ok('Yes').cancel('No').multiple(true);
+      $mdDialog.show(confirm).then(function() {
+          selectedEvent.$remove(deleteSuccessCallback, deleteErrorCallback);
 
-            function deleteSuccessCallback(res) {
-              var deleteProcessedHalls = 0;
-              angular.forEach($scope.mixins.mSelectedHalls, function(hall) {
+          function deleteSuccessCallback(res) {
+            var deleteProcessedHalls = 0;
+            angular.forEach($scope.mixins.mSelectedHalls, function(hall) {
 
-                var deleteEventReq = gapi.client.calendar.events.delete({
-                  calendarId: hall.mCalendarId,
-                  eventId: hall.mEventId
-                });
-
-                deleteEventReq.execute(function(response) {
-                  deleteProcessedHalls++;
-                  if (response && response.hasOwnProperty('error')) // error
-                  {
-                    Notification.error({
-                      message: "Unable to delete the event from " + hall.name + " hall in Google Calendar",
-                      title: '<i class="glyphicon glyphicon-remove"></i> Google Calendar Error !!!'
-                    });
-                  } else // success
-                  {
-                    //no need to do anything.
-                  }
-
-                  if (deleteProcessedHalls == $scope.mixins.mSelectedHalls.length) {
-                    res.isDelete = true;
-                    $mdDialog.hide(res);
-                  }
-                });
-
-              });              
-            }
-
-            function deleteErrorCallback(res) {
-              Notification.error({
-                message: res.data.message,
-                title: '<i class="glyphicon glyphicon-remove"></i> Delete Booking Detail Error !!!'
+              var deleteEventReq = gapi.client.calendar.events.delete({
+                calendarId: hall.mCalendarId,
+                eventId: hall.mEventId
               });
-            }
+
+              deleteEventReq.execute(function(response) {
+                deleteProcessedHalls++;
+                if (response && response.hasOwnProperty('error')) // error
+                {
+                  Notification.error({
+                    message: "Unable to delete the event from " + hall.name + " hall in Google Calendar",
+                    title: '<i class="glyphicon glyphicon-remove"></i> Google Calendar Error !!!'
+                  });
+                } else // success
+                {
+                  //no need to do anything.
+                }
+
+                if (deleteProcessedHalls == $scope.mixins.mSelectedHalls.length) {
+                  res.isDelete = true;
+                  $mdDialog.hide(res);
+                }
+              });
+
+            });
           }
+
+          function deleteErrorCallback(res) {
+            Notification.error({
+              message: res.data.message,
+              title: '<i class="glyphicon glyphicon-remove"></i> Delete Booking Detail Error !!!'
+            });
+          }
+        },
+        function() {
+          console.log("no");
         });
     };
 
