@@ -46,7 +46,7 @@
       gapi.client.init({
         discoveryDocs: GOOGLE_DISCOVERY_DOCS,
         clientId: GOOGLE_CLIENT_ID,
-        scope: 'https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/calendar.readonly'
+        scope: 'https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/calendar'
         })
       .then(function () 
       {

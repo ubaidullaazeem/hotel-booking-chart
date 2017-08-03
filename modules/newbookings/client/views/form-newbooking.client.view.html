@@ -293,7 +293,7 @@
        
         <div layout="column" flex>
             <label>Payment Received</label>  
-            <div layout="row" ng-hide="ui.viewMode" flex>
+            <div layout="row" ng-hide="ui.viewMode || (ui.isFullyPaid && mixins.mBalanceDue <= 0)" flex>
               <md-input-container flex>
                 <label>Amount Paid</label>
                 <input ng-required="ui.createMode || mixins.mPaymentHistories.length <= 0 || mPaymentHistory.paymentMode" name="amountPaid" ng-model="mPaymentHistory.amountPaid" type="number" min="1" ng-change="calculateBalanceDue()" ng-pattern="ui.mNumberPattern"/>
@@ -326,7 +326,7 @@
                     <div ng-message="required">Payment mode is required.</div>
                   </div>
               </md-input-container>   
-              <div class="pull-right" ng-if="!ui.createMode">
+              <div class="pull-right" ng-if="!ui.createMode && !(mixins.mSelectedPaymentStatus.name === PAYMENT_STATUS[1] && mixins.mBalanceDue <= 0)">
                 <md-button class="md-raised md-primary nonecase" style="min-width: 50px" ng-click="addPayment()" ng-disabled="mPaymentHistory.amountPaid == null || mPaymentHistory.paidDate == null || mPaymentHistory.paymentMode == null" type="submit"><span class="glyphicon glyphicon-plus"></span></md-button>
               </div> 
             </div>

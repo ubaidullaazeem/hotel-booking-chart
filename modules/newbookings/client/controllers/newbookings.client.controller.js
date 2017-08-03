@@ -22,7 +22,8 @@
       mailsending: false,
       viewMode: viewMode,
       isBookingInProgress: false,
-      isPastEvent: selectedEvent ? moment(selectedEvent.mStartDateTime) < moment(new Date().setHours(0, 0, 0, 0)) : true
+      isPastEvent: selectedEvent ? moment(selectedEvent.mStartDateTime) < moment(new Date().setHours(0, 0, 0, 0)) : true,
+      isFullyPaid: selectedEvent ? selectedEvent.mSelectedPaymentStatus.name === PAYMENT_STATUS[1] : false
     }
 
     $scope.model = {
@@ -40,6 +41,8 @@
       CGSTPercent: 0,
       SGSTPercent: 0
     };
+
+    $scope.PAYMENT_STATUS = PAYMENT_STATUS;
 
     $scope.taxableChargesBeforeDiscount = 0;
 
