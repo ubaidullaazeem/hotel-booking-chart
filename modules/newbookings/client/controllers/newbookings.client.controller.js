@@ -359,10 +359,7 @@
         $scope.mixins.date = new Date($scope.eventTime.mStartToServer).getDate();
         $scope.mixins.month = new Date($scope.eventTime.mStartToServer).getMonth() + 1;
         $scope.mixins.year = new Date($scope.eventTime.mStartToServer).getFullYear();      
-
-        // Calculate Prorate Charges
-        calculateProrateCharges();
-
+        
         $scope.mixins.mSelectedHalls = _.uniqBy($scope.mixins.mSelectedHalls, '_id');
 
         var startOfTheDayInLocal = new Date(selectedDate);
@@ -410,6 +407,10 @@
             } else {
               pushPayment();
             }
+
+            // Calculate Prorate Charges
+            calculateProrateCharges();
+
             if ($scope.mixins._id) {
               NewbookingsService.update($scope.mixins, successCallback, errorCallback);
             } else {
@@ -805,6 +806,8 @@
 
     $scope.removePayment = function(index) {
       $scope.mixins.mPaymentHistories.splice(index, 1);
+
+      $scope.calculateBalanceDue();
     };
 
     function pushPayment() {
@@ -897,6 +900,20 @@
                                                   + $scope.mixins.mSelectedHalls[i].mMiscellaneousCharges + $scope.mixins.mSelectedHalls[i].mDamages 
                                                   + $scope.mixins.mSelectedHalls[i].mTotalCGST + $scope.mixins.mSelectedHalls[i].mTotalSGST;
         
+        var receivedPayment = CommonService.sumOfArray(_.map($scope.mixins.mPaymentHistories, 'amountPaid'));                
+        $scope.mixins.mSelectedHalls[i].Collection = {
+          mBasicCostCollection : ((sHall.mBasicCost - discounts.mRateDiscount) / $scope.mixins.mSubTotal) * receivedPayment,
+          mElectricityCollection : ((sHall.mElectricityCharges - discounts.mElectricityDiscount) / $scope.mixins.mSubTotal) * receivedPayment,
+          mCleaningCollection : ((sHall.mCleaningCharges - discounts.mCleaningDiscount) / $scope.mixins.mSubTotal) * receivedPayment,
+          mGeneratorCollection : (sHall.mGeneratorCharges /  $scope.mixins.mSubTotal) * receivedPayment,
+          mMiscellaneousCollection : (sHall.mMiscellaneousCharges /  $scope.mixins.mSubTotal) * receivedPayment,
+          mDamageCollection : (sHall.mDamages /  $scope.mixins.mSubTotal) * receivedPayment
+        }
+
+        var Collections = $scope.mixins.mSelectedHalls[i].Collection;
+        $scope.mixins.mSelectedHalls[i].mTotalCollection = Collections.mBasicCostCollection + Collections.mElectricityCollection 
+                                                          + Collections.mCleaningCollection + Collections.mGeneratorCollection 
+                                                          + Collections.mMiscellaneousCollection + Collections.mDamageCollection;
         
       }
     }

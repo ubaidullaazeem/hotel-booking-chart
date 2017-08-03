@@ -206,7 +206,7 @@
               <div layout="row" flex ng-if="!ui.createMode">
                 <md-input-container flex>
                     <label style="text-transform: capitalize;">Actual Electricity Charges</label>
-                    <input name="actualelectricity" ng-disabled="ui.viewMode" ng-model="hallRateSummary.mActualElectricityCharges" type="number" min="0" ng-pattern="ui.mNumberPattern"/>
+                    <input required name="actualelectricity" ng-disabled="ui.viewMode" ng-model="hallRateSummary.mActualElectricityCharges" type="number" min="0" ng-pattern="ui.mNumberPattern"/>
                     <div ng-messages="bookingForm.electricity.$error">
                       <div ng-message="required">Actual Electricity Charges is required.</div>
                     </div>
@@ -214,7 +214,7 @@
                 
                 <md-input-container flex>
                   <label style="text-transform: capitalize;">Damages</label>
-                  <input name="damages" ng-model="hallRateSummary.mDamages" ng-disabled="ui.viewMode" type="number" min="0" ng-pattern="ui.mNumberPattern"/>
+                  <input required name="damages" ng-model="hallRateSummary.mDamages" ng-disabled="ui.viewMode" type="number" min="0" ng-pattern="ui.mNumberPattern"/>
                   <div ng-messages="bookingForm.miscellaneous.$error">
                     <div ng-message="required">Damages Charges is required.</div>
                   </div>
@@ -296,7 +296,7 @@
             <div layout="row" ng-hide="ui.viewMode" flex>
               <md-input-container flex>
                 <label>Amount Paid</label>
-                <input ng-required="ui.createMode" name="amountPaid" ng-model="mPaymentHistory.amountPaid" type="number" min="1" ng-change="calculateBalanceDue()" ng-pattern="ui.mNumberPattern"/>
+                <input ng-required="ui.createMode || mixins.mPaymentHistories.length <= 0" name="amountPaid" ng-model="mPaymentHistory.amountPaid" type="number" min="1" ng-change="calculateBalanceDue()" ng-pattern="ui.mNumberPattern"/>
                 <div ng-messages="bookingForm.amountPaid.$error">
                   <div ng-message="required">Amount paid is required.</div>
                 </div>
@@ -305,7 +305,7 @@
               <md-input-container flex>
                 <label>Paid Date</label>
                   <div ng-click="!ui.viewMode ? showPaidDatePicker($event) : ''">
-                    <input type="date" ng-required="ui.createMode" name="paidDate" ng-model="mPaymentHistory.paidDate"></input>
+                    <input type="date" ng-required="ui.createMode || mixins.mPaymentHistories.length <= 0" name="paidDate" ng-model="mPaymentHistory.paidDate"></input>
                   </div>                  
                   <div ng-messages="bookingForm.paidDate.$error">
                     <div ng-message="required">Paid date is required.</div>
@@ -314,7 +314,7 @@
 
               <md-input-container flex>
                   <label>Payment Mode</label>
-                  <md-select  ng-required="ui.createMode"
+                  <md-select  ng-required="ui.createMode || mixins.mPaymentHistories.length <= 0"
                               name="payMode"
                               ng-model="mPaymentHistory.paymentMode"
                               ng-change="onPaymentModeChanged()">
