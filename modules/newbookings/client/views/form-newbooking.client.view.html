@@ -381,8 +381,9 @@
      <md-button class="btn btn-next btn-fill btn-danger btn-wd" ng-show="ui.viewMode" flex ng-click="deleteBooking()" type="submit">Delete</md-button>
       <md-button class="btn btn-next btn-fill btn-rose btn-wd" flex ng-disabled="bookingForm.$invalid" ng-click="printBooking(bookingForm)" type="submit">Print</md-button>
       <md-button class="btn btn-next btn-fill btn-primary btn-wd" ng-disabled="bookingForm.$invalid && !mixins.mEmail" flex ng-click="sendMail(bookingForm)" ng-hide="ui.mailsending" type="submit">Email</md-button>
-      <md-button class="btn btn-next btn-fill btn-primary btn-wd" ng-disabled="true" flex ng-click="sendMail()" ng-show="ui.mailsending" type="submit"><i class="fa fa-spinner fa-spin"></i> Sending...</md-button>
-      <md-button class="btn btn-next btn-fill btn-info btn-wd" ng-hide="ui.viewMode" ng-disabled="bookingForm.$invalid" flex ng-click="save(bookingForm)" type="submit">Confirm Booking</md-button>
+      <md-button class="btn btn-next btn-fill btn-primary btn-wd" ng-disabled="true" flex ng-show="ui.mailsending" type="submit"><i class="fa fa-spinner fa-spin"></i> Sending...</md-button>
+      <md-button class="btn btn-next btn-fill btn-info btn-wd" ng-hide="ui.viewMode || ui.isBookingInProgress" ng-disabled="bookingForm.$invalid" flex ng-click="save(bookingForm)" type="submit">{{mixins._id ? 'Update Booking' : 'Confirm Booking'}}</md-button>
+      <md-button class="btn btn-next btn-fill btn-primary btn-wd" ng-disabled="true" flex ng-show="ui.isBookingInProgress" type="submit"><i class="fa fa-spinner fa-spin"></i> Booking...</md-button>
       <md-button ng-hide="mixins.isPastEvent || !ui.viewMode" class="btn btn-next btn-fill btn-info btn-wd" ng-click="editBooking()" type="submit">Edit Booking</md-button>
     </md-dialog-actions>
   </form>

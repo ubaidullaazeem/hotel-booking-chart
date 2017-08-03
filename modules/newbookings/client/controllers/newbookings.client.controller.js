@@ -21,6 +21,7 @@
       showMdSelect: true,
       mailsending: false,
       viewMode: viewMode,
+      isBookingInProgress: false,
       isPastEvent: selectedEvent ? moment(selectedEvent.mStartDateTime) < moment(new Date().setHours(0, 0, 0, 0)) : true
     }
 
@@ -65,12 +66,12 @@
     };
 
     $scope.eventTime = {
-      mStartClock: new Date('1991-05-04T06:00:00'),
-      mEndClock: new Date('1991-05-04T13:00:00'),
+      mStartClock: selectedEvent ? new Date(selectedEvent.mStartDateTime) : new Date('1991-05-04T06:00:00'),
+      mEndClock: selectedEvent ? new Date(selectedEvent.mEndDateTime) : new Date('1991-05-04T13:00:00'),
       mStartToDisplay: selectedEvent ? getTimeToDisplay(new Date(selectedEvent.mStartDateTime)) : getTimeToDisplay(new Date('1991-05-04T06:00:00')),
       mEndToDisplay: selectedEvent ? getTimeToDisplay(new Date(selectedEvent.mEndDateTime)) : getTimeToDisplay(new Date('1991-05-04T13:00:00')),
-      mStartToServer: getTimeToServer(new Date('1991-05-04T06:00:00')),
-      mEndToServer: getTimeToServer(new Date('1991-05-04T13:00:00'))
+      mStartToServer: selectedEvent ? getTimeToServer(new Date(selectedEvent.mStartDateTime)) : getTimeToServer(new Date('1991-05-04T06:00:00')),
+      mEndToServer: selectedEvent ? getTimeToServer(new Date(selectedEvent.mEndDateTime)) : getTimeToServer(new Date('1991-05-04T13:00:00'))
     };
 
     $scope.$watch('mixins.mSelectedHalls', function(newValue) {
@@ -336,7 +337,7 @@
     $scope.save = function(form) {
 
       if (form.$valid) {
-        if (($scope.mixins.mSelectedPaymentStatus.name.toLowerCase() == PAYMENT_STATUS[1] && $scope.mixins.mBalanceDue !== 0) || $scope.mixins.mSelectedPaymentStatus.name.toLowerCase() == PAYMENT_STATUS[0] && $scope.mixins.mBalanceDue <= 0) {
+        if (($scope.mixins.mSelectedPaymentStatus.name.toLowerCase() == PAYMENT_STATUS[1].toLowerCase() && $scope.mixins.mBalanceDue !== 0) || $scope.mixins.mSelectedPaymentStatus.name.toLowerCase() == PAYMENT_STATUS[0].toLowerCase() && $scope.mixins.mBalanceDue <= 0) {
           Notification.error({
             message: "Please check the payment status and payment received",
             title: '<i class="glyphicon glyphicon-remove"></i> Payment Status Error !!!'
@@ -387,7 +388,7 @@
             var commonHallNamesArray = _.intersection(_.map(eventItem.mSelectedHalls, 'name'), _.map($scope.mixins.mSelectedHalls, 'name'));
 
             if (commonHallIdsArray.length > 0) {
-              //already booked hall selected
+              //already booked hall selected              
               if (($scope.eventTime.mStartToServer < addHours(eventItem.mEndDateTime, 3)) && ($scope.eventTime.mEndToServer > subtractHours(eventItem.mStartDateTime, 3))) { // overlaps
                 isEventOverlaps = true;
 
@@ -402,6 +403,13 @@
           }
 
           if (!isEventOverlaps) {
+
+            if ($scope.ui.isBookingInProgress) {
+              return;
+            } else {
+              $scope.ui.isBookingInProgress = true;
+            }
+            
             if ($scope.ui.createMode) {
               $scope.mixins.mPaymentHistories.push($scope.mPaymentHistory);
             } else {
@@ -787,7 +795,7 @@
       if (res.mSelectedEventType.name === HARDCODE_VALUES[0]) {
         bookingTitle = res.mOtherEvent;
       }
-
+      $scope.ui.isBookingInProgress = false;
       $mdDialog.hide(res);
     };
 
