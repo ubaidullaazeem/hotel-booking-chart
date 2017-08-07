@@ -116,12 +116,63 @@ var NewbookingSchema = new Schema({
     required: 'Please enter grand total',
     trim: true
   },
+  mPendingSubTotal: {
+    type: Number,
+    default: '',
+    required: 'Please enter pending subtotal amount',
+    trim: true
+  },
+  mPendingCGST: {
+    type: Number,
+    default: '',
+    required: 'Please enter pending CGST tax',
+    trim: true
+  },
+  mPendingSGST: {
+    type: Number,
+    default: '',
+    required: 'Please enter pending SGST tax',
+    trim: true
+  },
+  mPendingGrandTotal: {
+    type: Number,
+    default: '',
+    required: 'Please enter pending grand total',
+    trim: true
+  },
+  mReceivedSubTotal: {
+    type: Number,
+    default: '',
+    required: 'Please enter received subtotal amount',
+    trim: true
+  },
+  mReceivedCGST: {
+    type: Number,
+    default: '',
+    required: 'Please enter received CGST tax',
+    trim: true
+  },
+  mReceivedSGST: {
+    type: Number,
+    default: '',
+    required: 'Please enter received SGST tax',
+    trim: true
+  },
+  mReceivedGrandTotal: {
+    type: Number,
+    default: '',
+    required: 'Please enter received grand total',
+    trim: true
+  },
   mPaymentHistories: [{
     amountPaid : Number,
     paidDate : Date,
     paymentMode : String,
     CGSTPercent : Number,
-    SGSTPercent : Number
+    SGSTPercent : Number,
+    paidSubTotal : Number,
+    paidCGST : Number,
+    paidSGST : Number
   }],
   mBalanceDue: {
     type: Number,

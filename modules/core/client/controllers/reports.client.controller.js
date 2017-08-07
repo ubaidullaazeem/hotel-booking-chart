@@ -38,10 +38,10 @@
 		$scope.options = {
 			scales: {
 				xAxes: [{
-					stacked: true,
+					stacked: false,
 				}],
 				yAxes: [{
-					stacked: true
+					stacked: false
 				}]
 			},
 			legend: {

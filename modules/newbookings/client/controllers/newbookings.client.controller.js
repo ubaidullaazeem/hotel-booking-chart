@@ -11,7 +11,9 @@
   function NewbookingsController(AuthenticationService, CGST, SGST, DATA_BACKGROUND_COLOR, EmailBookingServices, HARDCODE_VALUES, PAYMENT_STATUS, $filter, $scope, $state, selectedEvent, $location, $mdDialog, $templateRequest, $sce, NewbookingsService, selectedDate, HallsService, EventtypesService, TaxesService, PaymentstatusesService, Notification, $mdpTimePicker, $mdpDatePicker, PAY_MODES, CommonService, ValidateOverlapBookingServices, viewMode, GOOGLE_CALENDAR_COLOR_IDS) {
     $scope.DATA_BACKGROUND_COLOR = DATA_BACKGROUND_COLOR;
 
+    var cgstPercent, sgstPercent;
     var totalCostToDiscountProrate = 0;
+    var pendingSubTotalPercentage, pendingCGSTPercentage, pendingSGSTPercentage;
 
     $scope.ui = {
       mSelectedDateToDisplay: selectedDate.format('DD-MMMM-YYYY'),
@@ -39,7 +41,10 @@
       paidDate: new Date(),
       paymentMode: null,
       CGSTPercent: 0,
-      SGSTPercent: 0
+      SGSTPercent: 0,
+      paidSubTotal: 0,
+      paidCGST: 0,
+      paidSGST: 0
     };
 
     $scope.PAYMENT_STATUS = PAYMENT_STATUS;
@@ -65,7 +70,16 @@
       mSGST: selectedEvent ? selectedEvent.mSGST : 0,
       mGrandTotal: selectedEvent ? selectedEvent.mGrandTotal : 0,
       mPaymentHistories: selectedEvent ? selectedEvent.mPaymentHistories : [],
-      mBalanceDue: selectedEvent ? selectedEvent.mBalanceDue : 0
+      mBalanceDue: selectedEvent ? selectedEvent.mBalanceDue : 0,
+
+      mPendingSubTotal : selectedEvent ? selectedEvent.mPendingSubTotal : 0,
+      mReceivedSubTotal : selectedEvent ? selectedEvent.mReceivedSubTotal : 0,
+      mPendingCGST : selectedEvent ? selectedEvent.mPendingCGST : 0,
+      mReceivedCGST : selectedEvent ? selectedEvent.mReceivedCGST : 0,
+      mPendingSGST : selectedEvent ? selectedEvent.mPendingSGST : 0,
+      mReceivedSGST : selectedEvent ? selectedEvent.mReceivedSGST : 0,
+      mPendingGrandTotal : selectedEvent ? selectedEvent.mPendingGrandTotal : 0,
+      mReceivedGrandTotal : selectedEvent ? selectedEvent.mReceivedGrandTotal : 0
     };
 
     $scope.googleCalendar = {
@@ -105,7 +119,7 @@
           });
         }
         /** End **/
-        var effectiveSummaries = CommonService.findRateSummariesByDate(hall.rateSummaries, new Date(selectedDate));
+        var effectiveSummaries = CommonService.findRateSummariesByDate(hall.rateSummaries, new Date($scope.eventTime.mStartToServer));
         if (effectiveSummaries.length > 0) {
           /** Ubai New Code Start **/
           hall.mBasicCost = selectedHalls.length > 0 ? selectedHalls[0].mBasicCost : effectiveSummaries[0].rate,
@@ -177,6 +191,29 @@
         targetEvent: ev
       }).then(function(date) {
         $scope.mPaymentHistory.paidDate = new Date(date);
+      });
+    };
+
+    $scope.showEventDatePicker = function(ev){
+       var today = new Date();
+       today.setDate(today.getDate()-1);
+      $mdpDatePicker(new Date(selectedDate), {
+        targetEvent: ev, 
+        minDate: today
+      }).then(function(date) {
+        var startTime = new Date(selectedEvent.mStartDateTime);
+        var startTimeFormat = new Date(date).setHours(startTime.getHours(), startTime.getMinutes(), 0, 0);
+        var endTime = new Date(selectedEvent.mEndDateTime);
+        var endTimeFormat = new Date(date).setHours(endTime.getHours(), endTime.getMinutes(), 0, 0);        
+        var dtGMTStart = new Date((new Date(startTimeFormat)).toUTCString()).toISOString();
+        var dtGMTEnd = new Date((new Date(endTimeFormat)).toUTCString()).toISOString();
+        $scope.eventTime.mStartToDisplay = getTimeToDisplay(new Date(startTimeFormat));
+        $scope.eventTime.mEndToDisplay = getTimeToDisplay(new Date(endTimeFormat));
+        $scope.eventTime.mStartToServer = dtGMTStart;
+        $scope.eventTime.mEndToServer = dtGMTEnd;
+        $scope.ui.mSelectedDateToDisplay = moment(date).format('DD-MMMM-YYYY');
+        calculateTaxRate();
+        $scope.selectedHallsChanged();
       });
     };
 
@@ -285,33 +322,7 @@
 
       return dtGMT;
     };
-
-    //var divideRate;
-    var cgstPercent, sgstPercent;
-
-    $scope.calculateBalanceDue = function() {
-
-      var subTotal = $scope.taxableChargesBeforeDiscount - Number($scope.mixins.mDiscount);
-
-      var cgst = Number(Number(Number(subTotal) * cgstPercent).toFixed(2));
-      var sgst = Number(Number(Number(subTotal) * sgstPercent).toFixed(2));
-      var grandTot = Number(Number(Math.round(Number(subTotal) + Number(cgst) + Number(sgst))).toFixed(2));
-      var receivedPayment = CommonService.sumOfArray(_.map($scope.mixins.mPaymentHistories, 'amountPaid'));
-      var balance = Number(Number(Math.round(Number(grandTot) - Number($scope.mPaymentHistory.amountPaid))).toFixed(2));
-
-      $scope.mixins.mSubTotal = subTotal;
-      $scope.mixins.mCGST = cgst;
-      $scope.mixins.mSGST = sgst;
-      $scope.mixins.mGrandTotal = grandTot;
-      $scope.mixins.mBalanceDue = $scope.ui.createMode ? balance : balance - receivedPayment;
-
-      console.log("$scope.mSubTotal " + $scope.mixins.mSubTotal);
-      console.log("$scope.mCGST " + $scope.mixins.mCGST);
-      console.log("$scope.mSGST " + $scope.mixins.mSGST);
-      console.log("$scope.mGrandTotal " + $scope.mixins.mGrandTotal);
-      console.log("$scope.mBalanceDue " + $scope.mixins.mBalanceDue);
-    };
-
+        
     var init = function() {
       if ($scope.mixins._id) {
         $scope.ui.createMode = false;
@@ -326,14 +337,7 @@
         });
         $mdDialog.cancel();
       } else {
-        var cgst = CommonService.findRateSummariesByDate(CommonService.getTaxRateByName($scope.model.taxes, CGST).rateSummaries, new Date(selectedDate));
-        var sgst = CommonService.findRateSummariesByDate(CommonService.getTaxRateByName($scope.model.taxes, SGST).rateSummaries, new Date(selectedDate));
-
-        $scope.mPaymentHistory.CGSTPercent = cgst[0].percentage;
-        $scope.mPaymentHistory.SGSTPercent = sgst[0].percentage;
-
-        cgstPercent = Number(cgst[0].percentage) / 100;
-        sgstPercent = Number(sgst[0].percentage) / 100;
+        calculateTaxRate();
       }
 
       $scope.calculateBalanceDue();
@@ -374,9 +378,9 @@
         
         $scope.mixins.mSelectedHalls = _.uniqBy($scope.mixins.mSelectedHalls, '_id');
 
-        var startOfTheDayInLocal = new Date(selectedDate);
+        var startOfTheDayInLocal = new Date($scope.eventTime.mStartToServer);
         startOfTheDayInLocal.setHours(0, 0, 0, 0);
-        var endOfTheDayInLocal = new Date(selectedDate);
+        var endOfTheDayInLocal = new Date($scope.eventTime.mEndToServer);
         endOfTheDayInLocal.setHours(23, 59, 59, 999);
         var gmtDateTime = {
           startGMT: new Date(startOfTheDayInLocal.toUTCString()).toISOString(),
@@ -422,9 +426,11 @@
             }
             
             if ($scope.ui.createMode) {
+              proRateAmountPaid();
               $scope.mixins.mPaymentHistories.push($scope.mPaymentHistory);
             } else {
               pushPayment();
+              clearPaymentHistory();
             }
 
             // Calculate Prorate Charges
@@ -803,7 +809,12 @@
       $scope.mPaymentHistory = {
         amountPaid: null,
         paidDate: new Date(),
-        paymentMode: null
+        paymentMode: null,
+        CGSTPercent: 0,
+        SGSTPercent: 0,
+        paidSubTotal: 0,
+        paidCGST: 0,
+        paidSGST: 0
       };
     };
 
@@ -820,8 +831,17 @@
 
     function pushPayment() {
       if ($scope.mPaymentHistory.amountPaid && $scope.mPaymentHistory.paymentMode) {
+
+        proRateAmountPaid();
+
         $scope.mixins.mPaymentHistories.unshift($scope.mPaymentHistory);
       }
+    };
+
+    function proRateAmountPaid() {
+      $scope.mPaymentHistory.paidSubTotal = ($scope.mPaymentHistory.amountPaid * pendingSubTotalPercentage) / 100;
+      $scope.mPaymentHistory.paidCGST = ($scope.mPaymentHistory.amountPaid * pendingCGSTPercentage) / 100;
+      $scope.mPaymentHistory.paidSGST = ($scope.mPaymentHistory.amountPaid * pendingSGSTPercentage) / 100;
     };
 
     /**
@@ -867,6 +887,53 @@
       return subtractedGMT;
     }
 
+    $scope.calculateBalanceDue = function() {      
+      
+      var previouslyPaidSubTotal = selectedEvent ? CommonService.sumOfArray(_.map($scope.mixins.mPaymentHistories, 'paidSubTotal')) : 0 ;
+
+      //without payment history subtotal
+      $scope.mixins.mPendingSubTotal = Number(Number(Number($scope.taxableChargesBeforeDiscount) - Number($scope.mixins.mDiscount) - Number(previouslyPaidSubTotal)).toFixed(2));
+      $scope.mixins.mPendingCGST = Number(Number(Number($scope.mixins.mPendingSubTotal) * cgstPercent).toFixed(2));
+      $scope.mixins.mPendingSGST = Number(Number(Number($scope.mixins.mPendingSubTotal) * sgstPercent).toFixed(2));
+      $scope.mixins.mPendingGrandTotal = Number(Number(Math.round(Number($scope.mixins.mPendingSubTotal) + Number($scope.mixins.mPendingCGST) + Number($scope.mixins.mPendingSGST))).toFixed(2));
+      
+      if ($scope.mixins.mPendingSubTotal===0 && $scope.mixins.mPendingGrandTotal===0)// 0/0 returns undefined
+      {
+        pendingSubTotalPercentage =  0;
+        pendingCGSTPercentage = 0;
+        pendingSGSTPercentage = 0; 
+      }
+      else
+      {
+        pendingSubTotalPercentage = ($scope.mixins.mPendingSubTotal/$scope.mixins.mPendingGrandTotal)*100;
+        pendingCGSTPercentage = ($scope.mixins.mPendingCGST/$scope.mixins.mPendingGrandTotal)*100;
+        pendingSGSTPercentage = ($scope.mixins.mPendingSGST/$scope.mixins.mPendingGrandTotal)*100;         
+      }
+      
+      var paymentHistorySubTotal = ($scope.mPaymentHistory.amountPaid * pendingSubTotalPercentage) / 100;
+      var paymentHistoryCGST = ($scope.mPaymentHistory.amountPaid * pendingCGSTPercentage) / 100;
+      var paymentHistorySGST = ($scope.mPaymentHistory.amountPaid * pendingSGSTPercentage) / 100;
+
+      //with payment history subtotal
+      $scope.mixins.mPendingSubTotal = Number(Number(Number($scope.taxableChargesBeforeDiscount) - Number($scope.mixins.mDiscount) - Number(previouslyPaidSubTotal) - Number(paymentHistorySubTotal)).toFixed(2));
+      $scope.mixins.mPendingCGST = Number(Number(Number($scope.mixins.mPendingSubTotal) * cgstPercent).toFixed(2));
+      $scope.mixins.mPendingSGST = Number(Number(Number($scope.mixins.mPendingSubTotal) * sgstPercent).toFixed(2));
+      $scope.mixins.mPendingGrandTotal = Number(Number(Math.round(Number($scope.mixins.mPendingSubTotal) + Number($scope.mixins.mPendingCGST) + Number($scope.mixins.mPendingSGST))).toFixed(2));
+      
+      $scope.mixins.mReceivedSubTotal = Number(Number(Number(previouslyPaidSubTotal) + Number(paymentHistorySubTotal)).toFixed(2));
+      $scope.mixins.mReceivedCGST = Number(Number(Number(selectedEvent ? CommonService.sumOfArray(_.map($scope.mixins.mPaymentHistories, 'paidCGST')) : 0) + Number(paymentHistoryCGST)).toFixed(2));
+      $scope.mixins.mReceivedSGST = Number(Number(Number(selectedEvent ? CommonService.sumOfArray(_.map($scope.mixins.mPaymentHistories, 'paidSGST')) : 0) + Number(paymentHistorySGST)).toFixed(2));
+      $scope.mixins.mReceivedGrandTotal = Number(Number(Math.round(Number($scope.mixins.mReceivedSubTotal) + Number($scope.mixins.mReceivedCGST) + Number($scope.mixins.mReceivedSGST))).toFixed(2));
+      
+      $scope.mixins.mSubTotal = Number(Number(Math.round(Number($scope.mixins.mPendingSubTotal) + Number($scope.mixins.mReceivedSubTotal))).toFixed(2));
+      $scope.mixins.mCGST = Number(Number(Math.round(Number($scope.mixins.mPendingCGST) + Number($scope.mixins.mReceivedCGST))).toFixed(2));
+      $scope.mixins.mSGST = Number(Number(Math.round(Number($scope.mixins.mPendingSGST) + Number($scope.mixins.mReceivedSGST))).toFixed(2));
+      $scope.mixins.mGrandTotal = Number(Number(Math.round(Number($scope.mixins.mPendingGrandTotal) + Number($scope.mixins.mReceivedGrandTotal))).toFixed(2));
+
+      $scope.mixins.mBalanceDue = Number(Number(Math.round(Number($scope.mixins.mPendingGrandTotal))).toFixed(2));    
+              
+    };
+
     function calculateProrateCharges() {
       for (var i = 0; i < $scope.mixins.mSelectedHalls.length; i++) {
 
@@ -883,20 +950,20 @@
         $scope.mixins.mSelectedHalls[i].mTotalDiscount = discounts.mRateDiscount + discounts.mElectricityDiscount + discounts.mCleaningDiscount;
 
         $scope.mixins.mSelectedHalls[i].GST = {
-          mRateCGST: (sHall.mBasicCost - discounts.mRateDiscount) * cgstPercent,
-          mRateSGST: (sHall.mBasicCost - discounts.mRateDiscount) * sgstPercent,
-          mElectricityCGST: (sHall.mElectricityCharges - discounts.mElectricityDiscount) * cgstPercent,
-          mElectricitySGST: (sHall.mElectricityCharges - discounts.mElectricityDiscount) * sgstPercent,
-          mCleaningCGST: (sHall.mCleaningCharges - discounts.mCleaningDiscount) * cgstPercent,
-          mCleaningSGST: (sHall.mCleaningCharges - discounts.mCleaningDiscount) * sgstPercent,
-          mGeneratorCGST: sHall.mGeneratorCharges * cgstPercent,
-          mGeneratorSGST: sHall.mGeneratorCharges * sgstPercent,
-          mMiscellaneousCGST: sHall.mMiscellaneousCharges * cgstPercent,
-          mMiscellaneousSGST: sHall.mMiscellaneousCharges * sgstPercent,
-          mDamagesCGST: sHall.mDamages * cgstPercent,
-          mDamagesSGST: sHall.mDamages * sgstPercent
+          mRateCGST: ((sHall.mBasicCost - discounts.mRateDiscount) / $scope.mixins.mSubTotal) * $scope.mixins.mCGST,
+          mRateSGST: ((sHall.mBasicCost - discounts.mRateDiscount) / $scope.mixins.mSubTotal) * $scope.mixins.mSGST,
+          mElectricityCGST: ((sHall.mElectricityCharges - discounts.mElectricityDiscount) / $scope.mixins.mSubTotal) * $scope.mixins.mCGST,
+          mElectricitySGST: ((sHall.mElectricityCharges - discounts.mElectricityDiscount) / $scope.mixins.mSubTotal) * $scope.mixins.mSGST,
+          mCleaningCGST: ((sHall.mCleaningCharges - discounts.mCleaningDiscount) / $scope.mixins.mSubTotal) * $scope.mixins.mCGST,
+          mCleaningSGST: ((sHall.mCleaningCharges - discounts.mCleaningDiscount) / $scope.mixins.mSubTotal) * $scope.mixins.mSGST,
+          mGeneratorCGST: (sHall.mGeneratorCharges / $scope.mixins.mSubTotal) * $scope.mixins.mCGST,
+          mGeneratorSGST: (sHall.mGeneratorCharges / $scope.mixins.mSubTotal) * $scope.mixins.mSGST,
+          mMiscellaneousCGST: (sHall.mMiscellaneousCharges / $scope.mixins.mSubTotal) * $scope.mixins.mCGST,
+          mMiscellaneousSGST: (sHall.mMiscellaneousCharges / $scope.mixins.mSubTotal) * $scope.mixins.mSGST,
+          mDamagesCGST: (sHall.mDamages / $scope.mixins.mSubTotal) * $scope.mixins.mCGST,
+          mDamagesSGST: (sHall.mDamages / $scope.mixins.mSubTotal) * $scope.mixins.mSGST,
         };
-
+        
         var GSTs = $scope.mixins.mSelectedHalls[i].GST;
         $scope.mixins.mSelectedHalls[i].mTotalCGST = GSTs.mRateCGST + GSTs.mElectricityCGST + GSTs.mCleaningCGST + GSTs.mGeneratorCGST + GSTs.mMiscellaneousCGST + GSTs.mDamagesCGST;
 
@@ -908,6 +975,7 @@
                                                   + $scope.mixins.mSelectedHalls[i].mMiscellaneousCharges + $scope.mixins.mSelectedHalls[i].mDamages 
                                                   + $scope.mixins.mSelectedHalls[i].mTotalCGST + $scope.mixins.mSelectedHalls[i].mTotalSGST;
         
+        //Collection including CGST and SGST taxes.
         var receivedPayment = CommonService.sumOfArray(_.map($scope.mixins.mPaymentHistories, 'amountPaid'));                
         $scope.mixins.mSelectedHalls[i].Collection = {
           mBasicCostCollection : ((sHall.mBasicCost - discounts.mRateDiscount) / $scope.mixins.mSubTotal) * receivedPayment,
@@ -937,15 +1005,18 @@
       $scope.taxableChargesBeforeDiscount = Number(basicCost) + Number(electricityCost) + Number(cleaningCost) +
         Number(generatorCost) + Number(miscellaneousCost) + Number(damageCost);
 
-      totalCostToDiscountProrate = Number(basicCost) + Number(electricityCost) + Number(cleaningCost);
+      totalCostToDiscountProrate = Number(basicCost) + Number(electricityCost) + Number(cleaningCost);      
+    }
 
-      console.log("basicCost " + basicCost);
-      console.log("electricityCost " + electricityCost);
-      console.log("cleaningCost " + cleaningCost);
-      console.log("miscellaneousCost " + miscellaneousCost);
-      console.log("$scope.generatorCost " + generatorCost);
-      console.log("damageCost " + damageCost);
-      console.log("taxableChargesBeforeDiscount " + $scope.taxableChargesBeforeDiscount);
+    function calculateTaxRate() {
+      var cgst = CommonService.findRateSummariesByDate(CommonService.getTaxRateByName($scope.model.taxes, CGST).rateSummaries, new Date($scope.eventTime.mStartToServer));
+      var sgst = CommonService.findRateSummariesByDate(CommonService.getTaxRateByName($scope.model.taxes, SGST).rateSummaries, new Date($scope.eventTime.mStartToServer));
+
+      $scope.mPaymentHistory.CGSTPercent = cgst[0].percentage;
+      $scope.mPaymentHistory.SGSTPercent = sgst[0].percentage;
+
+      cgstPercent = Number(cgst[0].percentage) / 100;
+      sgstPercent = Number(sgst[0].percentage) / 100;
     }
   }
 }());

@@ -32,7 +32,7 @@
 
               <md-input-container flex>
                 <label>Percentage</label>
-                <input  required name="percentage" ng-model="model.percentage" ng-maxlength="2" ng-pattern="ui.mNumberPattern"/>
+                <input required type="number" name="percentage" ng-model="model.percentage" ng-pattern="ui.mNumberPattern" step="0.01" max="100" />
                 <div ng-messages="taxForm.percentage.$error">
                   <div ng-message="required">Tax percentage is required.</div>
                 </div>
