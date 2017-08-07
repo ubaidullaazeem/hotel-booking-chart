@@ -14,12 +14,17 @@
     $scope.model = {
       eventType: {
         name: eventtype ? eventtype.name : undefined,
+        displayName: eventtype ? eventtype.displayName : undefined,
         colour: eventtype ? eventtype.colour : undefined,
         _id: eventtype ? eventtype._id : undefined
       }
     }
 
     $scope.DATA_BACKGROUND_COLOR = DATA_BACKGROUND_COLOR;
+
+    $scope.$watch('model.eventType.displayName', function() {
+      $scope.model.eventType.name = $scope.model.eventType.displayName;
+    }, true);
 
     if (eventtype) 
     { 

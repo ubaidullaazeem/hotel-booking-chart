@@ -19,7 +19,7 @@
           </md-input-container>  -->        
           <md-input-container flex>
             <label>Halls</label>           
-            <md-select style="text-transform: capitalize;"  multiple 
+            <md-select  multiple 
                         required
                         name="halls"
                         ng-model="mixins.mSelectedHalls"
@@ -27,7 +27,7 @@
                         ng-model-options= "{trackBy: '$value._id'}"
                         ng-disabled="ui.viewMode">
               <md-optgroup label="Halls">
-                <md-option style="text-transform: capitalize;" ng-value="hall" ng-selected="{{ selectHallsByDefault(hall) }}" ng-repeat="hall in model.halls">{{hall.name}}</md-option>
+                <md-option ng-value="hall" ng-selected="{{ selectHallsByDefault(hall) }}" ng-repeat="hall in model.halls">{{hall.displayName}}</md-option>
               </md-optgroup>
             </md-select>
             <div ng-messages="bookingForm.halls.$error" ng-show="bookingForm.halls.$invalid  && submitted">
@@ -50,7 +50,7 @@
                           ng-change="onEventTypeSelected()"
                           ng-disabled="ui.viewMode">
                 <md-optgroup label="Event">
-                  <md-option style="text-transform: capitalize;" ng-value="eventType" ng-selected="{{ eventType.name === mixins.mSelectedEventType.name ? 'true' : 'false' }}" ng-repeat="eventType in model.eventTypes">{{eventType.name}}</md-option>
+                  <md-option ng-value="eventType" ng-selected="{{ eventType.name === mixins.mSelectedEventType.name ? 'true' : 'false' }}" ng-repeat="eventType in model.eventTypes">{{eventType.displayName}}</md-option>
                 </md-optgroup>
               </md-select>    
               <div ng-messages="bookingForm.event.$error" ng-show="bookingForm.event.$invalid && submitted">

@@ -27,6 +27,7 @@
     var loggedIn = $rootScope.globals.currentUser;
     if(loggedIn) 
     {
+      console.log("header loggedin");
       $state.go('bookings');
       $scope.imageUrl = loggedIn.imageUrl;
       $scope.name = loggedIn.userName;

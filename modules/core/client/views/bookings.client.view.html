@@ -22,13 +22,13 @@
 
 		<md-input-container flex style="margin-left: 20px">
 	        <label>Halls</label>
-	        <md-select  multiple style="text-transform: capitalize"
+	        <md-select  multiple 
 	                    name="halls"
 	                    ng-model="searchParams.selectedHalls"
 	                    ng-change="selectedHallsChanged()"
 	                    ng-model-options= "{trackBy: '$value._id'}">
 	          <md-optgroup label="Halls">
-	            <md-option style="text-transform: capitalize" ng-value="hall" ng-repeat="hall in halls.mAllHalls">{{hall.name}}</md-option>
+	            <md-option ng-value="hall" ng-repeat="hall in halls.mAllHalls">{{hall.displayName}}</md-option>
 	          </md-optgroup>
 	        </md-select>
 	        <div ng-messages="userForm.halls.$error" ng-show="userForm.halls.$invalid  && submitted">

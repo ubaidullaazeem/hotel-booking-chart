@@ -13,6 +13,7 @@
     var loggedIn = $rootScope.globals.currentUser;
     if(loggedIn) 
     {
+      console.log("login loggedin");
       $state.go('bookings');
       $rootScope.isUserLoggedIn = true;
     }

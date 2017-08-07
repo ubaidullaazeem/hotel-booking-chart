@@ -17,7 +17,7 @@
 
               <md-input-container flex>
                 <label>Name</label>
-                <input style="text-transform: capitalize" required name="name" ng-model="model.eventType.name" ng-disabled="model.eventType.name === 'others'"/>
+                <input required name="name" ng-model="model.eventType.displayName" ng-disabled="model.eventType.name === 'others'"/>
                 <div ng-messages="eventtypeForm.name.$error">
                   <div ng-message="required">Event type name is required.</div>
                 </div>

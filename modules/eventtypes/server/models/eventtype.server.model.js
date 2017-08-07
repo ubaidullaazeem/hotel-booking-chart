@@ -17,6 +17,11 @@ var EventtypeSchema = new Schema({
     trim: true,
     lowercase: true
   },
+  displayName: {
+    type: String,
+    required: 'Please fill Eventtype display name',
+    trim: true,
+  },
   colour:{
     name:{
       type: String,

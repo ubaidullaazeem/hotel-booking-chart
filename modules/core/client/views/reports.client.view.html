@@ -10,13 +10,13 @@
 					<div layout="row">
 						<md-input-container flex=30>
 							<label>Halls</label>
-							<md-select required multiple style="text-transform: capitalize"
+							<md-select required multiple 
 							name="halls"
 							ng-model="searchParams.selectedHalls"
 							ng-change="selectedHallsChanged()"
 							ng-model-options= "{trackBy: '$value._id'}">
 								<md-optgroup label="Halls">
-								<md-option style="text-transform: capitalize" ng-value="hall" ng-selected="{{ selectHallsByDefault(hall) }}" ng-repeat="hall in model.halls">{{hall.name}}</md-option>
+								<md-option ng-value="hall" ng-selected="{{ selectHallsByDefault(hall) }}" ng-repeat="hall in model.halls">{{hall.displayName}}</md-option>
 								</md-optgroup>
 							</md-select>
 						</md-input-container>

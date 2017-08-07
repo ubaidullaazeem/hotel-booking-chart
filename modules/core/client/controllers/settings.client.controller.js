@@ -55,7 +55,7 @@
 
     $scope.mDeleteHall = function(ev, index, hall) {
       var confirm = $mdDialog.confirm()
-        .title('Do you want to delete the ' + hall.name + ' hall?')
+        .title('Do you want to delete the "' + hall.displayName + '" hall?')
         .textContent('Hall will be deleted permanently.')
         .targetEvent(ev)
         .ok('Yes')
@@ -167,7 +167,7 @@
 
     $scope.mDeleteEventType = function(ev, index, eventType) {
       var confirm = $mdDialog.confirm()
-        .title('Do you want to delete "' + eventType.name + '"?')
+        .title('Do you want to delete "' + eventType.displayName + '"?')
         .textContent('Event type will be deleted permanently.')
         .targetEvent(ev)
         .ok('Yes')

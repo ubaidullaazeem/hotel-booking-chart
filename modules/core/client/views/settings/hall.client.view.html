@@ -21,7 +21,7 @@
 					    <th style="text-align: center" width="20%">Action</th>
 					  </tr>
 					  <tr ng-repeat = "hall in halls" style="text-align: center" ng-init="findRateSummariesByDate(hall)">
-				        <td style="text-transform: capitalize;">{{ hall.name }}</td>
+				        <td>{{ hall.displayName }}</td>
 				        <td>{{ hall.rate | currency:"₹":0 }}</td>
 				        <td>{{ hall.powerConsumpationCharges | currency:"₹":0 }}</td>
 				        <td>{{ hall.cleaningCharges | currency:"₹":0 }}</td>

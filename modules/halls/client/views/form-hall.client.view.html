@@ -17,7 +17,7 @@
 
               <md-input-container flex>
                 <label>Name</label>
-                <input style="text-transform: capitalize" required name="name" ng-model="model.hall.name"/>
+                <input required name="name" ng-model="model.hall.displayName"/>
                 <div ng-messages="hallForm.name.$error">
                   <div ng-message="required">Hall name is required.</div>
                 </div>

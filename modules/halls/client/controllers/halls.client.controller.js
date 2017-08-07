@@ -12,6 +12,7 @@
     $scope.model = {
       hall: {
         name: hall ? hall.name : undefined,
+        displayName: hall ? hall.displayName : undefined,
         _id: hall ? hall._id : undefined,        
         effectiveDate: hall ? dateConvertion(hall.effectiveDate) : dateConvertion(new Date()),
         rateSummaries: hall ? hall.rateSummaries : [],
@@ -30,6 +31,10 @@
     }
 
     $scope.DATA_BACKGROUND_COLOR = DATA_BACKGROUND_COLOR;
+
+    $scope.$watch('model.hall.displayName', function() {
+      $scope.model.hall.name = $scope.model.hall.displayName;
+    }, true);
 
     $scope.loadInitial = function() {  
       if ($scope.model.hall._id) {

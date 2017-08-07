@@ -136,7 +136,7 @@
           }
         } else {
           Notification.error({
-            message: "Effective date is not found for " + hall.name,
+            message: "Effective date is not found for " + hall.displayName,
             title: '<i class="glyphicon glyphicon-remove"></i> Effective date Error !!!'
           });
           $mdDialog.cancel();
@@ -529,7 +529,7 @@
               }
 
               Notification.warning({
-                message: "Unable to find the " + hall.name + " in Google Calendar",
+                message: "Unable to find the " + hall.displayName + " in Google Calendar",
                 title: '<i class="glyphicon glyphicon-remove"></i> Google Calendar Warning !!!'
               });
             }
@@ -557,7 +557,7 @@
             if (response && response.hasOwnProperty('error')) // error
             {
               Notification.warning({
-                message: "Unable to remove the event from "+hall.name+" hall in Google Calendar",
+                message: "Unable to remove the event from "+hall.displayName+" hall in Google Calendar",
                 title: '<i class="glyphicon glyphicon-remove"></i> Google Calendar Error !!!'
               });
             } else // success
@@ -621,7 +621,7 @@
                 if (updateEventRes && updateEventRes.hasOwnProperty('error')) // error
                 {
                   Notification.error({
-                    message: "Unable to update the event in " + hall.name,
+                    message: "Unable to update the event in " + hall.displayName,
                     title: '<i class="glyphicon glyphicon-remove"></i> Google Calendar Error !!!'
                   });
                 } else // success
@@ -685,7 +685,7 @@
                 }
 
                 Notification.warning({
-                  message: "Unable to find the " + hall.name + " in Google Calendar",
+                  message: "Unable to find the " + hall.displayName + " in Google Calendar",
                   title: '<i class="glyphicon glyphicon-remove"></i> Google Calendar Warning !!!'
                 });
               }
@@ -759,7 +759,7 @@
                 if (response && response.hasOwnProperty('error')) // error
                 {
                   Notification.error({
-                    message: "Unable to delete the event from " + hall.name + " hall in Google Calendar",
+                    message: "Unable to delete the event from " + hall.displayName + " hall in Google Calendar",
                     title: '<i class="glyphicon glyphicon-remove"></i> Google Calendar Error !!!'
                   });
                 } else // success
