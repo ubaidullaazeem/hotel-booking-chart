@@ -28,7 +28,9 @@
         };
 
         CommonService.hasContainsTaxName = function(taxes) {
-            return _.includes(_.map(taxes, 'name'), CGST, SGST);
+            var isCGSTPresent = _.includes(_.map(taxes, 'name'), CGST);
+            var isSGSTPresent = _.includes(_.map(taxes, 'name'), SGST);
+            return isCGSTPresent && isSGSTPresent;
         };
 
         CommonService.makeFirstLetterCapitalizeinArray = function(array) {

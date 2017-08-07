@@ -26,7 +26,7 @@
     };
 
     $scope.ui = {
-      mNumberPattern: /^[0-9]*$/,
+      mNumberPattern: /^[0-9]+(\.[0-9]{1,2})?$/,
       createMode: true,
     }
 

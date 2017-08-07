@@ -281,7 +281,7 @@
         $scope.ui.validateSettings = true;
       }
 
-      if ($scope.model.paymentStatuses.length == 0) {
+      if ($scope.model.paymentStatuses.length < 2) {
         Notification.error({
           message: "Please add payment statuses in settings.",
           title: '<i class="glyphicon glyphicon-remove"></i> Payment status Error !!!'

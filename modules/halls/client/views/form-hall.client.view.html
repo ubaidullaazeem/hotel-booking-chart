@@ -25,7 +25,7 @@
 
               <md-input-container flex>
                 <label>Rate</label>
-                <input required name="rate" ng-model="model.rate" ng-change="calculateTaxRate()" min="0" ng-pattern="ui.mNumberPattern"/>
+                <input required type="number" name="rate" ng-model="model.rate" ng-change="calculateTaxRate()" min="0" ng-pattern="ui.mNumberPattern" step="0.01"/>
                 <div ng-messages="hallForm.rate.$error">
                   <div ng-message="required">Hall rate is required.</div>
                 </div>
@@ -37,7 +37,7 @@
 
               <md-input-container flex>
                 <label>Electricity Charge</label>
-                <input required name="powerConsumpationCharges" ng-change="calculateTaxRate()" min="0" ng-model="model.powerConsumpationCharges"/>
+                <input required type="number" name="powerConsumpationCharges" ng-change="calculateTaxRate()" min="0" ng-model="model.powerConsumpationCharges" ng-pattern="ui.mNumberPattern" step="0.01"/>
                 <div ng-messages="hallForm.powerConsumpationCharges.$error">
                   <div ng-message="required">Electricity Charge is required.</div>
                 </div>
@@ -45,7 +45,7 @@
 
               <md-input-container flex>
                 <label>Cleaning Charge</label>
-                <input required name="cleaningCharges" ng-change="calculateTaxRate()" min="0" ng-model="model.cleaningCharges"/>
+                <input required type="number" name="cleaningCharges" ng-change="calculateTaxRate()" min="0" ng-model="model.cleaningCharges" ng-pattern="ui.mNumberPattern" step="0.01"/>
                 <div ng-messages="hallForm.cleaningCharges.$error">
                   <div ng-message="required">Cleaning Charge is required.</div>
                 </div>
