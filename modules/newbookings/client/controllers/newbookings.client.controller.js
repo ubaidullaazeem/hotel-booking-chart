@@ -17,7 +17,6 @@
 
     $scope.ui = {
       mSelectedDateToDisplay: selectedDate.format('DD-MMMM-YYYY'),
-      mNumberPattern: /^[0-9]*$/,
       mPricePattern: /^[0-9]+(\.[0-9]{1,2})?$/,
       mEmailPattern: /^.+@.+\..+$/,
       createMode: true,

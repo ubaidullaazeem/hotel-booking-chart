@@ -6,13 +6,14 @@
     .module('halls')
     .controller('HallsController', HallsController);
 
-  HallsController.$inject = ['CGST', 'SGST', 'DATA_BACKGROUND_COLOR', 'CommonService', '$scope', '$state', '$rootScope', '$mdDialog', 'Notification', 'hallResolve', 'HallsService', '$mdpDatePicker', 'TaxesService'];
+  HallsController.$inject = ['CGST', 'SGST', 'DATA_BACKGROUND_COLOR', 'CommonService', '$scope', '$state', '$rootScope', '$mdDialog', 'Notification', 'hallResolve', 'otherHallsResolve', 'HallsService', '$mdpDatePicker', 'TaxesService'];
 
-  function HallsController(CGST, SGST, DATA_BACKGROUND_COLOR, CommonService, $scope, $state, $rootScope, $mdDialog, Notification, hall, HallsService, $mdpDatePicker, TaxesService) {
+  function HallsController(CGST, SGST, DATA_BACKGROUND_COLOR, CommonService, $scope, $state, $rootScope, $mdDialog, Notification, hall, otherHallsResolve, HallsService, $mdpDatePicker, TaxesService) {
     $scope.model = {
       hall: {
         name: hall ? hall.name : undefined,
         displayName: hall ? hall.displayName : undefined,
+        description: hall ? hall.description : undefined,
         _id: hall ? hall._id : undefined,        
         effectiveDate: hall ? dateConvertion(hall.effectiveDate) : dateConvertion(new Date()),
         rateSummaries: hall ? hall.rateSummaries : [],
@@ -74,6 +75,16 @@
     $scope.save = function(hallForm) {
       $scope.hallForm = hallForm;
       if (hallForm.$valid) {
+
+        if (_.includes(otherHallsResolve, $scope.model.hall.name.toLowerCase().trim())) {
+          Notification.error({
+            message: 'Name already exists',
+            title: '<i class="glyphicon glyphicon-remove"></i> Create Hall Error !!!'
+          });
+
+          return;
+        }
+
         if ($scope.model.hall._id) {
           var requestedEffectiveDate = new Date($scope.model.hall.effectiveDate);
           var summaryRate = CommonService.findRateSummariesByDateBeforeSave($scope.model.hall.rateSummaries, requestedEffectiveDate);
@@ -128,8 +139,10 @@
     }
 
     $scope.showStartDatePicker = function(ev) {
+      var today = new Date();
       $mdpDatePicker($scope.model.hall.effectiveDate, {
           targetEvent: ev,
+          minDate: today
         })
         .then(function(dateTime) {
           $scope.model.hall.effectiveDate = moment(dateTime).format('DD, MMM YYYY');

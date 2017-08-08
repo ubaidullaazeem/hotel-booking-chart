@@ -22,6 +22,11 @@ var HallSchema = new Schema({
     required: 'Please fill Hall display name',
     trim: true    
   },
+  description:{
+    type: String,
+    default: '',
+    trim: true
+  },
   rateSummaries: [{
     rate: Number,
     powerConsumpationCharges: Number,

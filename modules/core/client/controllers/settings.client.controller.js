@@ -22,13 +22,13 @@
     /** CRUD Functionality for Hall **/
 
     $scope.mShowHallPopup = function(ev, index = null, hall = null) {
-       var oldShow = $mdDialog.show;
-        $mdDialog.show = function(options) {
-          if (options.hasOwnProperty("skipHide")) {
-            options.multiple = options.skipHide;
-          }
-          return oldShow(options);
-        };
+      var oldShow = $mdDialog.show;
+      $mdDialog.show = function(options) {
+        if (options.hasOwnProperty("skipHide")) {
+          options.multiple = options.skipHide;
+        }
+        return oldShow(options);
+      };
       $mdDialog.show({
           controller: 'HallsController',
           templateUrl: 'modules/halls/client/views/form-hall.client.view.html',
@@ -39,6 +39,18 @@
           resolve: {
             hallResolve: function() {
               return hall;
+            },
+            otherHallsResolve: function() {
+              var allHallnames = _.map($scope.halls, 'name');
+              var otherHalls;
+              if (hall) {
+                otherHalls = _.filter(allHallnames, function(obj) {
+                  return obj !== hall.name;
+                });
+              } else {
+                otherHalls = allHallnames;
+              }
+              return otherHalls;
             }
           },
         })
@@ -49,7 +61,7 @@
             $scope.halls.push(updatedItem);
           }
         }, function() {
-          console.log('You cancelled the dialog.');          
+          console.log('You cancelled the dialog.');
         });
     }
 
@@ -150,6 +162,18 @@
             },
             colorsResolve: function() {
               return colours
+            },
+            otherEventTypesResolve: function() {
+              var allEventTypeNames = _.map($scope.eventTypes, 'name');
+              var otherEventTypes;
+              if (eventType) {
+                otherEventTypes = _.filter(allEventTypeNames, function(obj) {
+                  return obj !== eventType.name;
+                });
+              } else {
+                otherEventTypes = allEventTypeNames;
+              }
+              return otherEventTypes;
             }
           },
         })
