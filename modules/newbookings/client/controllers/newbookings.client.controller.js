@@ -40,6 +40,7 @@
       amountPaid: null,
       paidDate: new Date(),
       paymentMode: null,
+      details: '',
       CGSTPercent: 0,
       SGSTPercent: 0,
       paidSubTotal: 0,
@@ -146,11 +147,29 @@
       calculateHallsRate();
       $scope.calculateBalanceDue();
     };
+    
+    $scope.$watch('mixins.mBalanceDue', function() {
 
-    $scope.onPaymentStatusChanged = function() {
-        $scope.googleCalendar.colorCode = ($scope.mixins.mSelectedPaymentStatus.name === PAYMENT_STATUS[1]) ? GOOGLE_CALENDAR_COLOR_IDS.RED : GOOGLE_CALENDAR_COLOR_IDS.GREEN;
-    };
+      if ($scope.mixins.mBalanceDue === 0 && $scope.mixins.mSelectedHalls.length > 0) //Fully Paid
+      {
+        var fullyPaid = _.filter($scope.model.paymentStatuses, function(obj) {
+          return obj.name === PAYMENT_STATUS[1];
+        });
 
+        $scope.mixins.mSelectedPaymentStatus = fullyPaid[0];
+        $scope.googleCalendar.colorCode = GOOGLE_CALENDAR_COLOR_IDS.RED;
+      } else //Advance Paid
+      {
+        var advancePaid = _.filter($scope.model.paymentStatuses, function(obj) {
+          return obj.name === PAYMENT_STATUS[0];
+        });
+
+        $scope.mixins.mSelectedPaymentStatus = advancePaid[0];
+        $scope.googleCalendar.colorCode = GOOGLE_CALENDAR_COLOR_IDS.GREEN;
+      }
+      
+    }, true);
+    
     $scope.getOtherEvents = function() {
       var events = _.filter($scope.model.eventTypes, function(eventType) {
         return eventType.name === HARDCODE_VALUES[0];
@@ -184,14 +203,32 @@
         });
     };
 
-    $scope.showPaidDatePicker = function(ev) {
-      var dateToPicker = $scope.mPaymentHistory.paidDate ? new Date($scope.mPaymentHistory.paidDate) : new Date();
+    $scope.onPaymentModeChanged = function() {
+      if ($scope.mPaymentHistory.paymentMode !== $scope.model.paymentModes[0] && $scope.mPaymentHistory.paidDate > new Date()) {
+        $scope.mPaymentHistory.paidDate = new Date();
+      }
+    };
 
-      $mdpDatePicker(dateToPicker, {
-        targetEvent: ev
-      }).then(function(date) {
-        $scope.mPaymentHistory.paidDate = new Date(date);
-      });
+    $scope.showPaidDatePicker = function(ev) {
+
+      if ($scope.mPaymentHistory.paymentMode) {
+
+        var maxDate = $scope.mPaymentHistory.paymentMode !== $scope.model.paymentModes[0] ? new Date() : null;
+
+        var dateToPicker = $scope.mPaymentHistory.paidDate ? new Date($scope.mPaymentHistory.paidDate) : new Date();
+
+        $mdpDatePicker(dateToPicker, {
+          targetEvent: ev,
+          maxDate: maxDate
+        }).then(function(date) {
+          $scope.mPaymentHistory.paidDate = new Date(date);
+        });
+      } else {
+        Notification.info({
+          message: "Please select payment mode.",
+          title: '<i class="glyphicon glyphicon-remove"></i> Payment Mode !!!'
+        });
+      }
     };
 
     $scope.showEventDatePicker = function(ev){
@@ -352,14 +389,14 @@
     $scope.save = function(form) {
 
       if (form.$valid) {
-        if (($scope.mixins.mSelectedPaymentStatus.name.toLowerCase() == PAYMENT_STATUS[1].toLowerCase() && $scope.mixins.mBalanceDue !== 0) || $scope.mixins.mSelectedPaymentStatus.name.toLowerCase() == PAYMENT_STATUS[0].toLowerCase() && $scope.mixins.mBalanceDue <= 0) {
+        /*if (($scope.mixins.mSelectedPaymentStatus.name.toLowerCase() == PAYMENT_STATUS[1].toLowerCase() && $scope.mixins.mBalanceDue !== 0) || $scope.mixins.mSelectedPaymentStatus.name.toLowerCase() == PAYMENT_STATUS[0].toLowerCase() && $scope.mixins.mBalanceDue <= 0) {
           Notification.error({
             message: "Please check the payment status and payment received",
             title: '<i class="glyphicon glyphicon-remove"></i> Payment Status Error !!!'
           });
 
           return;
-        }
+        }*/
 
         if ($scope.mixins.mBalanceDue < 0) {
           Notification.error({
@@ -810,6 +847,7 @@
         amountPaid: null,
         paidDate: new Date(),
         paymentMode: null,
+        details: '',
         CGSTPercent: 0,
         SGSTPercent: 0,
         paidSubTotal: 0,

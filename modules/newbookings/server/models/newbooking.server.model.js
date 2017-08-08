@@ -168,6 +168,7 @@ var NewbookingSchema = new Schema({
     amountPaid : Number,
     paidDate : Date,
     paymentMode : String,
+    details : String,
     CGSTPercent : Number,
     SGSTPercent : Number,
     paidSubTotal : Number,

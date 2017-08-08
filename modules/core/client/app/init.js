@@ -42,7 +42,7 @@
 
     var validNavigation = false;
     window.onbeforeunload = function() {
-      return 'Are you sure you want to leave?';
+      //return 'Are you sure you want to leave?';
       if (!validNavigation) {
         AuthenticationService.ClearCredentials();
         $rootScope.isUserLoggedIn = false; //Webkit, Safari, Chrome
