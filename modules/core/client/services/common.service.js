@@ -11,13 +11,18 @@
         };
 
         CommonService.findRateSummariesByDate = function(rateSummaries, date) {
-            var summaries = rateSummariesByDateImpl(rateSummaries, date);
-            if (summaries.length > 0) {
-                return summaries;
-            } else {
-                var previousDate = date.setDate(date.getDate() - 1);
-                return CommonService.findRateSummariesByDate(rateSummaries, new Date(previousDate));
+            try {
+                var summaries = rateSummariesByDateImpl(rateSummaries, date);
+                if (summaries.length > 0) {
+                    return summaries;
+                } else {
+                    var previousDate = date.setDate(date.getDate() - 1);
+                    return CommonService.findRateSummariesByDate(rateSummaries, new Date(previousDate));
+                }
+            } catch (exe) {
+                return rateSummaries;
             }
+
         };
 
         CommonService.getTaxRateByName = function(taxes, name) {

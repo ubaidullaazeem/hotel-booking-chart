@@ -7,7 +7,7 @@
 				</div>
 				<div class="card-content">
 					<h4 class="card-title">List of halls</h4>
-					<span class="pull-right" style="margin-top: -50px"><md-button class="btn btn-{{DATA_BACKGROUND_COLOR}} btn-sm md-button" ng-click="mShowHallPopup($event)">Add Hall Rates</md-button></span>
+					<span class="pull-right" style="margin-top: -50px"><md-button class="btn btn-info btn-sm md-button" ng-click="mShowHallPopup($event)">Add Hall Rates</md-button></span>
 					<h4 class="card-title" style="text-align: center" ng-hide="halls.length">Hall rates not found.</h4>
 					<table class="table table-bordered" ng-show="halls.length">
 					  <tr>
@@ -29,7 +29,7 @@
 				        <!-- <td>{{ hall.CGSTTax | currency:"₹":0 }}</td>
 				        <td>{{ hall.SGSTTax | currency:"₹":0 }}</td> -->
 				        <td>{{ hall.effectiveDate | date:'dd, MMM yyyy' }}</td>
-				        <td><md-button class="btn btn-{{DATA_BACKGROUND_COLOR}} btn-sm md-button" ng-click="viewSummaries($event, $index, hall)">Rate Summaries</md-button></td>
+				        <td><md-button class="btn btn-info btn-sm md-button" ng-click="viewSummaries($event, $index, hall)">Rate Summaries</md-button></td>
 				        <td style="text-align: center;">
 				        	<md-button class="md-raised md-primary nonecase" style="min-width: 50px" ng-click="mShowHallPopup($event, $index, hall)"><span class="glyphicon glyphicon-pencil"></span></md-button>
 				        	<md-button class="btn btn-danger btn-sm" style="min-width: 50px" ng-click="mDeleteHall($event, $index, hall)"><span class="glyphicon glyphicon-trash"></span></md-button>

@@ -25,7 +25,8 @@
     }
 
     var loggedIn = $rootScope.globals.currentUser;
-    var currentPage = window.location.href.substr(window.location.href.lastIndexOf('/') + 1);
+    var page = window.location.href.substr(window.location.href.lastIndexOf('/') + 1);
+    var currentPage = page ? page : 'login';
     if(loggedIn) 
     {
       var routePage = currentPage === 'login' ? 'bookings' : currentPage;
