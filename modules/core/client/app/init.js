@@ -27,8 +27,8 @@
     $logProvider.debugEnabled(app.applicationEnvironment !== 'production');
   }
 
-  run.$inject = ['$rootScope', '$cookieStore', '$http', '$q', 'GOOGLE_DISCOVERY_DOCS', 'GOOGLE_CLIENT_ID'];
-  function run($rootScope, $cookieStore, $http, $q, GOOGLE_DISCOVERY_DOCS, GOOGLE_CLIENT_ID) 
+  run.$inject = ['AuthenticationService', '$rootScope', '$cookieStore', '$http', '$q', 'GOOGLE_DISCOVERY_DOCS', 'GOOGLE_CLIENT_ID'];
+  function run(AuthenticationService, $rootScope, $cookieStore, $http, $q, GOOGLE_DISCOVERY_DOCS, GOOGLE_CLIENT_ID) 
   {
     $rootScope.ajaxCall = $q.defer();
 
@@ -38,6 +38,36 @@
     {
       $http.defaults.headers.common['Authorization'] = 'Bearer ' + $rootScope.globals.currentUser.accessToken; // jshint ignore:line
     }
+
+
+    var validNavigation = false;
+    window.onbeforeunload = function() {
+      if (!validNavigation) {
+        AuthenticationService.ClearCredentials();
+        $rootScope.isUserLoggedIn = false; //Webkit, Safari, Chrome
+      }
+    }
+
+    $(document).keydown(function(e) {
+      if ((e.keyCode == 65 && e.ctrlKey)  || (e.keyCode == 116)) {
+        validNavigation = true;
+      }
+    });
+
+    // Attach the event click for all links in the page
+    angular.element("a").bind("click", function() {
+      validNavigation = true;
+    });
+
+    // Attach the event submit for all forms in the page
+    angular.element("form").bind("submit", function() {
+      validNavigation = true;
+    });
+
+    // Attach the event click for all inputs in the page
+    angular.element("input[type=submit]").bind("click", function() {
+      validNavigation = true;
+    });
     
     gapi.load('client:auth2', function()
     {
@@ -57,7 +87,6 @@
       });
     });     
   }
-
 
   // Then define the init function for starting up the application
   angular.element(document).ready(init);

@@ -12,16 +12,44 @@
       <div class="card-content table-responsive">
         <md-dialog-content>
           <div class="md-dialog-content">
-
-            <div layout="row" flex ng-repeat="rate in model.rate.rateSummaries" ng-init="addIsEdit(rate)">            
+            <div layout="row" flex> 
               <md-input-container flex>
                 <label>Effective Date</label>
-                <div>
-                  <input class="form-control datepicker" mo-date-input="YYYY-MM-DD" id="hallEffectiveDatePicker" required name="start" ng-model="rate.effectiveDate" onfocus="this.blur()" ng-disabled="true"></input>
-                </div>
+                <div ng-click="showUnconfirmedEffectiveDatePicker($event)">
+                <input class="form-control datepicker" id="hallEffectiveDatePicker" name="start" ng-model="unconfirmed.effectiveDate" onfocus="this.blur()"></input>
+              </div>
+              </md-input-container>
+              <md-input-container flex ng-if="ui.isHallRate">
+                <label>Rate</label>
+                <input name="rate" ng-model="unconfirmed.rate" min="0" ng-pattern="ui.mNumberPattern"/>
               </md-input-container> 
 
+              <md-input-container flex ng-if="ui.isHallRate">
+                <label>Electricity Charge</label>
+                <input name="powerConsumpationCharges" min="0" ng-pattern="ui.mNumberPattern" ng-model="unconfirmed.powerConsumpationCharges"/>
+              </md-input-container>
+
+              <md-input-container flex ng-if="ui.isHallRate">
+                <label>Cleaning Charge</label>
+                <input name="cleaningCharges" min="0" ng-pattern="ui.mNumberPattern" ng-model="unconfirmed.cleaningCharges"/>
+              </md-input-container>
+
+              <md-input-container flex ng-if="!ui.isHallRate">
+                <label>Percentage</label>
+                <input name="percentage" ng-model="unconfirmed.percentage" min="0"/>
+              </md-input-container>
+              <div class="pull-right" ng-if="!ui.createMode && !(mixins.mBalanceDue <= 0)">
+                  <md-button class="md-raised md-primary nonecase" style="min-width: 50px" ng-click="addRateSummary()" ng-disabled="ui.isHallRate ? (unconfirmed.rate === null || unconfirmed.powerConsumpationCharges === null || unconfirmed.cleaningCharges === null) : unconfirmed.percentage === null" type="submit"><span class="glyphicon glyphicon-plus"></span></md-button>
+              </div>
+            </div>
+            <div layout="row" flex ng-repeat="rate in model.rate.rateSummaries  | orderBy:'effectiveDate'" ng-init="addIsEdit(rate)">            
               <md-input-container flex>
+                <label>Effective Date</label>
+                <div ng-click="showEffectiveDatePicker($event, rate)">
+                  <input class="form-control datepicker" mo-date-input="YYYY-MM-DD" id="hallEffectiveDatePicker" required name="start" ng-model="rate.effectiveDate" onfocus="this.blur()" ng-disabled="!rate.isEdit"></input>
+                </div>
+              </md-input-container>
+              <md-input-container flex ng-if="ui.isHallRate">
                 <label>Rate</label>
                 <input required name="rate" ng-model="rate.rate" min="0" ng-pattern="ui.mNumberPattern" ng-disabled="!rate.isEdit"/>
                 <div ng-messages="rateSummaryForm.rate.$error">
@@ -29,7 +57,7 @@
                 </div>
               </md-input-container> 
 
-              <md-input-container flex>
+              <md-input-container flex ng-if="ui.isHallRate">
                 <label>Electricity Charge</label>
                 <input required name="powerConsumpationCharges" min="0" ng-pattern="ui.mNumberPattern" ng-model="rate.powerConsumpationCharges" ng-disabled="!rate.isEdit"/>
                 <div ng-messages="rateSummaryForm.powerConsumpationCharges.$error">
@@ -37,7 +65,7 @@
                 </div>
               </md-input-container>
 
-              <md-input-container flex>
+              <md-input-container flex ng-if="ui.isHallRate">
                 <label>Cleaning Charge</label>
                 <input required name="cleaningCharges" min="0" ng-pattern="ui.mNumberPattern" ng-model="rate.cleaningCharges" ng-disabled="!rate.isEdit"/>
                 <div ng-messages="rateSummaryForm.cleaningCharges.$error">
@@ -45,8 +73,17 @@
                 </div>
               </md-input-container>
 
+              <md-input-container flex ng-if="!ui.isHallRate">
+                <label>Percentage</label>
+                <input required name="percentage" ng-model="rate.percentage" min="0" ng-disabled="!rate.isEdit"/>
+                <div ng-messages="rateSummaryForm.rate.$error">
+                  <div ng-message="required">Percentage is required.</div>
+                </div>
+              </md-input-container>
+
               <div class="pull-right">
                 <md-button class="md-raised md-primary nonecase" style="min-width: 50px" ng-click="isEdit(rate)" type="submit"><span class="glyphicon glyphicon-pencil"></span></md-button>
+                <md-button class="btn btn-danger btn-sm" style="min-width: 50px" ng-click="removeRateSummary(rate)" type="submit"><span class="glyphicon glyphicon-remove"></span></md-button>
               </div>                           
 
             </div>
@@ -57,7 +94,7 @@
       
       <md-dialog-actions layout="row"> 
         <span flex></span> 
-        <input class="btn btn-next btn-fill btn-rose btn-wd" name="submit" value="Submit" ng-click="save()" ng-disabled="rateSummaryForm.$invalid" type="button">
+        <input class="btn btn-next btn-fill btn-rose btn-wd" name="submit" value="Submit" ng-click="save()" ng-disabled="rateSummaryForm.$invalid || model.rate.rateSummaries.length < 1" type="button">
         <span flex></span>
         <input class="btn btn-next btn-fill btn-rose btn-wd" name="cancel" value="Cancel" ng-click="cancel()" type="button">
         <span flex></span>

@@ -274,7 +274,14 @@
       $mdDialog.cancel();
     };
 
-    $scope.viewSummaries = function(ev, index, hall) { 
+    $scope.viewSummaries = function(ev, index, resolveData, isHallRate) {
+      var oldShow = $mdDialog.show;
+        $mdDialog.show = function(options) {
+          if (options.hasOwnProperty("skipHide")) {
+            options.multiple = options.skipHide;
+          }
+          return oldShow(options);
+        };
       $mdDialog.show({
           controller: 'RateSummariesController',
           templateUrl: 'modules/core/client/views/settings/form-rate-summaries.client.view.html',
@@ -283,13 +290,21 @@
           clickOutsideToClose: false,
           fullscreen: true,
           resolve: {
-            hallResolve: function() {
-              return hall;
+            summariesResolve: function() {
+              return resolveData;
+            },
+            isHallRate: function() {
+              return isHallRate;
             }
           },
         })
         .then(function(updatedItem) {
-          $scope.halls[index] = updatedItem        
+          if(isHallRate) {
+            $scope.halls[index] = updatedItem;
+          } else {
+            $scope.taxes[index] = updatedItem;
+          }
+          
         }, function() {
           console.log('You cancelled the dialog.');          
         });

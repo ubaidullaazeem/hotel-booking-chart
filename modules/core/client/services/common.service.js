@@ -20,7 +20,7 @@
                     return CommonService.findRateSummariesByDate(rateSummaries, new Date(previousDate));
                 }
             } catch (exe) {
-                return rateSummaries;
+                return _.orderBy(rateSummaries, function(rateSummary) { return rateSummary.effectiveDate}, ['asc']);;
             }
 
         };

@@ -36,8 +36,8 @@
 						</md-input-container>
 						<div flex></div>
 						<md-input-container flex=11  style="margin-top: 0px">
-							<md-button class="btn btn-{{DATA_BACKGROUND_COLOR}} btn-sm" ng-hide="ui.searching" ng-click="searchReports()"><span class="glyphicon glyphicon-search"></span> Search</md-button>
-							<md-button class="btn btn-{{DATA_BACKGROUND_COLOR}} btn-sm" ng-disabled="true" ng-show="ui.searching"><i class="fa fa-spinner fa-spin"></i> Searching</md-button>
+							<md-button class="btn btn-info btn-sm" ng-hide="ui.searching" ng-click="searchReports()"><span class="glyphicon glyphicon-search"></span> Search</md-button>
+							<md-button class="btn btn-info btn-sm" ng-disabled="true" ng-show="ui.searching"><i class="fa fa-spinner fa-spin"></i> Searching</md-button>
 						</md-input-container>
 					</div>
 				</div>
@@ -60,8 +60,8 @@
 		</div>
 	</div>
 	<div class="col-md-2">
-		<md-button class="btn btn-{{DATA_BACKGROUND_COLOR}} btn-sm" ng-click="exportReport()">Export</md-button>
-		<md-button class="btn btn-{{DATA_BACKGROUND_COLOR}} btn-sm" ng-hide="ui.email" ng-click="emailReport()">Email</md-button>
-		<md-button class="btn btn-{{DATA_BACKGROUND_COLOR}} btn-sm" ng-disabled="true" ng-show="ui.email"><i class="fa fa-spinner fa-spin"></i> Email sending</md-button>
+		<md-button class="btn btn-info btn-sm" ng-click="exportReport()">Export</md-button>
+		<md-button class="btn btn-info btn-sm" ng-hide="ui.email" ng-click="emailReport()">Email</md-button>
+		<md-button class="btn btn-info btn-sm" ng-disabled="true" ng-show="ui.email"><i class="fa fa-spinner fa-spin"></i> Email sending</md-button>
 	</div>
 </div>

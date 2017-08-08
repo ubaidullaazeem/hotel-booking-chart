@@ -29,7 +29,7 @@
 				        <!-- <td>{{ hall.CGSTTax | currency:"₹":0 }}</td>
 				        <td>{{ hall.SGSTTax | currency:"₹":0 }}</td> -->
 				        <td>{{ hall.effectiveDate | date:'dd, MMM yyyy' }}</td>
-				        <td><md-button class="btn btn-info btn-sm md-button" ng-click="viewSummaries($event, $index, hall)">Rate Summaries</md-button></td>
+				        <td><md-button class="btn btn-info btn-sm md-button" ng-click="viewSummaries($event, $index, hall, true)">Rate Summaries</md-button></td>
 				        <td style="text-align: center;">
 				        	<md-button class="md-raised md-primary nonecase" style="min-width: 50px" ng-click="mShowHallPopup($event, $index, hall)"><span class="glyphicon glyphicon-pencil"></span></md-button>
 				        	<md-button class="btn btn-danger btn-sm" style="min-width: 50px" ng-click="mDeleteHall($event, $index, hall)"><span class="glyphicon glyphicon-trash"></span></md-button>
