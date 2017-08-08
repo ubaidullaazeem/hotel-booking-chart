@@ -1,0 +1,68 @@
+<md-dialog flex="50" ng-init="loadInitial()">
+  <form name="rateSummaryForm" autocomplete="off">    
+    <div class="card">
+        <div class="card-header" data-background-color="{{DATA_BACKGROUND_COLOR}}">
+          <div class="md-toolbar-tools">        
+            <span flex align="left" style="text-transform: capitalize"><h1>{{model.rate.name}}</h1></span>
+            <md-button class="md-icon-button" ng-click="cancel()">
+              <i class="material-icons">close</i>
+            </md-button>
+          </div>
+        </div>
+      <div class="card-content table-responsive">
+        <md-dialog-content>
+          <div class="md-dialog-content">
+
+            <div layout="row" flex ng-repeat="rate in model.rate.rateSummaries" ng-init="addIsEdit(rate)">            
+              <md-input-container flex>
+                <label>Effective Date</label>
+                <div>
+                  <input class="form-control datepicker" mo-date-input="YYYY-MM-DD" id="hallEffectiveDatePicker" required name="start" ng-model="rate.effectiveDate" onfocus="this.blur()" ng-disabled="true"></input>
+                </div>
+              </md-input-container> 
+
+              <md-input-container flex>
+                <label>Rate</label>
+                <input required name="rate" ng-model="rate.rate" min="0" ng-pattern="ui.mNumberPattern" ng-disabled="!rate.isEdit"/>
+                <div ng-messages="rateSummaryForm.rate.$error">
+                  <div ng-message="required">Hall rate is required.</div>
+                </div>
+              </md-input-container> 
+
+              <md-input-container flex>
+                <label>Electricity Charge</label>
+                <input required name="powerConsumpationCharges" min="0" ng-pattern="ui.mNumberPattern" ng-model="rate.powerConsumpationCharges" ng-disabled="!rate.isEdit"/>
+                <div ng-messages="rateSummaryForm.powerConsumpationCharges.$error">
+                  <div ng-message="required">Electricity Charge is required.</div>
+                </div>
+              </md-input-container>
+
+              <md-input-container flex>
+                <label>Cleaning Charge</label>
+                <input required name="cleaningCharges" min="0" ng-pattern="ui.mNumberPattern" ng-model="rate.cleaningCharges" ng-disabled="!rate.isEdit"/>
+                <div ng-messages="rateSummaryForm.cleaningCharges.$error">
+                  <div ng-message="required">Cleaning Charge is required.</div>
+                </div>
+              </md-input-container>
+
+              <div class="pull-right">
+                <md-button class="md-raised md-primary nonecase" style="min-width: 50px" ng-click="isEdit(rate)" type="submit"><span class="glyphicon glyphicon-pencil"></span></md-button>
+              </div>                           
+
+            </div>
+            
+          </div>
+        </md-dialog-content>
+      </div>
+      
+      <md-dialog-actions layout="row"> 
+        <span flex></span> 
+        <input class="btn btn-next btn-fill btn-rose btn-wd" name="submit" value="Submit" ng-click="save()" ng-disabled="rateSummaryForm.$invalid" type="button">
+        <span flex></span>
+        <input class="btn btn-next btn-fill btn-rose btn-wd" name="cancel" value="Cancel" ng-click="cancel()" type="button">
+        <span flex></span>
+      </md-dialog-actions>
+    </div>
+  </form>
+</md-dialog>
+

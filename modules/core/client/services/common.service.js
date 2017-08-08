@@ -91,7 +91,7 @@
         function rateSummariesByDateImpl(rateSummaries, date) {
             var summaries = _.filter(rateSummaries, function(summary) {
                 var createdHallEffectiveDate = new Date(summary.effectiveDate);
-                return ((createdHallEffectiveDate.getFullYear() === date.getFullYear()) && (createdHallEffectiveDate.getMonth() === date.getMonth()));
+                return ((createdHallEffectiveDate.getFullYear() === date.getFullYear()) && (createdHallEffectiveDate.getMonth() === date.getMonth()) && (createdHallEffectiveDate.getDate() === date.getDate()));
             });
 
             return summaries;

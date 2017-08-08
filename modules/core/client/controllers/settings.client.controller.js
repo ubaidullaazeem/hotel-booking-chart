@@ -250,6 +250,28 @@
       $mdDialog.cancel();
     };
 
+    $scope.viewSummaries = function(ev, index, hall) { 
+      $mdDialog.show({
+          controller: 'RateSummariesController',
+          templateUrl: 'modules/core/client/views/settings/form-rate-summaries.client.view.html',
+          parent: angular.element(document.body),
+          targetEvent: ev,
+          clickOutsideToClose: false,
+          fullscreen: true,
+          resolve: {
+            hallResolve: function() {
+              return hall;
+            }
+          },
+        })
+        .then(function(updatedItem) {
+          $scope.halls[index] = updatedItem        
+        }, function() {
+          console.log('You cancelled the dialog.');          
+        });
+
+    }
+
     $scope.findRateSummariesByDate = function(hall) {
       var date = new Date();
       var summaries = CommonService.findRateSummariesByDate(hall.rateSummaries, date);

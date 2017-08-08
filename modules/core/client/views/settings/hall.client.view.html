@@ -11,14 +11,15 @@
 					<h4 class="card-title" style="text-align: center" ng-hide="halls.length">Hall rates not found.</h4>
 					<table class="table table-bordered" ng-show="halls.length">
 					  <tr>
-					    <th style="text-align: center" width="20%">Hall name</th>
+					    <th style="text-align: center" width="15%">Hall name</th>
 					    <th style="text-align: center" width="9%">Rate</th> 
 					    <th style="text-align: center" width="15%">Electricity Charge</th> 
-					    <th style="text-align: center" width="16%">Cleaning Charge</th> 
+					    <th style="text-align: center" width="15%">Cleaning Charge</th> 
 					    <!-- <th style="text-align: center" width="8%">SGST</th> 
 					    <th style="text-align: center" width="8%">CGST</th> --> 
-					    <th style="text-align: center" width="20%">Effective Date</th> 
-					    <th style="text-align: center" width="20%">Action</th>
+					    <th style="text-align: center" width="15%">Effective Date</th>
+					    <th style="text-align: center" width="16%">Rate Summaries</th>
+					    <th style="text-align: center" width="15%">Action</th>
 					  </tr>
 					  <tr ng-repeat = "hall in halls" style="text-align: center" ng-init="findRateSummariesByDate(hall)">
 				        <td>{{ hall.displayName }}</td>
@@ -27,7 +28,8 @@
 				        <td>{{ hall.cleaningCharges | currency:"₹":0 }}</td>
 				        <!-- <td>{{ hall.CGSTTax | currency:"₹":0 }}</td>
 				        <td>{{ hall.SGSTTax | currency:"₹":0 }}</td> -->
-				        <td>{{ hall.effectiveDate | date:'MMM yyyy' }}</td>
+				        <td>{{ hall.effectiveDate | date:'dd, MMM yyyy' }}</td>
+				        <td><md-button class="btn btn-{{DATA_BACKGROUND_COLOR}} btn-sm md-button" ng-click="viewSummaries($event, $index, hall)">Rate Summaries</md-button></td>
 				        <td style="text-align: center;">
 				        	<md-button class="md-raised md-primary nonecase" style="min-width: 50px" ng-click="mShowHallPopup($event, $index, hall)"><span class="glyphicon glyphicon-pencil"></span></md-button>
 				        	<md-button class="btn btn-danger btn-sm" style="min-width: 50px" ng-click="mDeleteHall($event, $index, hall)"><span class="glyphicon glyphicon-trash"></span></md-button>

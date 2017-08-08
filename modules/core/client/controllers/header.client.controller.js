@@ -25,10 +25,11 @@
     }
 
     var loggedIn = $rootScope.globals.currentUser;
+    var currentPage = window.location.href.substr(window.location.href.lastIndexOf('/') + 1);
     if(loggedIn) 
     {
-      console.log("header loggedin");
-      $state.go('bookings');
+      var routePage = currentPage === 'login' ? 'bookings' : currentPage;
+      $state.go(routePage);
       $scope.imageUrl = loggedIn.imageUrl;
       $scope.name = loggedIn.userName;
     }

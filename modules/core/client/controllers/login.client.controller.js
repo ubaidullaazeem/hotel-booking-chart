@@ -11,10 +11,11 @@
     //var vm = this;
 
     var loggedIn = $rootScope.globals.currentUser;
+    var currentPage = window.location.href.substr(window.location.href.lastIndexOf('/') + 1);
     if(loggedIn) 
     {
-      console.log("login loggedin");
-      $state.go('bookings');
+      var routePage = currentPage === 'login' ? 'bookings' : currentPage;
+      $state.go(routePage);
       $rootScope.isUserLoggedIn = true;
     }
     else
@@ -28,7 +29,7 @@
          // reset login status
          AuthenticationService.ClearCredentials();
       })();*/
-	
+  
     $scope.handleAuthClick=function (event) 
     {        
         //gapi.auth.authorize({discoveryDocs: GOOGLE_DISCOVERY_DOCS, client_id: GOOGLE_CLIENT_ID, scope: GOOGLE_SCOPES, immediate: true}, handleAuthResult);
@@ -73,13 +74,13 @@
                 {
                   if (primaryEmail.toLowerCase() == AUTHORISED_EMAIL) 
                   {  
+                    $state.go('bookings');
                     AuthenticationService.SetCredentials("", primaryEmail, userResult.id, userResult.displayName, userResult.image.url);                    
 
                     Notification.success({ message: "Authorized successfully", title: '<i class="glyphicon glyphicon-remove"></i> Success !!!' });
 
                     $rootScope.isUserLoggedIn = true;
-                    $rootScope.$broadcast('userLoggedIn');//sending broadcast to update the header name and image
-                    $state.go('bookings');
+                    $rootScope.$broadcast('userLoggedIn');//sending broadcast to update the header name and image                    
                   }
                   else
                   {
@@ -98,6 +99,12 @@
       else 
       {
          console.log("not signed in");
+      }           
+    }
+
+  }
+}());
+
       }           
     }
 
