@@ -45,8 +45,8 @@
             <div layout="row" flex ng-repeat="rate in model.rate.rateSummaries  | orderBy:'effectiveDate'" ng-init="addIsEdit(rate)">            
               <md-input-container flex>
                 <label>Effective Date</label>
-                <div ng-click="showEffectiveDatePicker($event, rate)">
-                  <input class="form-control datepicker" mo-date-input="YYYY-MM-DD" id="hallEffectiveDatePicker" required name="start" ng-model="rate.effectiveDate" onfocus="this.blur()" ng-disabled="!rate.isEdit"></input>
+                <div>
+                  <input class="form-control datepicker" mo-date-input="YYYY-MM-DD" id="hallEffectiveDatePicker" required name="start" ng-model="rate.effectiveDate" onfocus="this.blur()" ng-disabled="true"></input>
                 </div>
               </md-input-container>
               <md-input-container flex ng-if="ui.isHallRate">

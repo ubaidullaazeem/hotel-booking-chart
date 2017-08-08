@@ -73,7 +73,7 @@
     };
 
     $scope.addRateSummary = function() {
-      $scope.model.rate.rateSummaries.push($scope.unconfirmed);
+      checkEffectiveDate();
       $scope.loadInitial();
     };
 
@@ -83,10 +83,15 @@
     };
 
     $scope.save = function() {
-      $scope.addRateSummary();
       if(isHallRate) {
+        if($scope.unconfirmed.rate && $scope.unconfirmed.powerConsumpationCharges && $scope.unconfirmed.cleaningCharges && $scope.unconfirmed.effectiveDate) {
+          $scope.addRateSummary();
+        }
         HallsService.update($scope.model.rate, successCallback, errorCallback);  
       } else {
+        if($scope.unconfirmed.percentage && $scope.unconfirmed.effectiveDate) {
+          $scope.addRateSummary();
+        }
         TaxesService.update($scope.model.rate, successCallback, errorCallback);
       }      
 
@@ -99,6 +104,29 @@
           message: res.data.message,
           title: '<i class="glyphicon glyphicon-remove"></i> Update Rate Summary Error !!!'
         });
+      }
+    };
+
+    function checkEffectiveDate() {
+      var unconfirmedEffectiveDate = new Date($scope.unconfirmed.effectiveDate);
+      var summaryRate = CommonService.findRateSummariesByDateBeforeSave($scope.model.rate.rateSummaries, unconfirmedEffectiveDate);
+      if (summaryRate.length > 0) {
+        var index = _.indexOf($scope.model.rate.rateSummaries, summaryRate[0]);
+        if (isHallRate) {
+          $scope.model.rate.rateSummaries[index] = {
+            rate: $scope.unconfirmed.rate,
+            powerConsumpationCharges: $scope.unconfirmed.powerConsumpationCharges,
+            cleaningCharges: $scope.unconfirmed.cleaningCharges,
+            effectiveDate: $scope.unconfirmed.effectiveDate
+          };
+        } else {
+          $scope.model.rate.rateSummaries[index] = {
+            percentage: $scope.unconfirmed.percentage,
+            effectiveDate: $scope.unconfirmed.effectiveDate
+          };
+        }
+      } else {
+        $scope.model.rate.rateSummaries.push($scope.unconfirmed);
       }
     }
   }
