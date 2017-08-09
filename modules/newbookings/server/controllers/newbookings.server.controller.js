@@ -267,12 +267,12 @@ exports.sendReport = function(req, res, next) {
  * Search of Newbookings
  */
 exports.search = function(req, res) {
-  var mapSelectedHallsByName = _.map(req.body.selectedHalls, 'name');
+  var mapSelectedHallsById = _.map(req.body.selectedHalls, '_id');
   Newbooking.find({
     mSelectedHalls: {
       $elemMatch: {
-        name: {
-          $in: mapSelectedHallsByName
+        _id: {
+          $in: mapSelectedHallsById
         }
       }
     }

@@ -6,6 +6,7 @@
 var path = require('path'),
   mongoose = require('mongoose'),
   Hall = mongoose.model('Hall'),
+  Newbooking = mongoose.model('Newbooking'),
   errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller')),
   _ = require('lodash');
 
@@ -66,14 +67,35 @@ exports.update = function(req, res) {
 exports.delete = function(req, res) {
   var hall = req.hall;
 
-  hall.remove(function(err) {
+  Newbooking.findOne({
+    mSelectedHalls: {
+      $elemMatch: {
+        _id: hall._id.toString()
+      }
+    }
+  }, function(err, searchResults) {
     if (err) {
       return res.status(400).send({
         message: errorHandler.getErrorMessage(err)
       });
     } else {
-      res.jsonp(hall);
+      if (searchResults == null) {
+        hall.remove(function(err) {
+          if (err) {
+            return res.status(400).send({
+              message: errorHandler.getErrorMessage(err)
+            });
+          } else {
+            res.jsonp(hall);
+          }
+        });
+      } else {
+        return res.status(400).send({
+          message: hall.displayName + " has some bookings, so it is not allowed to delete it."
+        });
+      }
     }
+
   });
 };
 

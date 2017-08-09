@@ -6,6 +6,7 @@
 var path = require('path'),
   mongoose = require('mongoose'),
   Eventtype = mongoose.model('Eventtype'),
+  Newbooking = mongoose.model('Newbooking'),
   errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller')),
   _ = require('lodash');
 
@@ -66,14 +67,33 @@ exports.update = function(req, res) {
 exports.delete = function(req, res) {
   var eventtype = req.eventtype;
 
-  eventtype.remove(function(err) {
+  console.log(eventtype._id);
+
+  Newbooking.findOne({
+    "mSelectedEventType._id": eventtype._id.toString()
+  }, function(err, searchResults) {
     if (err) {
       return res.status(400).send({
         message: errorHandler.getErrorMessage(err)
       });
     } else {
-      res.jsonp(eventtype);
+      if (searchResults == null) {
+        eventtype.remove(function(err) {
+          if (err) {
+            return res.status(400).send({
+              message: errorHandler.getErrorMessage(err)
+            });
+          } else {
+            res.jsonp(eventtype);
+          }
+        });
+      } else {
+        return res.status(400).send({
+          message: eventtype.displayName + " has some bookings, so it is not allowed to delete it."
+        });
+      }
     }
+
   });
 };
 

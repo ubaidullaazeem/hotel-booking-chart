@@ -23,6 +23,7 @@
       showMdSelect: true,
       mailsending: false,
       viewMode: viewMode,
+      isActualChargesView: false,
       isBookingInProgress: false,
       isPastEvent: selectedEvent ? moment(selectedEvent.mStartDateTime) < moment(new Date().setHours(0, 0, 0, 0)) : true,
       isFullyPaid: selectedEvent ? selectedEvent.mSelectedPaymentStatus.name === PAYMENT_STATUS[1] : false
@@ -33,7 +34,8 @@
       eventTypes: EventtypesService.query(),
       paymentStatuses: PaymentstatusesService.query(),
       taxes: TaxesService.query(),
-      paymentModes: PAY_MODES
+      paymentModes: PAY_MODES,
+      selectedEventSelectedHalls: selectedEvent ? selectedEvent.mSelectedHalls : []
     };
 
     $scope.mPaymentHistory = {
@@ -126,6 +128,7 @@
           hall.mBasicCost = selectedHalls.length > 0 ? selectedHalls[0].mBasicCost : effectiveSummaries[0].rate,
             hall.mElectricityCharges = selectedHalls.length > 0 ? selectedHalls[0].mElectricityCharges : effectiveSummaries[0].powerConsumpationCharges,
             hall.mActualElectricityCharges = selectedHalls.length > 0 ? selectedHalls[0].mActualElectricityCharges : 0,
+            hall.mActualCleaningCharges = selectedHalls.length > 0 ? selectedHalls[0].mActualCleaningCharges : 0,
             hall.mDamages = selectedHalls.length > 0 ? selectedHalls[0].mDamages : 0,
             hall.mCleaningCharges = selectedHalls.length > 0 ? selectedHalls[0].mCleaningCharges : effectiveSummaries[0].cleaningCharges,
             hall.mGeneratorCharges = selectedHalls.length > 0 ? selectedHalls[0].mGeneratorCharges : 0,
@@ -383,6 +386,7 @@
 
     $scope.model.taxes.$promise.then(function(result) {
       init();
+      getCommonHalls();
     });
 
     // Save Newbooking
@@ -616,6 +620,39 @@
       }      
     };
 
+    function getCommonHalls() {
+      var calendarListReq = gapi.client.calendar.calendarList.list();
+      calendarListReq.execute(function(respCalList) {
+        if (respCalList && respCalList.hasOwnProperty('error')) // error
+        {
+          Notification.error({
+            message: "Unable to fetch the halls from Google Calendar",
+            title: '<i class="glyphicon glyphicon-remove"></i> Google Calendar Error !!!'
+          });
+        } else // success
+        {          
+          var googleCalendarHallNames = _.map(respCalList.items, function(item) {
+            return item.summary.toLowerCase().trim();
+          });
+
+          var commonHalls = [];
+          angular.forEach($scope.model.halls, function(hall) {
+            if (_.includes(googleCalendarHallNames, hall.name.toLowerCase().trim())) 
+            {
+              commonHalls.push(hall);
+            }
+            else if(selectedEvent && _.includes(_.map(selectedEvent.mSelectedHalls, 'name'), hall.name))
+            {
+              commonHalls.push(hall);
+            }
+          });
+
+          $scope.model.halls.length = 0;
+          $scope.model.halls = commonHalls;
+        }
+      });
+    }
+
     function insertOrUpdateEventInGoogleCalendar(res)
     {
       var calendarListReq = gapi.client.calendar.calendarList.list();
@@ -776,6 +813,51 @@
     $scope.editBooking = function() {
       $scope.ui.viewMode = false;
     }
+
+    $scope.shiftChargesView = function(isShowActualChargesView) {
+
+      if ($scope.ui.viewMode) {
+        $scope.ui.isActualChargesView = isShowActualChargesView;
+        return;
+      }
+
+      var confirm = $mdDialog.confirm().title(isShowActualChargesView ? 'Do you want to move to actual charges view?' : 'Do you want to move to booking charges view?')
+        .textContent('Updated data will not be saved.').ok('Yes').cancel('No').multiple(true);
+      $mdDialog.show(confirm).then(function() {
+
+          $scope.ui.isActualChargesView = isShowActualChargesView;
+        },
+        function() {
+          console.log("no");
+        });
+    };
+    
+    $scope.saveActualCharges = function(actualChargesForm) {
+      if (actualChargesForm.$invalid)
+        return;
+
+      var updatedActualChargesData = {
+        _id: selectedEvent._id,
+        mSelectedHalls: $scope.model.selectedEventSelectedHalls
+      };
+
+      NewbookingsService.update(updatedActualChargesData, updateActuralChargesSuccessCallback, updateActuralChargesErrorCallback);
+
+      function updateActuralChargesSuccessCallback(res) {
+        Notification.success({
+          message: "Actual charges updated successfully",
+          title: '<i class="glyphicon glyphicon-remove"></i> Success !!!'
+        });
+        $scope.cancel();
+      };
+
+      function updateActuralChargesErrorCallback(res) {
+        Notification.error({
+          message: res.data.message,
+          title: '<i class="glyphicon glyphicon-remove"></i> Error !!!'
+        });
+      };
+    };
 
     $scope.deleteBooking = function() {
       var confirm = $mdDialog.confirm().title('Do you want to delete the booking?').textContent('Booking detail will be deleted permanently.').ok('Yes').cancel('No').multiple(true);
