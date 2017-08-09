@@ -14,7 +14,7 @@
     };
 
     $scope.ui = {
-      mNumberPattern: /^[0-9]*$/,
+      mNumberPattern: /^[0-9]+(\.[0-9]{1,2})?$/,
       isHallRate: isHallRate
     };
 
@@ -64,8 +64,10 @@
     };
 
     $scope.showUnconfirmedEffectiveDatePicker = function(ev) {
+      var today = new Date();
       $mdpDatePicker($scope.unconfirmed.effectiveDate, {
           targetEvent: ev,
+          minDate: today
         })
         .then(function(dateTime) {
           $scope.unconfirmed.effectiveDate = moment(dateTime).format('YYYY-MM-DD');

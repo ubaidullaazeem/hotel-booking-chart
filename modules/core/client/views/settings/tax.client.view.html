@@ -21,7 +21,7 @@
 							<td>{{ tax.name | uppercase}}(%)</td>
 							<td>{{ tax.percentage }}</td>
 							<td>{{ tax.effectiveDate | date:'dd, MMM yyyy' }}</td>
-							<td><md-button class="btn btn-info btn-sm md-button" ng-click="viewSummaries($event, $index, tax, false)">Rate Summaries</md-button></td>
+							<td><md-button class="btn btn-info btn-sm md-button" ng-click="viewTaxSummaries($event, $index, tax, false)">Rate Summaries</md-button></td>
 							<td style="text-align: center;">
 							<md-button class="md-raised md-primary nonecase" style="min-width: 50px" ng-click="mShowTaxPopup($event, $index, tax)"><span class="glyphicon glyphicon-pencil"></span></md-button>
 							</td>
