@@ -36,7 +36,7 @@
 
               <md-input-container flex ng-if="!ui.isHallRate">
                 <label>Percentage</label>
-                <input name="percentage" ng-model="unconfirmed.percentage" min="0"/>
+                <input type="number" name="percentage" ng-model="unconfirmed.percentage" ng-pattern="ui.mNumberPattern" step="0.01" min="0" max="100"/>
               </md-input-container>
               <div class="pull-right" ng-if="!ui.createMode && !(mixins.mBalanceDue <= 0)">
                   <md-button class="md-raised md-primary nonecase" style="min-width: 50px" ng-click="addRateSummary()" ng-disabled="ui.isHallRate ? (unconfirmed.rate === null || unconfirmed.powerConsumpationCharges === null || unconfirmed.cleaningCharges === null) : unconfirmed.percentage === null" type="submit"><span class="glyphicon glyphicon-plus"></span></md-button>
@@ -75,7 +75,7 @@
 
               <md-input-container flex ng-if="!ui.isHallRate">
                 <label>Percentage</label>
-                <input required name="percentage" ng-model="rate.percentage" min="0" ng-disabled="!rate.isEdit"/>
+                <input required type="number" name="percentage" ng-model="rate.percentage"  ng-pattern="ui.mNumberPattern" step="0.01" min="0" max="100" ng-disabled="!rate.isEdit"/>
                 <div ng-messages="rateSummaryForm.rate.$error">
                   <div ng-message="required">Percentage is required.</div>
                 </div>
