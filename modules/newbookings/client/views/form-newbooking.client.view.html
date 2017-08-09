@@ -286,7 +286,7 @@
                   <label>Details</label>                      
                   <input name="details" ng-model="mPaymentHistory.details" ng-required="mPaymentHistory.amountPaid && mPaymentHistory.paymentMode !== model.paymentModes[2]"/>
                   <div ng-messages="bookingForm.details.$error">
-                    <div ng-message="required">Details is required.</div>
+                    <div ng-message="required">{{mPaymentHistory.paymentMode}} Details is required.</div>
                   </div>
               </md-input-container> 
 

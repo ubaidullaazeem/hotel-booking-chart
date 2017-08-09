@@ -1047,8 +1047,8 @@
     }
 
     function calculateTaxRate() {
-      var cgst = CommonService.findRateSummariesByDate(CommonService.getTaxRateByName($scope.model.taxes, CGST).rateSummaries, new Date($scope.eventTime.mStartToServer));
-      var sgst = CommonService.findRateSummariesByDate(CommonService.getTaxRateByName($scope.model.taxes, SGST).rateSummaries, new Date($scope.eventTime.mStartToServer));
+      var cgst = CommonService.findRateSummariesByDate(CommonService.getTaxRateByName($scope.model.taxes, CGST).rateSummaries, new Date());
+      var sgst = CommonService.findRateSummariesByDate(CommonService.getTaxRateByName($scope.model.taxes, SGST).rateSummaries, new Date());
 
       $scope.mPaymentHistory.CGSTPercent = cgst[0].percentage;
       $scope.mPaymentHistory.SGSTPercent = sgst[0].percentage;
