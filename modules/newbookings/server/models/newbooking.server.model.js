@@ -74,6 +74,10 @@ var NewbookingSchema = new Schema({
     default: '',
     trim: true
   },
+  mPhotoIdPath:{
+    type:String,
+    trim: true
+  },
   mSelectedPaymentStatus: {
     type: Object,
     default: '',

@@ -6,9 +6,9 @@
     .module('newbookings')
     .controller('NewbookingsController', NewbookingsController);
 
-  NewbookingsController.$inject = ['AuthenticationService', 'CGST', 'SGST', 'DATA_BACKGROUND_COLOR', 'EmailBookingServices', 'HARDCODE_VALUES', 'PAYMENT_STATUS', '$filter', '$scope', '$state', 'selectedEvent', '$location', '$mdDialog', '$templateRequest', '$sce', 'NewbookingsService', 'selectedDate', 'HallsService', 'EventtypesService', 'TaxesService', 'PaymentstatusesService', 'Notification', '$mdpTimePicker', '$mdpDatePicker', 'PAY_MODES', 'CommonService', 'ValidateOverlapBookingServices', 'viewMode', 'GOOGLE_CALENDAR_COLOR_IDS'];
+  NewbookingsController.$inject = ['AuthenticationService', 'CGST', 'SGST', 'DATA_BACKGROUND_COLOR', 'EmailBookingServices', 'HARDCODE_VALUES', 'PAYMENT_STATUS', '$filter', '$scope', '$state', 'selectedEvent', '$location', '$mdDialog', '$templateRequest', '$sce', 'NewbookingsService', 'selectedDate', 'HallsService', 'EventtypesService', 'TaxesService', 'PaymentstatusesService', 'Notification', '$mdpTimePicker', '$mdpDatePicker', 'PAY_MODES', 'CommonService', 'ValidateOverlapBookingServices', 'viewMode', 'GOOGLE_CALENDAR_COLOR_IDS', 'Upload', '$timeout'];
 
-  function NewbookingsController(AuthenticationService, CGST, SGST, DATA_BACKGROUND_COLOR, EmailBookingServices, HARDCODE_VALUES, PAYMENT_STATUS, $filter, $scope, $state, selectedEvent, $location, $mdDialog, $templateRequest, $sce, NewbookingsService, selectedDate, HallsService, EventtypesService, TaxesService, PaymentstatusesService, Notification, $mdpTimePicker, $mdpDatePicker, PAY_MODES, CommonService, ValidateOverlapBookingServices, viewMode, GOOGLE_CALENDAR_COLOR_IDS) {
+  function NewbookingsController(AuthenticationService, CGST, SGST, DATA_BACKGROUND_COLOR, EmailBookingServices, HARDCODE_VALUES, PAYMENT_STATUS, $filter, $scope, $state, selectedEvent, $location, $mdDialog, $templateRequest, $sce, NewbookingsService, selectedDate, HallsService, EventtypesService, TaxesService, PaymentstatusesService, Notification, $mdpTimePicker, $mdpDatePicker, PAY_MODES, CommonService, ValidateOverlapBookingServices, viewMode, GOOGLE_CALENDAR_COLOR_IDS, Upload, $timeout) {
     $scope.DATA_BACKGROUND_COLOR = DATA_BACKGROUND_COLOR;
 
     var cgstPercent, sgstPercent;
@@ -26,7 +26,8 @@
       isActualChargesView: false,
       isBookingInProgress: false,
       isPastEvent: selectedEvent ? moment(selectedEvent.mStartDateTime) < moment(new Date().setHours(0, 0, 0, 0)) : true,
-      isFullyPaid: selectedEvent ? selectedEvent.mSelectedPaymentStatus.name === PAYMENT_STATUS[1] : false
+      isFullyPaid: selectedEvent ? selectedEvent.mSelectedPaymentStatus.name === PAYMENT_STATUS[1] : false,
+      photoIdFile: ''
     }
 
     $scope.model = {
@@ -65,6 +66,7 @@
       mEmail: selectedEvent ? selectedEvent.mEmail : null,
       mAddress: selectedEvent ? selectedEvent.mAddress : null,
       mPhotoId: selectedEvent ? selectedEvent.mPhotoId : null,
+      mPhotoIdPath: selectedEvent ? selectedEvent.mPhotoIdPath : null,
       mSelectedPaymentStatus: selectedEvent ? selectedEvent.mSelectedPaymentStatus : null,
       mManagerName: selectedEvent ? selectedEvent.mManagerName : null,
       mDiscount: selectedEvent ? selectedEvent.mDiscount : 0,
@@ -362,6 +364,35 @@
 
       return dtGMT;
     };
+
+    $scope.onFileSelected = function(files, events, b) {
+      
+      if (files.length>0) 
+      {
+        $scope.ui.photoIdFile = files[0];  
+        var fileExtension = $scope.ui.photoIdFile.name.split('.').pop();
+        if (fileExtension === 'png' || fileExtension === 'jpg' || fileExtension=== 'jpeg') 
+        {          
+          $scope.ui.fileSelected = true;        
+        }
+        else
+        {
+          $scope.ui.fileSelected = false; 
+          $scope.ui.photoIdFile = '';
+
+          Notification.error({
+            message: 'Unsupported file.',
+            title: '<i class="glyphicon glyphicon-remove"></i> Image Error !!!'
+          });
+        }
+      }      
+    };
+
+    $scope.cancelFile = function()
+    {
+      $scope.ui.fileSelected = false; 
+      $scope.ui.photoIdFile = '';
+    };
         
     var init = function() {
       if ($scope.mixins._id) {
@@ -475,15 +506,42 @@
             }
 
             // Calculate Prorate Charges
-            calculateProrateCharges();
+            calculateProrateCharges();                    
 
-            if ($scope.mixins._id) {
+            if ($scope.ui.photoIdFile && $scope.ui.photoIdFile!=='') 
+            {
+              //Uploading PhotoId 
+              Upload.upload({
+                url: '/api/users/picture',
+                data: {
+                  newProfilePicture: $scope.ui.photoIdFile
+                }
+              }).then(function(response) { //Success
+                $timeout(function() {
+                  $scope.mixins.mPhotoIdPath = response.data.path;
+                  saveOrUpdate();
+                });
+              }, function(response) { //failed
+                saveOrUpdate();
+              }, function(evt) {
+                //var progress = parseInt(100.0 * evt.loaded / evt.total, 10);
+              });
+            }
+            else
+            {
+              saveOrUpdate();
+            }           
+          }
+        });
+
+        function saveOrUpdate()
+        {
+          if ($scope.mixins._id) {
               NewbookingsService.update($scope.mixins, successCallback, errorCallback);
             } else {
               NewbookingsService.save($scope.mixins, successCallback, errorCallback);
             }
-          }
-        });
+        };
 
         function successCallback(res) {
           if ($scope.ui.createMode) //Create booking
@@ -923,7 +981,7 @@
       $scope.ui.isBookingInProgress = false;
       $mdDialog.hide(res);
     };
-
+    
     function clearPaymentHistory() {
       $scope.mPaymentHistory = {
         amountPaid: null,

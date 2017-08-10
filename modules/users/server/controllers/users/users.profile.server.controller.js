@@ -63,7 +63,23 @@ exports.changeProfilePicture = function (req, res) {
   multerConfig.fileFilter = require(path.resolve('./config/lib/multer')).imageFileFilter;
   var upload = multer(multerConfig).single('newProfilePicture');
 
-  if (user) {
+  //My code
+  existingImageUrl = '';
+    uploadImage()
+      .then(function () {
+        var profileImageURL = config.uploads.profile.image.dest + req.file.filename;
+        var resPath = {
+          path: profileImageURL
+        };
+        res.json(resPath);
+      })
+      .catch(function (err) {
+        res.status(422).send(err);
+      });
+
+  //
+
+  /*if (user) {
     existingImageUrl = user.profileImageURL;
     uploadImage()
       .then(updateUser)
@@ -79,7 +95,7 @@ exports.changeProfilePicture = function (req, res) {
     res.status(401).send({
       message: 'User is not signed in'
     });
-  }
+  }*/
 
   function uploadImage () {
     return new Promise(function (resolve, reject) {
@@ -106,10 +122,10 @@ exports.changeProfilePicture = function (req, res) {
     });
   }
 
+  
   function deleteOldImage () {
     return new Promise(function (resolve, reject) {
-      if (existingImageUrl !== User.schema.path('profileImageURL').defaultValue) {
-        fs.unlink(existingImageUrl, function (unlinkError) {
+      fs.unlink(existingImageUrl, function (unlinkError) {
           if (unlinkError) {
             console.log(unlinkError);
             reject({
@@ -119,9 +135,6 @@ exports.changeProfilePicture = function (req, res) {
             resolve();
           }
         });
-      } else {
-        resolve();
-      }
     });
   }
 

@@ -146,6 +146,25 @@
             <input ng-model="mixins.mPhotoId" ng-disabled="ui.viewMode"/>
           </md-input-container>  
         </div>
+
+        <div layout="column" flex>
+          <md-input-container flex>
+            <label>Photo ID of the Person</label>        
+            <div class="form-group text-center" ng-hide="!ui.fileSelected && !mixins.mPhotoIdPath">
+              <img  ngf-src="ui.fileSelected ? ui.photoIdFile : '/' + mixins.mPhotoIdPath" class="img-thumbnail user-profile-picture" ngf-drop>
+            </div>
+            <!-- <div ng-show="vm.loading" class="form-group text-center">
+              <img ng-src="/modules/core/client/img/loaders/loader.gif" height="50" width="50" alt="Loading image...">
+            </div> -->           
+        
+            <div  ng-hide="ui.viewMode" class="text-center form-group">
+              <button class="btn btn-default btn-file" ngf-select="onFileSelected($files, $event, b)" accept="image/*" ngf-before-model-change="vm.loading = true" ngf-resize="{width: 400}" ngf-resize-if="$width > 400 || $height > 400">Browse</button>
+              <button ng-if="ui.fileSelected && mixins.mPhotoIdPath" class="btn btn-default" ng-click="cancelFile()">Cancel</button>
+            </div> 
+
+
+          </md-input-container>  
+        </div>
                         
         <div layout="column" flex>
           <md-input-container flex>
