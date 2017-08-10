@@ -459,7 +459,7 @@
       <md-button class="btn btn-next btn-fill btn-primary btn-wd" ng-disabled="true" flex ng-show="ui.mailsending" type="submit"><i class="fa fa-spinner fa-spin"></i> Sending...</md-button>
       <md-button class="btn btn-next btn-fill btn-info btn-wd" ng-hide="ui.viewMode || ui.isBookingInProgress || ui.isActualChargesView" ng-disabled="bookingForm.$invalid" flex ng-click="save(bookingForm)" type="submit">{{mixins._id ? 'Update Booking' : 'Confirm Booking'}}</md-button>
       <md-button class="btn btn-next btn-fill btn-primary btn-wd" ng-disabled="true" flex ng-show="ui.isBookingInProgress" type="submit"><i class="fa fa-spinner fa-spin"></i> Booking...</md-button>
-      <md-button flex ng-hide="mixins.isPastEvent || !ui.viewMode || ui.isActualChargesView" class="btn btn-next btn-fill btn-info btn-wd" ng-click="editBooking()" type="submit">Edit Booking</md-button>
+      <md-button flex ng-hide="ui.isPastEvent || !ui.viewMode || ui.isActualChargesView" class="btn btn-next btn-fill btn-info btn-wd" ng-click="editBooking()" type="submit">Edit Booking</md-button>
     </md-dialog-actions>
   </form>
 </md-dialog>
