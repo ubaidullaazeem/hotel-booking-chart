@@ -344,7 +344,7 @@
       $scope.ui.mailsending = false;
       Notification.error({
         message: response.message,
-        title: '<i class="glyphicon glyphicon-remove"></i> Email failed to snet !!!'
+        title: '<i class="glyphicon glyphicon-remove"></i> Email failed to send !!!'
       });
     }
 
@@ -690,13 +690,23 @@
             title: '<i class="glyphicon glyphicon-remove"></i> Google Calendar Error !!!'
           });
         } else // success
-        {          
+        {     
+          var withOutFutureRateHalls = [];
+          angular.forEach($scope.model.halls, function(hall) {
+            var effectiveSummaries = CommonService.findRateSummariesByDateOfFutureHalls(hall.rateSummaries, new Date($scope.eventTime.mStartToServer));
+            console.log(hall.displayName+" "+effectiveSummaries.length);
+            if (effectiveSummaries.length > 0) 
+            {
+              withOutFutureRateHalls.push(hall);
+            }
+          });
+
           var googleCalendarHallNames = _.map(respCalList.items, function(item) {
             return item.summary.toLowerCase().trim();
           });
 
           var commonHalls = [];
-          angular.forEach($scope.model.halls, function(hall) {
+          angular.forEach(withOutFutureRateHalls, function(hall) {
             if (_.includes(googleCalendarHallNames, hall.name.toLowerCase().trim())) 
             {
               commonHalls.push(hall);

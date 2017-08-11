@@ -228,7 +228,7 @@
 		function onRequestEmailReportError(response) {
 			Notification.error({
 				message: response.message,
-				title: '<i class="glyphicon glyphicon-remove"></i> Email failed to snet !!!'
+				title: '<i class="glyphicon glyphicon-remove"></i> Email failed to send !!!'
 			});
 			$scope.ui.email = false;
 		}
