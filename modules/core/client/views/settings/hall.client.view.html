@@ -23,9 +23,9 @@
 					  </tr>
 					  <tr ng-repeat = "hall in halls" style="text-align: center" ng-init="findRateSummariesByDate(hall)">
 				        <td>{{ hall.displayName }}</td>
-				        <td>{{ hall.rate | currency:"₹":0 }}</td>
-				        <td>{{ hall.powerConsumpationCharges | currency:"₹":0 }}</td>
-				        <td>{{ hall.cleaningCharges | currency:"₹":0 }}</td>
+				        <td>{{ hall.rate}}</td><!-- {{ hall.rate | currency:"₹":0 }} -->
+				        <td>{{ hall.powerConsumpationCharges}}</td>
+				        <td>{{ hall.cleaningCharges}}</td>
 				        <!-- <td>{{ hall.CGSTTax | currency:"₹":0 }}</td>
 				        <td>{{ hall.SGSTTax | currency:"₹":0 }}</td> -->
 				        <td>{{ hall.effectiveDate | date:'dd, MMM yyyy' }}</td>

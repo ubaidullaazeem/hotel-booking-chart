@@ -14,6 +14,8 @@
     var cgstPercent, sgstPercent;
     var totalCostToDiscountProrate = 0;
     var pendingSubTotalPercentage, pendingCGSTPercentage, pendingSGSTPercentage;
+    var hallsNotInGoogleCalendar="";
+    var isShownHallsNotInGoogleCalendar = false;
 
     $scope.ui = {
       mSelectedDateToDisplay: selectedDate.format('DD-MMMM-YYYY'),
@@ -120,7 +122,7 @@
         var selectedHalls = [];
         if (selectedEvent) {
           selectedHalls = _.filter(selectedEvent.mSelectedHalls, function(mSelectedHall) {
-            return mSelectedHall.name === hall.name;
+            return mSelectedHall._id === hall._id;
           });
         }
         /** End **/
@@ -289,7 +291,7 @@
       var baseUrl = $location.$$absUrl.replace($location.$$url, '');
       var halls = CommonService.makeFirstLetterCapitalizeinArray(_.map($scope.mixins.mSelectedHalls, 'name'));
 
-      return '<html><head><link rel="stylesheet" type="text/css" href="style.css" /></head><body onload="window.print()"><html><head> <title>Mirth</title></head><body><html><head> <title>Mirth</title></head><body><div style="border-style: solid; padding: 10px;"><div align="center"><div align="center"><img src="' + baseUrl + '/modules/core/client/img/logo-bw.png" /></div><h2 align="center"><u>BOOKING DETAILS</u></h2><table style="width: 100%;" align="center"> <tbody> <tr> <td style="width: 50%;"> Name </td> <td style="width: 50%;"> : ' + getValidValue($scope.mixins.mName) + ' </td> </tr> <tr> <td style="width: 50%;"> Address </td> <td style="width: 50%;">: ' + getValidValue($scope.mixins.mAddress) + ' </td> </tr> <tr> <td style="width: 50%;"> Phone No./Mobile No. </td> <td style="width: 50%;"> : ' + getValidValue($scope.mixins.mPhone) + '</td> </tr> <tr> <td style="width: 50%;"> Email I.D </td> <td style="width: 50%;"> : ' + getValidValue($scope.mixins.mEmail) + '</td> </tr> <tr> <td style="width: 50%;"> Photo ID of the Person </td> <td style="width: 50%;"> : ' + getValidValue($scope.mixins.mPhotoId) + '</td> </tr> <tr> <td style="width: 50%;"> Purpose of which Auditorium required </td> <td style="width: 50%;"> : ' + getValidValue(halls) + ' </td> </tr> <tr> <td style="width: 50%;"> Date/Time of Function </td> <td style="width: 50%;"> : ' + getValidValue(getEventDateTime()) + ' </td> </tr> <tr> <td style="width: 50%;"> Mode of Payment Cheque/DD/Cash/NEFT </td> <td style="width: 50%;">  : ' + getValidValue($scope.mPaymentHistory.paymentMode) + '</td> </tr> <tr> <td style="width: 50%;"> Halls </td> <td style="width: 50%;"> : ' + getValidValue(halls) + '</td> </tr> <tr> <td style="width: 50%;"> Description </td> <td style="width: 50%;"> : ' + getValidValue($scope.mixins.mDescription) + ' </td> </tr></tbody></table><h2 align="center"><u>DETAILS OF CHARGES</u></h2><table style="width: 100%;" align="center"> <tbody> <tr> <td style="width: 100%;" colspan="2"> <u>Service Code 997212:</u> </td> </tr> <tr> <td style="width: 50%;"> Rent(Ruby, Opal) + Electricity/Cleaning/Generator/Miscellaneous charges </td> <td style="width: 50%;"> : ' + $scope.mixins.mSubTotal + ' </td> </tr> <tr> <td style="width: 50%;"> CGST @ 9% </td> <td style="width: 50%;"> : ' + getValidValue($scope.mixins.mCGST) + ' </td> </tr> <tr> <td style="width: 50%;"> SGST @ 9% </td> <td style="width: 50%;"> : ' + getValidValue($scope.mixins.mSGST) + '</td> </tr> <tr> <td style="width: 50%;"> Grand Total </td> <td style="width: 50%;"> : ' + getValidValue($scope.mixins.mGrandTotal) + '</td> </tr> <tr> <td style="width: 50%;"> Advance Received </td> <td style="width: 50%;"> : ' + getValidValue($scope.mixins.mBasicCost) + '</td> </tr> <tr> <td style="width: 50%;"> Balance Due </td> <td style="width: 50%;"> : ' + getValidValue($scope.mixins.mBalanceDue) + '</td> </tr> </tbody></table><p style="text-align:left">Note:- The entry to the hall will be permitted to the Service Providers &Guests only after the receipt of the entire payment.</p><br/><br/><br/><br/><table style="width:100%"><tbody><tr><td style="width: 33%; text-align: left">Signature of the Manager</td><td style="width: 67%; text-align: right"> Signature of the Guest</td></tr></tbody></table></div><br/><br/><br/>' + $scope.termsAndConditions + '</div></body></html></body></html></body></html>';
+      return '<html><head><link rel="stylesheet" type="text/css" href="style.css" /></head><body onload="window.print()"><html><head> <title>Mirth</title></head><body><html><head> <title>Mirth</title></head><body><div style="border-style: solid; padding: 10px;"><div align="center"><div align="center"><img src="' + baseUrl + '/modules/core/client/img/logo-bw.png" /></div><h2 align="center"><u>BOOKING DETAILS</u></h2><table style="width: 100%;" align="center"> <tbody> <tr> <td style="width: 50%;"> Name </td> <td style="width: 50%;"> : ' + getValidValue($scope.mixins.mName) + ' </td> </tr> <tr> <td style="width: 50%;"> Address </td> <td style="width: 50%;">: ' + getValidValue($scope.mixins.mAddress) + ' </td> </tr> <tr> <td style="width: 50%;"> Phone No./Mobile No. </td> <td style="width: 50%;"> : ' + getValidValue($scope.mixins.mPhone) + '</td> </tr> <tr> <td style="width: 50%;"> Email I.D </td> <td style="width: 50%;"> : ' + getValidValue($scope.mixins.mEmail) + '</td> </tr> <tr> <td style="width: 50%;"> Photo ID of the Person </td> <td style="width: 50%;"> : ' + getValidValue($scope.mixins.mPhotoId) + '</td> </tr> <tr> <td style="width: 50%;"> Purpose of which Auditorium required </td> <td style="width: 50%;"> : ' + getValidValue(halls) + ' </td> </tr> <tr> <td style="width: 50%;"> Date/Time of Function </td> <td style="width: 50%;"> : ' + getValidValue(getEventDateTime()) + ' </td> </tr> <tr> <td style="width: 50%;"> Mode of Payment Cheque/DD/Cash/NEFT </td> <td style="width: 50%;">  : ' + getValidValue($scope.mPaymentHistory.paymentMode) + '</td> </tr> <tr> <td style="width: 50%;"> Halls </td> <td style="width: 50%;"> : ' + getValidValue(halls) + '</td> </tr> <tr> <td style="width: 50%;"> Description </td> <td style="width: 50%;"> : ' + getValidValue($scope.mixins.mDescription) + ' </td> </tr></tbody></table><h2 align="center"><u>DETAILS OF CHARGES</u></h2><table style="width: 100%;" align="center"> <tbody> <tr> <td style="width: 100%;" colspan="2"> <u>Service Code 997212:</u> </td> </tr> <tr> <td style="width: 50%;"> Rent(Ruby, Opal) + Electricity/Cleaning/Generator/Miscellaneous charges </td> <td style="width: 50%;"> : ' + $scope.mixins.mSubTotal + ' </td> </tr> <tr> <td style="width: 50%;"> CGST @ 9% </td> <td style="width: 50%;"> : ' + getValidValue($scope.mixins.mCGST) + ' </td> </tr> <tr> <td style="width: 50%;"> SGST @ 9% </td> <td style="width: 50%;"> : ' + getValidValue($scope.mixins.mSGST) + '</td> </tr> <tr> <td style="width: 50%;"> Grand Total </td> <td style="width: 50%;"> : ' + getValidValue($scope.mixins.mGrandTotal) + '</td> </tr> <tr> <td style="width: 50%;"> Advance Received </td> <td style="width: 50%;"> : ' + getValidValue($scope.mixins.mReceivedGrandTotal) + '</td> </tr> <tr> <td style="width: 50%;"> Balance Due </td> <td style="width: 50%;"> : ' + getValidValue($scope.mixins.mBalanceDue) + '</td> </tr> </tbody></table><p style="text-align:left">Note:- The entry to the hall will be permitted to the Service Providers &Guests only after the receipt of the entire payment.</p><br/><br/><br/><br/><table style="width:100%"><tbody><tr><td style="width: 33%; text-align: left">Signature of the Manager</td><td style="width: 67%; text-align: right"> Signature of the Guest</td></tr></tbody></table></div><br/><br/><br/>' + $scope.termsAndConditions + '</div></body></html></body></html></body></html>';
     }
 
     function getEventDateTime() {
@@ -399,7 +401,7 @@
         $scope.ui.createMode = false;
         $scope.ui.showMdSelect = false;
       };
-      $scope.disabledSelectedHalls = CommonService.makeFirstLetterCapitalizeinArray(_.map($scope.mixins.mSelectedHalls, 'name'));
+      //$scope.disabledSelectedHalls = CommonService.makeFirstLetterCapitalizeinArray(_.map($scope.mixins.mSelectedHalls, 'name'));
       var hasContainsTaxName = CommonService.hasContainsTaxName($scope.model.taxes);
       if (!hasContainsTaxName) {
         Notification.error({
@@ -699,14 +701,28 @@
             {
               commonHalls.push(hall);
             }
-            else if(selectedEvent && _.includes(_.map(selectedEvent.mSelectedHalls, 'name'), hall.name))
+            else if(selectedEvent && _.includes(_.map(selectedEvent.mSelectedHalls, '_id'), hall._id))
             {
               commonHalls.push(hall);
+            }
+            else
+            {
+              if (hallsNotInGoogleCalendar == "") 
+              {
+                hallsNotInGoogleCalendar = hall.displayName;
+              } 
+              else 
+              {
+                hallsNotInGoogleCalendar = hallsNotInGoogleCalendar.trim() + ', ' + hall.displayName;
+              }
             }
           });
 
           $scope.model.halls.length = 0;
           $scope.model.halls = commonHalls;
+
+          if (!$scope.ui.viewMode)
+            shownHallsNotInGoogleCalendarMessage();          
         }
       });
     }
@@ -853,8 +869,8 @@
     };
 
     $scope.selectHallsByDefault = function(hall) {
-      var pluckHalls = _.map($scope.mixins.mSelectedHalls, 'name');
-      return _.includes(pluckHalls, hall.name);
+      var pluckHalls = _.map($scope.mixins.mSelectedHalls, '_id');
+      return _.includes(pluckHalls, hall._id);
     };
 
     $scope.showMdselect = function() {
@@ -870,6 +886,7 @@
 
     $scope.editBooking = function() {
       $scope.ui.viewMode = false;
+      shownHallsNotInGoogleCalendarMessage();
     }
 
     $scope.shiftChargesView = function(isShowActualChargesView) {
@@ -1064,6 +1081,23 @@
       var subtractedGMT = new Date(subtractedLocalTime.toUTCString()).toISOString();
       return subtractedGMT;
     }
+
+    function shownHallsNotInGoogleCalendarMessage() {
+      isShownHallsNotInGoogleCalendar = true;
+
+      if (hallsNotInGoogleCalendar !== "") {
+        var message;
+        if (hallsNotInGoogleCalendar.indexOf(',') > -1)
+          message = hallsNotInGoogleCalendar + " halls are not in Google Calendar.";
+        else
+          message = hallsNotInGoogleCalendar + " hall is not in Google Calendar.";
+
+        Notification.warning({
+          message: message,
+          title: '<i class="glyphicon glyphicon-remove"></i> Google Calendar Error !!!'
+        });
+      }
+    };
 
     $scope.calculateBalanceDue = function() {      
       

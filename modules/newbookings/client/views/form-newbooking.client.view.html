@@ -50,7 +50,7 @@
                           ng-change="onEventTypeSelected()"
                           ng-disabled="ui.viewMode">
                 <md-optgroup label="Event">
-                  <md-option ng-value="eventType" ng-selected="{{ eventType.name === mixins.mSelectedEventType.name ? 'true' : 'false' }}" ng-repeat="eventType in model.eventTypes">{{eventType.displayName}}</md-option>
+                  <md-option ng-value="eventType" ng-selected="{{ eventType._id === mixins.mSelectedEventType._id ? 'true' : 'false' }}" ng-repeat="eventType in model.eventTypes">{{eventType.displayName}}</md-option>
                 </md-optgroup>
               </md-select>    
               <div ng-messages="bookingForm.event.$error" ng-show="bookingForm.event.$invalid && submitted">
@@ -281,9 +281,9 @@
                   </div>
               </md-input-container> 
 
-              <md-input-container flex ng-if="mPaymentHistory.amountPaid && mPaymentHistory.paymentMode !== model.paymentModes[2]">
+              <md-input-container flex ng-show="mPaymentHistory.paymentMode && mPaymentHistory.paymentMode !== model.paymentModes[2]">
                   <label>Details</label>                      
-                  <input name="details" ng-model="mPaymentHistory.details" ng-required="mPaymentHistory.amountPaid && mPaymentHistory.paymentMode !== model.paymentModes[2]"/>
+                  <input name="details" ng-required="mPaymentHistory.paymentMode && mPaymentHistory.paymentMode !== model.paymentModes[2]" ng-model="mPaymentHistory.details" />
                   <div ng-messages="bookingForm.details.$error">
                     <div ng-message="required">{{mPaymentHistory.paymentMode}} Details is required.</div>
                   </div>
@@ -474,11 +474,11 @@
       <md-button flex class="btn btn-next btn-fill btn-info btn-wd" ng-hide="ui.createMode || ui.viewMode || !ui.isActualChargesView" ng-click="saveActualCharges(bookingForm)" ng-disabled="bookingForm.$invalid" type="submit">Save</md-button>      
      <md-button class="btn btn-next btn-fill btn-danger btn-wd" ng-show="ui.viewMode && !ui.isActualChargesView" flex ng-click="deleteBooking()" type="submit">Delete</md-button>
       <md-button class="btn btn-next btn-fill btn-rose btn-wd" flex ng-disabled="bookingForm.$invalid" ng-click="printBooking(bookingForm)" type="submit" ng-hide="ui.isActualChargesView">Print</md-button>
-      <md-button class="btn btn-next btn-fill btn-primary btn-wd" ng-disabled="bookingForm.$invalid && !mixins.mEmail" flex ng-click="sendMail(bookingForm)" ng-hide="ui.mailsending || ui.isActualChargesView" type="submit">Email</md-button>
+      <md-button class="btn btn-next btn-fill btn-primary btn-wd" ng-disabled="mixins.mEmail==null || mixins.mEmail=='' || !bookingForm.$valid" flex ng-click="sendMail(bookingForm)" ng-hide="ui.mailsending || ui.isActualChargesView" type="submit">Email</md-button>
       <md-button class="btn btn-next btn-fill btn-primary btn-wd" ng-disabled="true" flex ng-show="ui.mailsending" type="submit"><i class="fa fa-spinner fa-spin"></i> Sending...</md-button>
       <md-button class="btn btn-next btn-fill btn-info btn-wd" ng-hide="ui.viewMode || ui.isBookingInProgress || ui.isActualChargesView" ng-disabled="bookingForm.$invalid" flex ng-click="save(bookingForm)" type="submit">{{mixins._id ? 'Update Booking' : 'Confirm Booking'}}</md-button>
       <md-button class="btn btn-next btn-fill btn-primary btn-wd" ng-disabled="true" flex ng-show="ui.isBookingInProgress" type="submit"><i class="fa fa-spinner fa-spin"></i> Booking...</md-button>
-      <md-button flex ng-hide="ui.isPastEvent || !ui.viewMode || ui.isActualChargesView" class="btn btn-next btn-fill btn-info btn-wd" ng-click="editBooking()" type="submit">Edit Booking</md-button>
+      <md-button flex ng-hide="(ui.isPastEvent && mixins.mPendingGrandTotal==0) || !ui.viewMode || ui.isActualChargesView" class="btn btn-next btn-fill btn-info btn-wd" ng-click="editBooking()" type="submit">Edit Booking</md-button>
     </md-dialog-actions>
   </form>
 </md-dialog>
