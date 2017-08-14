@@ -5,8 +5,8 @@
     .factory('AuthenticationService', AuthenticationService);
 
 
-	AuthenticationService.$inject = ['$http', '$cookieStore', '$rootScope'];
-	function AuthenticationService($http, $cookieStore, $rootScope) 
+	AuthenticationService.$inject = ['$http', '$cookieStore', '$rootScope', '$sessionStorage'];
+	function AuthenticationService($http, $cookieStore, $rootScope, $sessionStorage) 
     {
 		var service = {};
         service.SetCredentials = SetCredentials;
@@ -27,13 +27,15 @@
         	};
 
             $http.defaults.headers.common['Authorization'] = 'Bearer ' + access_token; // jshint ignore:line
-            $cookieStore.put('globals', $rootScope.globals);
+            //$cookieStore.put('globals', $rootScope.globals);
+            sessionStorage.setItem('globals', JSON.stringify($rootScope.globals));
         }
 
         function ClearCredentials() 
         {
         	$rootScope.globals = {};
-        	$cookieStore.remove('globals');
+        	//$cookieStore.remove('globals');
+            sessionStorage.removeItem('globals');
         	$http.defaults.headers.common.Authorization = 'Bearer ';
         }
         

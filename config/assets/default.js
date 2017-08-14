@@ -47,6 +47,7 @@ module.exports = {
         'public/lib/angular-perfect-scrollbar/src/angular-perfect-scrollbar.js',
         'public/lib/sweetalert/dist/sweetalert.min.js',
         'modules/core/client/js/material-datepicker.min.js',
+        'public/lib/ngstorage/ngStorage.min.js'
         // endbower
       ],
       tests: ['public/lib/angular-mocks/angular-mocks.js']

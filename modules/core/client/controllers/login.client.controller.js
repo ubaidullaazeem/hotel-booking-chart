@@ -5,8 +5,8 @@
     .module('core')
     .controller('LoginController', LoginController);
 
-  LoginController.$inject = ['$scope', '$state', '$rootScope', 'AuthenticationService', 'AUTHORISED_EMAIL', 'MESSAGES', '$mdDialog', '$mdToast', 'Notification'];
-  function LoginController($scope, $state, $rootScope, AuthenticationService, AUTHORISED_EMAIL, MESSAGES, $mdDialog, $mdToast, Notification) 
+  LoginController.$inject = ['$scope', '$state', '$rootScope', 'AuthenticationService', 'AUTHORISED_EMAIL', 'MESSAGES', '$mdDialog', 'Notification'];
+  function LoginController($scope, $state, $rootScope, AuthenticationService, AUTHORISED_EMAIL, MESSAGES, $mdDialog, Notification) 
   {
     //var vm = this;
     var isSigninInProgress = false;
@@ -68,7 +68,7 @@
            {          
               if(userResult && userResult.hasOwnProperty('error')) // error
               {
-                 $mdToast.show($mdToast.simple().textContent(MESSAGES.ERROR_OCCURED).position('top right').hideDelay(3000));
+                 Notification.error({ message: MESSAGES.ERROR_OCCURED });
               } 
               else // success
               {

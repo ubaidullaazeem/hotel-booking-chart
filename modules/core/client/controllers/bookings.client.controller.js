@@ -5,9 +5,9 @@
     .module('core')
     .controller('BookingsController', BookingsController);
 
-  BookingsController.$inject = ['bookedHallsResolve', 'CommonService', 'CALENDAR_CHANGE_VIEW', 'eventTypesResolve', 'paymentStatusesResolve', 'taxesResolve', '$scope', '$state', '$rootScope', '$mdDialog', '$mdToast', '$timeout', 'hallsResolve', 'MESSAGES', 'Notification', 'NewbookingsService', 'SearchBookingServices', 'HARDCODE_VALUES'];
+  BookingsController.$inject = ['bookedHallsResolve', 'CommonService', 'CALENDAR_CHANGE_VIEW', 'eventTypesResolve', 'paymentStatusesResolve', 'taxesResolve', '$scope', '$state', '$rootScope', '$mdDialog', '$timeout', 'hallsResolve', 'MESSAGES', 'Notification', 'NewbookingsService', 'SearchBookingServices', 'HARDCODE_VALUES'];
 
-  function BookingsController(bookedHallsResolve, CommonService, CALENDAR_CHANGE_VIEW, eventTypesResolve, paymentStatusesResolve, taxesResolve, $scope, $state, $rootScope, $mdDialog, $mdToast, $timeout, hallsResolve, MESSAGES, Notification, NewbookingsService, SearchBookingServices, HARDCODE_VALUES) {
+  function BookingsController(bookedHallsResolve, CommonService, CALENDAR_CHANGE_VIEW, eventTypesResolve, paymentStatusesResolve, taxesResolve, $scope, $state, $rootScope, $mdDialog, $timeout, hallsResolve, MESSAGES, Notification, NewbookingsService, SearchBookingServices, HARDCODE_VALUES) {
     $rootScope.isUserLoggedIn = true;
 
     $scope.model = {
