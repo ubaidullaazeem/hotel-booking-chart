@@ -51,7 +51,7 @@
               </md-input-container>
               <md-input-container flex ng-if="ui.isHallRate">
                 <label>Rate</label>
-                <input required type="number" name="rate" ng-model="rate.rate" min="0" ng-pattern="ui.mNumberPattern" ng-disabled="!rate.isEdit" step="0.01"/>
+                <input required type="number" name="rate" ng-model="rate.rate" min="0" ng-pattern="ui.mNumberPattern" ng-disabled="!rate.isEdit" step="0.01" ng-change="onConfirmedDataChanged()"/>
                 <div ng-messages="rateSummaryForm.rate.$error">
                   <div ng-message="required">Hall rate is required.</div>
                 </div>
@@ -59,7 +59,7 @@
 
               <md-input-container flex ng-if="ui.isHallRate">
                 <label>Electricity Charge</label>
-                <input required type="number" name="powerConsumpationCharges" min="0" ng-pattern="ui.mNumberPattern" ng-model="rate.powerConsumpationCharges" ng-disabled="!rate.isEdit" step="0.01"/>
+                <input required type="number" name="powerConsumpationCharges" min="0" ng-pattern="ui.mNumberPattern" ng-model="rate.powerConsumpationCharges" ng-disabled="!rate.isEdit" step="0.01" ng-change="onConfirmedDataChanged()"/>
                 <div ng-messages="rateSummaryForm.powerConsumpationCharges.$error">
                   <div ng-message="required">Electricity Charge is required.</div>
                 </div>
@@ -67,7 +67,7 @@
 
               <md-input-container flex ng-if="ui.isHallRate">
                 <label>Cleaning Charge</label>
-                <input required type="number" name="cleaningCharges" min="0" ng-pattern="ui.mNumberPattern" ng-model="rate.cleaningCharges" ng-disabled="!rate.isEdit" step="0.01"/>
+                <input required type="number" name="cleaningCharges" min="0" ng-pattern="ui.mNumberPattern" ng-model="rate.cleaningCharges" ng-disabled="!rate.isEdit" step="0.01" ng-change="onConfirmedDataChanged()"/>
                 <div ng-messages="rateSummaryForm.cleaningCharges.$error">
                   <div ng-message="required">Cleaning Charge is required.</div>
                 </div>
@@ -75,7 +75,7 @@
 
               <md-input-container flex ng-if="!ui.isHallRate">
                 <label>Percentage</label>
-                <input required type="number" name="percentage" ng-model="rate.percentage"  ng-pattern="ui.mNumberPattern" step="0.01" min="0" max="100" ng-disabled="!rate.isEdit"/>
+                <input required type="number" name="percentage" ng-model="rate.percentage"  ng-pattern="ui.mNumberPattern" step="0.01" min="0" max="100" ng-disabled="!rate.isEdit" ng-change="onConfirmedDataChanged()"/>
                 <div ng-messages="rateSummaryForm.rate.$error">
                   <div ng-message="required">Percentage is required.</div>
                 </div>
@@ -94,7 +94,7 @@
       
       <md-dialog-actions layout="row"> 
         <span flex></span> 
-        <input class="btn btn-next btn-fill btn-rose btn-wd" name="submit" value="Submit" ng-click="save()" ng-disabled="rateSummaryForm.$invalid || model.rate.rateSummaries.length < 1" type="button">
+        <input class="btn btn-next btn-fill btn-rose btn-wd" name="submit" value="Submit" ng-click="save()" ng-disabled="rateSummaryForm.$invalid || model.rate.rateSummaries.length < 1 || !ui.isDataChanged" type="button">
         <span flex></span>
         <input class="btn btn-next btn-fill btn-rose btn-wd" name="cancel" value="Cancel" ng-click="cancel()" type="button">
         <span flex></span>

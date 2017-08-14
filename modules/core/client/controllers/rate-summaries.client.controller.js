@@ -15,7 +15,8 @@
 
     $scope.ui = {
       mNumberPattern: /^[0-9]+(\.[0-9]{1,2})?$/,
-      isHallRate: isHallRate
+      isHallRate: isHallRate,
+      isDataChanged : false
     };
 
     $scope.unconfirmed = {};
@@ -77,6 +78,8 @@
     $scope.addRateSummary = function() {
       checkEffectiveDate();
       $scope.loadInitial();
+
+      $scope.ui.isDataChanged = true;
     };
 
     $scope.removeRateSummary = function(rate) {
@@ -130,6 +133,10 @@
       } else {
         $scope.model.rate.rateSummaries.push($scope.unconfirmed);
       }
+    }
+    
+    $scope.onConfirmedDataChanged = function(){
+      $scope.ui.isDataChanged = true;
     }
   }
 }());
