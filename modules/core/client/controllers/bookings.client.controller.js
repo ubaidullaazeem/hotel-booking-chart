@@ -370,7 +370,11 @@
         eventDrop: $scope.alertOnDrop,
         eventResize: $scope.alertOnResize,
         eventClick: $scope.eventClick,
-        viewRender: $scope.renderView
+        viewRender: $scope.renderView,
+        dayRender: function(date, cell) {
+          if((new Date(date).getFullYear() === new Date().getFullYear()) && (new Date(date).getMonth() === new Date().getMonth()) && (new Date(date).getDate() === new Date().getDate()))            
+            cell.css("background-color", "#00BFFF");
+        }
       }
     };
 

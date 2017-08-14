@@ -20,7 +20,7 @@ module.exports = {
       ],
       js: [
         // bower:js
-       // 'public/lib/jquery/dist/jquery.min.js',
+        'public/lib/jquery/dist/jquery.min.js',
         'public/lib/angular/angular.js',
         'public/lib/angular-animate/angular-animate.js',
         'public/lib/angular-aria/angular-aria.js',
@@ -38,7 +38,7 @@ module.exports = {
         'public/lib/lodash/lodash.js',
         'public/lib/moment/min/moment.min.js',
         'public/lib/angular-ui-calendar/src/calendar.js',
-        'public/js/fullcalendar.min.js',
+        'public/lib/fullcalendar/dist/fullcalendar.min.js',
         'public/lib/fullcalendar/dist/gcal.js',
         'public/lib/chart.js/dist/Chart.min.js',
         'public/lib/angular-chart.js/dist/angular-chart.min.js',

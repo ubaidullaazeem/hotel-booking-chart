@@ -44,10 +44,11 @@
     window.onbeforeunload = function() {
       //return 'Are you sure you want to leave?';
       if (!validNavigation) {
-        AuthenticationService.ClearCredentials();
-        $rootScope.isUserLoggedIn = false; //Webkit, Safari, Chrome
+        //AuthenticationService.ClearCredentials();
+        //$rootScope.isUserLoggedIn = false; //Webkit, Safari, Chrome
       }
     }
+
 
     $(document).keydown(function(e) {
       if ((e.keyCode == 65 && e.ctrlKey)  || (e.keyCode == 116)) {
@@ -68,7 +69,7 @@
     // Attach the event click for all inputs in the page
     angular.element("input[type=submit]").bind("click", function() {
       validNavigation = true;
-    });
+    });   
     
     gapi.load('client:auth2', function()
     {
