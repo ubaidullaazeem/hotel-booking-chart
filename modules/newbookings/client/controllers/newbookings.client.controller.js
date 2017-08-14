@@ -29,7 +29,8 @@
       isBookingInProgress: false,
       isPastEvent: selectedEvent ? moment(selectedEvent.mStartDateTime) < moment(new Date().setHours(0, 0, 0, 0)) : true,
       isFullyPaid: selectedEvent ? selectedEvent.mSelectedPaymentStatus.name === PAYMENT_STATUS[1] : false,
-      photoIdFile: ''
+      photoIdFile: '',
+      isDataChanged: false
     }
 
     $scope.model = {
@@ -194,6 +195,8 @@
           $scope.eventTime.mStartToServer = getTimeToServer(dateTime);
 
           validateStartAndEndTime();
+
+          $scope.ui.isDataChanged = true;
         });
     };
 
@@ -207,6 +210,8 @@
           $scope.eventTime.mEndToServer = getTimeToServer(dateTime);
 
           validateStartAndEndTime();
+
+          $scope.ui.isDataChanged = true;
         });
     };
 
@@ -245,6 +250,8 @@
         targetEvent: ev, 
         minDate: today
       }).then(function(date) {
+        $scope.ui.isDataChanged = true;
+
         var startTime = new Date(selectedEvent.mStartDateTime);
         var startTimeFormat = new Date(date).setHours(startTime.getHours(), startTime.getMinutes(), 0, 0);
         var endTime = new Date(selectedEvent.mEndDateTime);
@@ -369,6 +376,7 @@
 
     $scope.onFileSelected = function(files, events, b) {
       
+      $scope.ui.isDataChanged = true;
       if (files.length>0) 
       {
         $scope.ui.photoIdFile = files[0];  
@@ -874,8 +882,17 @@
       };
     };
 
-    $scope.cancel = function() {
-      $mdDialog.cancel();
+    $scope.cancel = function(bookingForm) {
+      if (bookingForm.$dirty || $scope.ui.isDataChanged) {
+        var confirm = $mdDialog.confirm().title('Do you want to close?').textContent('If you close, data will not be saved.').ok('Yes').cancel('No').multiple(true);
+        $mdDialog.show(confirm).then(function() {
+            $mdDialog.cancel();
+          },
+          function() {
+            console.log("no");
+          });
+      } else
+        $mdDialog.cancel();
     };
 
     $scope.selectHallsByDefault = function(hall) {
@@ -933,7 +950,7 @@
           message: "Actual charges updated successfully",
           title: '<i class="glyphicon glyphicon-remove"></i> Success !!!'
         });
-        $scope.cancel();
+        $mdDialog.cancel();
       };
 
       function updateActuralChargesErrorCallback(res) {

@@ -40,7 +40,16 @@
     };
 
     $scope.cancel = function() {
-      $mdDialog.cancel();
+      if ($scope.ui.isDataChanged || $scope.unconfirmed.rate!=null || $scope.unconfirmed.powerConsumpationCharges!=null || $scope.unconfirmed.cleaningCharges!=null || $scope.unconfirmed.percentage!=null) {
+        var confirm = $mdDialog.confirm().title('Do you want to close?').textContent('If you close, new data will not be saved.').ok('Yes').cancel('No').multiple(true);
+        $mdDialog.show(confirm).then(function() {
+            $mdDialog.cancel();
+          },
+          function() {
+            console.log("no");
+          });
+      } else
+        $mdDialog.cancel();
     }
 
     $scope.isEdit = function(rate) {

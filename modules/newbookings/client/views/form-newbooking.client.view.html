@@ -4,7 +4,7 @@
       <div class="card-header" data-background-color="{{DATA_BACKGROUND_COLOR}}">
         <div class="md-toolbar-tools">        
           <span flex><h2>{{mixins._id ? ui.viewMode ? 'Booking Details' : 'Edit Booking' : 'New Booking'}}</h2> </span>
-          <md-button class="md-icon-button" ng-click="cancel()">
+          <md-button class="md-icon-button" ng-click="cancel(bookingForm)">
              <i class="material-icons">close</i>
           </md-button>
         </div>
@@ -140,12 +140,12 @@
           </md-input-container>  
         </div>
 
-        <div layout="column" flex>
+        <!-- <div layout="column" flex>
           <md-input-container flex>
             <label>Photo ID of the Person</label>
             <input ng-model="mixins.mPhotoId" ng-disabled="ui.viewMode"/>
           </md-input-container>  
-        </div>
+        </div> -->
 
         <div layout="column" flex>
           <md-input-container flex>
