@@ -81,7 +81,19 @@
         })
       .then(function () 
       {
-        console.log("appjs client init ");          
+        console.log("appjs client init ");
+
+        var loggedIn = $rootScope.globals.currentUser;
+        if(!loggedIn) 
+        {
+          gapi.auth2.getAuthInstance().disconnect();
+
+          console.log("appjs client init disconnect ");
+        }
+        else
+        {
+          console.log("appjs client init not disconnect ");
+        }                  
 
         $rootScope.ajaxCall.resolve();
 
