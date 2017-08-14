@@ -9,6 +9,7 @@
   function LoginController($scope, $state, $rootScope, AuthenticationService, AUTHORISED_EMAIL, MESSAGES, $mdDialog, $mdToast, Notification) 
   {
     //var vm = this;
+    var isSigninInProgress = false;
 
     var loggedIn = $rootScope.globals.currentUser;
     var page = window.location.href.substr(window.location.href.lastIndexOf('/') + 1);
@@ -33,6 +34,7 @@
   
     $scope.handleAuthClick=function (event) 
     {        
+      isSigninInProgress = false;
         //gapi.auth.authorize({discoveryDocs: GOOGLE_DISCOVERY_DOCS, client_id: GOOGLE_CLIENT_ID, scope: GOOGLE_SCOPES, immediate: true}, handleAuthResult);
         //return false;        
 
@@ -47,8 +49,14 @@
 
     $scope.updateSigninStatus=function(isSignedIn) 
     {      
+      if (isSigninInProgress) 
+      {
+        return
+      }
+
       if (isSignedIn) 
       {
+        isSigninInProgress = true;
         console.log("signed in");
 
         //gapi.auth.authorize({discoveryDocs: GOOGLE_DISCOVERY_DOCS, client_id: GOOGLE_CLIENT_ID, scope: GOOGLE_SCOPES, immediate: true}, handleAuthResult);          
@@ -85,7 +93,11 @@
                   }
                   else
                   {
-                    $mdDialog.show($mdDialog.alert().clickOutsideToClose(true).title(MESSAGES.UNAUTHORISED_USER).ok('OK'));
+                    $mdDialog.show($mdDialog.alert().clickOutsideToClose(true).title(MESSAGES.UNAUTHORISED_USER).ok('OK'));                    
+                  setTimeout(function() {
+                    gapi.auth2.getAuthInstance().disconnect();
+                  }, 1000);
+
                   }                  
                 }
                 else
