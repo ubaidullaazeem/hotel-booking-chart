@@ -11,6 +11,7 @@
         </div>
     </div>
     <md-dialog-content>
+      <div ng-init="setForm(bookingForm)"/>
       <div class="md-dialog-content" id="printThis" ng-if="!ui.isActualChargesView">
         <div layout="row" flex>
           <!-- <md-input-container flex ng-show="!ui.showMdSelect">
@@ -158,8 +159,8 @@
             </div> -->           
         
             <div  ng-hide="ui.viewMode" class="text-center form-group">
-              <button class="btn btn-default btn-file" ngf-select="onFileSelected($files, $event, b)" accept="image/*" ngf-before-model-change="vm.loading = true" ngf-resize="{width: 400}" ngf-resize-if="$width > 400 || $height > 400">Browse</button>
-              <button ng-if="ui.fileSelected && mixins.mPhotoIdPath" class="btn btn-default" ng-click="cancelFile()">Cancel</button>
+              <button class="btn btn-default btn-file btn btn-next btn-fill btn-rose btn-wd" ngf-select="onFileSelected($files, $event, b)" accept="image/*" ngf-before-model-change="vm.loading = true" ngf-resize="{width: 400}" ngf-resize-if="$width > 400 || $height > 400">Browse</button>
+              <button ng-if="ui.fileSelected && mixins.mPhotoIdPath" class="btn btn-next btn-fill btn-danger btn-wd" ng-click="cancelFile()">Cancel</button>
             </div> 
 
 

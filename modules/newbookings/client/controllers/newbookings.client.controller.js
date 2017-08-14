@@ -428,21 +428,18 @@
     $scope.model.taxes.$promise.then(function(result) {
       init();
       getCommonHalls();
+      $scope.bookingForm.$setPristine();
     });
+
+    $scope.setForm = function(form) {
+      $scope.bookingForm = form;
+    }
 
     // Save Newbooking
     $scope.save = function(form) {
 
       if (form.$valid) {
-        /*if (($scope.mixins.mSelectedPaymentStatus.name.toLowerCase() == PAYMENT_STATUS[1].toLowerCase() && $scope.mixins.mBalanceDue !== 0) || $scope.mixins.mSelectedPaymentStatus.name.toLowerCase() == PAYMENT_STATUS[0].toLowerCase() && $scope.mixins.mBalanceDue <= 0) {
-          Notification.error({
-            message: "Please check the payment status and payment received",
-            title: '<i class="glyphicon glyphicon-remove"></i> Payment Status Error !!!'
-          });
-
-          return;
-        }*/
-
+        
         if ($scope.mixins.mBalanceDue < 0) {
           Notification.error({
             message: "Please enter valid data.",
