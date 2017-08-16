@@ -7,11 +7,10 @@
 
   SettingsController.$inject = ['COLOURS', 'CommonService', 'DATA_BACKGROUND_COLOR', '$scope', '$state', '$rootScope', '$mdDialog', 'HallsService', 'Notification', 'EventtypesService', 'TaxesService', 'PaymentstatusesService', 'PAYMENT_STATUS', 'TAX_TYPES'];
 
-  function SettingsController(COLOURS, CommonService, DATA_BACKGROUND_COLOR, $scope, $state, $rootScope, $mdDialog, HallsService, Notification, EventtypesService, TaxesService, PaymentstatusesService, PAYMENT_STATUS, TAX_TYPES) 
-  {
-    
+  function SettingsController(COLOURS, CommonService, DATA_BACKGROUND_COLOR, $scope, $state, $rootScope, $mdDialog, HallsService, Notification, EventtypesService, TaxesService, PaymentstatusesService, PAYMENT_STATUS, TAX_TYPES) {
+
     $scope.DATA_BACKGROUND_COLOR = DATA_BACKGROUND_COLOR;
-    
+
     $scope.loadInitial = function() {
       $scope.halls = HallsService.query();
       $scope.taxes = TaxesService.query();
@@ -77,11 +76,14 @@
           hall.$remove(successCallback, errorCallback);
 
           function successCallback(res) {
-           $scope.halls.splice(index, 1);
+            $scope.halls.splice(index, 1);
           }
 
           function errorCallback(res) {
-            Notification.error({ message: res.data.message, title: '<i class="glyphicon glyphicon-remove"></i> Delete Hall Error !!!' });
+            Notification.error({
+              message: res.data.message,
+              title: '<i class="glyphicon glyphicon-remove"></i> Delete Hall Error !!!'
+            });
           }
         },
         function() {
@@ -89,21 +91,21 @@
         });
     }
 
-     /** CRUD Functionality for Tax **/
+    /** CRUD Functionality for Tax **/
 
-    $scope.mShowTaxPopup = function(ev, index = null, tax = null) { 
+    $scope.mShowTaxPopup = function(ev, index = null, tax = null) {
       var taxTypes = TAX_TYPES;
       var savedTaxTypes = _.map($scope.taxes, 'name');
       if (!tax) {
-        taxTypes =  _.pullAll(TAX_TYPES, savedTaxTypes);
+        taxTypes = _.pullAll(TAX_TYPES, savedTaxTypes);
       }
       var oldShow = $mdDialog.show;
-        $mdDialog.show = function(options) {
-          if (options.hasOwnProperty("skipHide")) {
-            options.multiple = options.skipHide;
-          }
-          return oldShow(options);
-        };
+      $mdDialog.show = function(options) {
+        if (options.hasOwnProperty("skipHide")) {
+          options.multiple = options.skipHide;
+        }
+        return oldShow(options);
+      };
       $mdDialog.show({
           controller: 'TaxesController',
           templateUrl: 'modules/taxes/client/views/form-tax.client.view.html',
@@ -121,18 +123,18 @@
           },
         })
         .then(function(updatedItem) {
-          if(tax) {
+          if (tax) {
             $scope.taxes[index] = updatedItem
           } else {
             $scope.taxes.push(updatedItem);
-          }          
+          }
         }, function() {
-          console.log('You cancelled the dialog.');          
+          console.log('You cancelled the dialog.');
         });
 
     }
 
-     /** CRUD Functionality for EventType **/
+    /** CRUD Functionality for EventType **/
 
     $scope.mShowEventTypePopup = function(ev, index = null, eventType = null) {
       var savedColors = _.map($scope.eventTypes, 'colour');
@@ -205,7 +207,10 @@
           }
 
           function errorCallback(res) {
-            Notification.error({ message: res.data.message, title: '<i class="glyphicon glyphicon-remove"></i> Delete Event Error !!!' });
+            Notification.error({
+              message: res.data.message,
+              title: '<i class="glyphicon glyphicon-remove"></i> Delete Event Error !!!'
+            });
           }
         },
         function() {
@@ -213,12 +218,12 @@
         });
     }
 
-     /** CRUD Functionality for Payment status **/
+    /** CRUD Functionality for Payment status **/
 
     $scope.mShowPaymentStatusPopup = function(ev, index = null, paymentStatus = null) {
 
       var savedColors = _.map($scope.paymentStatuses, 'colour');
-      var savedPaymentTypes = _.map($scope.paymentStatuses, 'name');      
+      var savedPaymentTypes = _.map($scope.paymentStatuses, 'name');
       var colours = [];
       var paymentTypes = PAYMENT_STATUS;
       var colors = _.map(COLOURS, function(o) {
@@ -231,7 +236,7 @@
         colours = _.pullAllBy(colors, paymentColors, 'name');
       } else {
         colours = _.pullAllBy(colors, savedColors, 'name');
-        paymentTypes =  _.pullAll(PAYMENT_STATUS, savedPaymentTypes);
+        paymentTypes = _.pullAll(PAYMENT_STATUS, savedPaymentTypes);
       }
 
       $mdDialog.show({
@@ -274,7 +279,7 @@
       $mdDialog.cancel();
     };
 
-    $scope.viewHallSummaries = function(ev, index, hall, isHallRate) {      
+    $scope.viewHallSummaries = function(ev, index, hall, isHallRate) {
       HallsService.get({
         hallId: hall._id
       }, function(data) {
@@ -282,7 +287,7 @@
       });
     };
 
-    $scope.viewTaxSummaries = function(ev, index, tax, isHallRate) {      
+    $scope.viewTaxSummaries = function(ev, index, tax, isHallRate) {
       TaxesService.get({
         taxId: tax._id
       }, function(data) {

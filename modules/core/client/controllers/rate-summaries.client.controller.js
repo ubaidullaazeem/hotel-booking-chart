@@ -16,15 +16,15 @@
     $scope.ui = {
       mNumberPattern: /^[0-9]+(\.[0-9]{1,2})?$/,
       isHallRate: isHallRate,
-      isDataChanged : false
+      isDataChanged: false
     };
 
     $scope.unconfirmed = {};
 
     $scope.DATA_BACKGROUND_COLOR = DATA_BACKGROUND_COLOR;
 
-    $scope.loadInitial = function() {  
-      if(isHallRate) {
+    $scope.loadInitial = function() {
+      if (isHallRate) {
         $scope.unconfirmed = {
           effectiveDate: moment(new Date()).format('YYYY-MM-DD'),
           rate: null,
@@ -40,7 +40,7 @@
     };
 
     $scope.cancel = function() {
-      if ($scope.ui.isDataChanged || $scope.unconfirmed.rate!=null || $scope.unconfirmed.powerConsumpationCharges!=null || $scope.unconfirmed.cleaningCharges!=null || $scope.unconfirmed.percentage!=null) {
+      if ($scope.ui.isDataChanged || $scope.unconfirmed.rate != null || $scope.unconfirmed.powerConsumpationCharges != null || $scope.unconfirmed.cleaningCharges != null || $scope.unconfirmed.percentage != null) {
         var confirm = $mdDialog.confirm().title('Do you want to close?').textContent('If you close, new data will not be saved.').ok('Yes').cancel('No').multiple(true);
         $mdDialog.show(confirm).then(function() {
             $mdDialog.cancel();
@@ -92,22 +92,24 @@
     };
 
     $scope.removeRateSummary = function(rate) {
-      var index = _.findIndex($scope.model.rate.rateSummaries, function(o) { return o._id == rate._id; });
+      var index = _.findIndex($scope.model.rate.rateSummaries, function(o) {
+        return o._id == rate._id;
+      });
       $scope.model.rate.rateSummaries.splice(index, 1);
     };
 
     $scope.save = function() {
-      if(isHallRate) {
-        if($scope.unconfirmed.rate && $scope.unconfirmed.powerConsumpationCharges && $scope.unconfirmed.cleaningCharges && $scope.unconfirmed.effectiveDate) {
+      if (isHallRate) {
+        if ($scope.unconfirmed.rate && $scope.unconfirmed.powerConsumpationCharges && $scope.unconfirmed.cleaningCharges && $scope.unconfirmed.effectiveDate) {
           $scope.addRateSummary();
         }
-        HallsService.update($scope.model.rate, successCallback, errorCallback);  
+        HallsService.update($scope.model.rate, successCallback, errorCallback);
       } else {
-        if($scope.unconfirmed.percentage && $scope.unconfirmed.effectiveDate) {
+        if ($scope.unconfirmed.percentage && $scope.unconfirmed.effectiveDate) {
           $scope.addRateSummary();
         }
         TaxesService.update($scope.model.rate, successCallback, errorCallback);
-      }      
+      }
 
       function successCallback(res) {
         $mdDialog.hide(res);
@@ -143,8 +145,8 @@
         $scope.model.rate.rateSummaries.push($scope.unconfirmed);
       }
     }
-    
-    $scope.onConfirmedDataChanged = function(){
+
+    $scope.onConfirmedDataChanged = function() {
       $scope.ui.isDataChanged = true;
     }
   }

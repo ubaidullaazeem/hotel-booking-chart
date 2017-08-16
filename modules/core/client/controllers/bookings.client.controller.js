@@ -13,10 +13,10 @@
     $scope.model = {
       events: [],
       newBookings: bookedHallsResolve,
-      mColorFilter: 1,  
+      mColorFilter: 1,
       eventTypes: eventTypesResolve,
       paymentStatuses: paymentStatusesResolve,
-      taxes: taxesResolve, 
+      taxes: taxesResolve,
     };
 
     $scope.ui = {
@@ -94,7 +94,7 @@
     $scope.dayClick = function(date, allDay, jsEvent, view) {
       validateSettings();
       if (!$scope.ui.validateSettings) {
-         console.log("day click date " + date);
+        console.log("day click date " + date);
         if (moment(date) < moment(new Date().setHours(0, 0, 0, 0))) {
           Notification.error({
             message: MESSAGES.PAST_DATE,
@@ -164,12 +164,12 @@
     //with this you can handle the click on the events
     $scope.eventClick = function(event) {
       var oldShow = $mdDialog.show;
-        $mdDialog.show = function(options) {
-          if (options.hasOwnProperty("skipHide")) {
-            options.multiple = options.skipHide;
-          }
-          return oldShow(options);
-        };
+      $mdDialog.show = function(options) {
+        if (options.hasOwnProperty("skipHide")) {
+          options.multiple = options.skipHide;
+        }
+        return oldShow(options);
+      };
       NewbookingsService.get({
         newbookingId: event._id
       }, function(data) {
@@ -195,7 +195,7 @@
             var index = findIndexByID($scope.model.events, event._id);
             var bookingIndex = findIndexByID($scope.model.newBookings, data._id);
             $scope.model.events.splice(index, 1);
-            if(updatedItem.isDelete) {
+            if (updatedItem.isDelete) {
               $scope.model.newBookings.splice(bookingIndex, 1);
             } else {
               $scope.model.newBookings[bookingIndex] = updatedItem;
@@ -203,7 +203,7 @@
                 eventsPush(updatedItem);
                 $scope.$apply();
               })
-             }
+            }
             var view = $scope.ui.renderView;
             var moment = view.calendar.getDate();
             var date = new Date(moment.format());
@@ -225,7 +225,7 @@
 
       $timeout(function() {
         $scope.$apply();
-      });      
+      });
     };
 
     //with this you can handle the events that generated when we change the view i.e. Month, Week and Day
@@ -244,28 +244,26 @@
 
     function eventsPush(booking) {
       var colorCode;
-      if($scope.model.mColorFilter === 1 || $scope.model.mColorFilter === '1') {
+      if ($scope.model.mColorFilter === 1 || $scope.model.mColorFilter === '1') {
         //colorCode = booking.mSelectedPaymentStatus.colour.code;        
         for (var i = 0; i < $scope.model.paymentStatuses.length; i++) {
-          if ($scope.model.paymentStatuses[i]._id === booking.mSelectedPaymentStatus._id) 
-          {
+          if ($scope.model.paymentStatuses[i]._id === booking.mSelectedPaymentStatus._id) {
             colorCode = $scope.model.paymentStatuses[i].colour.code;
             break;
           }
         }
-        
+
       } else {
         //colorCode = booking.mSelectedEventType.colour.code;
         for (var i = 0; i < $scope.model.eventTypes.length; i++) {
-          if ($scope.model.eventTypes[i]._id === booking.mSelectedEventType._id) 
-          {
+          if ($scope.model.eventTypes[i]._id === booking.mSelectedEventType._id) {
             colorCode = $scope.model.eventTypes[i].colour.code;
             break;
           }
         }
       }
       var bookingTitle = booking.mSelectedEventType.name;
-      if(booking.mSelectedEventType.name === HARDCODE_VALUES[0]) {
+      if (booking.mSelectedEventType.name === HARDCODE_VALUES[0]) {
         bookingTitle = booking.mOtherEvent;
       }
       $scope.model.events.push({
@@ -316,7 +314,7 @@
     };
 
     function paymentChart(bookedHalls) {
-      $scope.chart.options.title.text = "Payment Summary for "+$scope.ui.mCalendarTitle;
+      $scope.chart.options.title.text = "Payment Summary for " + $scope.ui.mCalendarTitle;
       angular.forEach($scope.model.paymentStatuses, function(payment) {
         var length = CommonService.getPaymentCountFromBookedHall(bookedHalls, payment.name);
         $scope.chart.data.push(length);
@@ -327,7 +325,7 @@
     };
 
     function eventTypeChart(bookedHalls) {
-      $scope.chart.options.title.text = "EventType Summary for "+$scope.ui.mCalendarTitle;
+      $scope.chart.options.title.text = "EventType Summary for " + $scope.ui.mCalendarTitle;
       angular.forEach($scope.model.eventTypes, function(eventType) {
         var length = CommonService.getEventTypeCountFromBookedHall(bookedHalls, eventType.name);
         $scope.chart.data.push(length);
@@ -338,20 +336,22 @@
     };
 
     function chartViewByAgenda(view, date) {
-      if(view === CALENDAR_CHANGE_VIEW[0]) {
+      if (view === CALENDAR_CHANGE_VIEW[0]) {
         var bookedHalls = CommonService.findBookedHallsByDay($scope.model.newBookings, date);
         chartSummary(bookedHalls);
-      } else if(view === CALENDAR_CHANGE_VIEW[1]) {
+      } else if (view === CALENDAR_CHANGE_VIEW[1]) {
         var bookedHalls = CommonService.findBookedHallsByWeek($scope.model.newBookings, date);
         chartSummary(bookedHalls);
-      } else {    
+      } else {
         var bookedHalls = CommonService.findBookedHallsByMonth($scope.model.newBookings, date);
         chartSummary(bookedHalls);
       }
     };
 
     function findIndexByID(array, id) {
-      return _.findIndex(array, function(o) { return o._id == id; });
+      return _.findIndex(array, function(o) {
+        return o._id == id;
+      });
     };
 
 
@@ -372,7 +372,7 @@
         eventClick: $scope.eventClick,
         viewRender: $scope.renderView,
         dayRender: function(date, cell) {
-          if((new Date(date).getFullYear() === new Date().getFullYear()) && (new Date(date).getMonth() === new Date().getMonth()) && (new Date(date).getDate() === new Date().getDate()))            
+          if ((new Date(date).getFullYear() === new Date().getFullYear()) && (new Date(date).getMonth() === new Date().getMonth()) && (new Date(date).getDate() === new Date().getDate()))
             cell.css("background-color", "#00BFFF");
         }
       }

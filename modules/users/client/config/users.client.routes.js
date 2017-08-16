@@ -10,7 +10,7 @@
 
   function routeConfig($stateProvider) {
     // Users state routing
-    /*$stateProvider
+    /*  $stateProvider
       .state('settings', {
         abstract: true,
         url: '/settings',

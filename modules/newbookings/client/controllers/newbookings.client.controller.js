@@ -11,10 +11,13 @@
   function NewbookingsController(AuthenticationService, CGST, SGST, DATA_BACKGROUND_COLOR, EmailBookingServices, HARDCODE_VALUES, PAYMENT_STATUS, $filter, $scope, $state, selectedEvent, $location, $mdDialog, $templateRequest, $sce, NewbookingsService, selectedDate, HallsService, EventtypesService, TaxesService, PaymentstatusesService, Notification, $mdpTimePicker, $mdpDatePicker, PAY_MODES, CommonService, ValidateOverlapBookingServices, viewMode, GOOGLE_CALENDAR_COLOR_IDS, Upload, $timeout) {
     $scope.DATA_BACKGROUND_COLOR = DATA_BACKGROUND_COLOR;
 
-    var cgstPercent, sgstPercent;
+    var cgstPercent;
+    var sgstPercent;
     var totalCostToDiscountProrate = 0;
-    var pendingSubTotalPercentage, pendingCGSTPercentage, pendingSGSTPercentage;
-    var hallsNotInGoogleCalendar="";
+    var pendingSubTotalPercentage;
+    var pendingCGSTPercentage;
+    var pendingSGSTPercentage;
+    var hallsNotInGoogleCalendar = '';
     var isShownHallsNotInGoogleCalendar = false;
 
     $scope.ui = {
@@ -31,7 +34,7 @@
       isFullyPaid: selectedEvent ? selectedEvent.mSelectedPaymentStatus.name === PAYMENT_STATUS[1] : false,
       photoIdFile: '',
       isDataChanged: false
-    }
+    };
 
     $scope.model = {
       halls: HallsService.query(),
@@ -80,19 +83,19 @@
       mPaymentHistories: selectedEvent ? selectedEvent.mPaymentHistories : [],
       mBalanceDue: selectedEvent ? selectedEvent.mBalanceDue : 0,
 
-      mPendingSubTotal : selectedEvent ? selectedEvent.mPendingSubTotal : 0,
-      mReceivedSubTotal : selectedEvent ? selectedEvent.mReceivedSubTotal : 0,
-      mPendingCGST : selectedEvent ? selectedEvent.mPendingCGST : 0,
-      mReceivedCGST : selectedEvent ? selectedEvent.mReceivedCGST : 0,
-      mPendingSGST : selectedEvent ? selectedEvent.mPendingSGST : 0,
-      mReceivedSGST : selectedEvent ? selectedEvent.mReceivedSGST : 0,
-      mPendingGrandTotal : selectedEvent ? selectedEvent.mPendingGrandTotal : 0,
-      mReceivedGrandTotal : selectedEvent ? selectedEvent.mReceivedGrandTotal : 0
+      mPendingSubTotal: selectedEvent ? selectedEvent.mPendingSubTotal : 0,
+      mReceivedSubTotal: selectedEvent ? selectedEvent.mReceivedSubTotal : 0,
+      mPendingCGST: selectedEvent ? selectedEvent.mPendingCGST : 0,
+      mReceivedCGST: selectedEvent ? selectedEvent.mReceivedCGST : 0,
+      mPendingSGST: selectedEvent ? selectedEvent.mPendingSGST : 0,
+      mReceivedSGST: selectedEvent ? selectedEvent.mReceivedSGST : 0,
+      mPendingGrandTotal: selectedEvent ? selectedEvent.mPendingGrandTotal : 0,
+      mReceivedGrandTotal: selectedEvent ? selectedEvent.mReceivedGrandTotal : 0
     };
 
     $scope.googleCalendar = {
-      colorCode : selectedEvent ? ((selectedEvent.mSelectedPaymentStatus.name === PAYMENT_STATUS[1]) ? GOOGLE_CALENDAR_COLOR_IDS.RED : GOOGLE_CALENDAR_COLOR_IDS.GREEN) : GOOGLE_CALENDAR_COLOR_IDS.GREEN
-    }
+      colorCode: selectedEvent ? ((selectedEvent.mSelectedPaymentStatus.name === PAYMENT_STATUS[1]) ? GOOGLE_CALENDAR_COLOR_IDS.RED : GOOGLE_CALENDAR_COLOR_IDS.GREEN) : GOOGLE_CALENDAR_COLOR_IDS.GREEN
+    };
 
     $scope.eventTime = {
       mStartClock: selectedEvent ? new Date(selectedEvent.mStartDateTime) : new Date('1991-05-04T06:00:00'),
@@ -130,22 +133,22 @@
         var effectiveSummaries = CommonService.findRateSummariesByDate(hall.rateSummaries, new Date($scope.eventTime.mStartToServer));
         if (effectiveSummaries.length > 0) {
           /** Ubai New Code Start **/
-          hall.mBasicCost = selectedHalls.length > 0 ? selectedHalls[0].mBasicCost : effectiveSummaries[0].rate,
-            hall.mElectricityCharges = selectedHalls.length > 0 ? selectedHalls[0].mElectricityCharges : effectiveSummaries[0].powerConsumpationCharges,
-            hall.mActualElectricityCharges = selectedHalls.length > 0 ? selectedHalls[0].mActualElectricityCharges : 0,
-            hall.mActualCleaningCharges = selectedHalls.length > 0 ? selectedHalls[0].mActualCleaningCharges : 0,
-            hall.mDamages = selectedHalls.length > 0 ? selectedHalls[0].mDamages : 0,
-            hall.mCleaningCharges = selectedHalls.length > 0 ? selectedHalls[0].mCleaningCharges : effectiveSummaries[0].cleaningCharges,
-            hall.mGeneratorCharges = selectedHalls.length > 0 ? selectedHalls[0].mGeneratorCharges : 0,
-            hall.mMiscellaneousCharges = selectedHalls.length > 0 ? selectedHalls[0].mMiscellaneousCharges : 0
-            /** End **/
+          hall.mBasicCost = selectedHalls.length > 0 ? selectedHalls[0].mBasicCost : effectiveSummaries[0].rate;
+          hall.mElectricityCharges = selectedHalls.length > 0 ? selectedHalls[0].mElectricityCharges : effectiveSummaries[0].powerConsumpationCharges;
+          hall.mActualElectricityCharges = selectedHalls.length > 0 ? selectedHalls[0].mActualElectricityCharges : 0;
+          hall.mActualCleaningCharges = selectedHalls.length > 0 ? selectedHalls[0].mActualCleaningCharges : 0;
+          hall.mDamages = selectedHalls.length > 0 ? selectedHalls[0].mDamages : 0;
+          hall.mCleaningCharges = selectedHalls.length > 0 ? selectedHalls[0].mCleaningCharges : effectiveSummaries[0].cleaningCharges;
+          hall.mGeneratorCharges = selectedHalls.length > 0 ? selectedHalls[0].mGeneratorCharges : 0;
+          hall.mMiscellaneousCharges = selectedHalls.length > 0 ? selectedHalls[0].mMiscellaneousCharges : 0;
+          /** End **/
           if (selectedHalls.length > 0 && selectedHalls[0].mCalendarId && selectedHalls[0].mEventId) {
             hall.mCalendarId = selectedHalls[0].mCalendarId;
             hall.mEventId = selectedHalls[0].mEventId;
           }
         } else {
           Notification.error({
-            message: "Effective date is not found for " + hall.displayName,
+            message: 'Effective date is not found for ' + hall.displayName,
             title: '<i class="glyphicon glyphicon-remove"></i> Effective date Error !!!'
           });
           $mdDialog.cancel();
@@ -155,7 +158,7 @@
       calculateHallsRate();
       $scope.calculateBalanceDue();
     };
-    
+
     $scope.$watch('mixins.mBalanceDue', function() {
 
       if ($scope.mixins.mBalanceDue === 0 && $scope.mixins.mSelectedHalls.length > 0) //Fully Paid
@@ -175,9 +178,9 @@
         $scope.mixins.mSelectedPaymentStatus = advancePaid[0];
         $scope.googleCalendar.colorCode = GOOGLE_CALENDAR_COLOR_IDS.GREEN;
       }
-      
+
     }, true);
-    
+
     $scope.getOtherEvents = function() {
       var events = _.filter($scope.model.eventTypes, function(eventType) {
         return eventType.name === HARDCODE_VALUES[0];
@@ -237,17 +240,17 @@
         });
       } else {
         Notification.info({
-          message: "Please select payment mode.",
+          message: 'Please select payment mode.',
           title: '<i class="glyphicon glyphicon-remove"></i> Payment Mode !!!'
         });
       }
     };
 
-    $scope.showEventDatePicker = function(ev){
-       var today = new Date();
-       today.setDate(today.getDate()-1);
+    $scope.showEventDatePicker = function(ev) {
+      var today = new Date();
+      today.setDate(today.getDate() - 1);
       $mdpDatePicker(new Date(selectedDate), {
-        targetEvent: ev, 
+        targetEvent: ev,
         minDate: today
       }).then(function(date) {
         $scope.ui.isDataChanged = true;
@@ -255,7 +258,7 @@
         var startTime = new Date(selectedEvent.mStartDateTime);
         var startTimeFormat = new Date(date).setHours(startTime.getHours(), startTime.getMinutes(), 0, 0);
         var endTime = new Date(selectedEvent.mEndDateTime);
-        var endTimeFormat = new Date(date).setHours(endTime.getHours(), endTime.getMinutes(), 0, 0);        
+        var endTimeFormat = new Date(date).setHours(endTime.getHours(), endTime.getMinutes(), 0, 0);
         var dtGMTStart = new Date((new Date(startTimeFormat)).toUTCString()).toISOString();
         var dtGMTEnd = new Date((new Date(endTimeFormat)).toUTCString()).toISOString();
         $scope.eventTime.mStartToDisplay = getTimeToDisplay(new Date(startTimeFormat));
@@ -270,27 +273,27 @@
 
     $scope.printBooking = function(form) {
       if (form.$valid) {
-        printElement(document.getElementById("printThis"));
-        var printContents = document.getElementById("printSection").innerHTML;
+        printElement(document.getElementById('printThis'));
+        var printContents = document.getElementById('printSection').innerHTML;
         var popupWin = window.open('', '_blank', 'width=300,height=300');
         popupWin.document.open();
         popupWin.document.write(getNewBookingData(form));
         popupWin.document.close();
       }
-    }
+    };
 
     function printElement(elem) {
       var domClone = elem.cloneNode(true);
-      var $printSection = document.getElementById("printSection");
+      var $printSection = document.getElementById('printSection');
 
       if (!$printSection) {
-        var $printSection = document.createElement("div");
-        $printSection.id = "printSection";
+        var $printSection = document.createElement('div');
+        $printSection.id = 'printSection';
         $($printSection).hide();
         document.body.appendChild($printSection);
       }
 
-      $printSection.innerHTML = "";
+      $printSection.innerHTML = '';
       $printSection.appendChild(domClone);
     }
 
@@ -323,12 +326,12 @@
           halls: CommonService.makeFirstLetterCapitalizeinArray(_.map($scope.mixins.mSelectedHalls, 'name')),
           paymentMode: $scope.mPaymentHistory.paymentMode,
           eventDateTime: getEventDateTime(),
-          subject: "Mirth Hall Booking Details"
+          subject: 'Mirth Hall Booking Details'
         };
 
         if ($scope.mixins.mEmail === null) {
           Notification.error({
-            message: "Mail not sent",
+            message: 'Mail not sent',
             title: '<i class="glyphicon glyphicon-remove"></i> Email Id Missing Error !!!'
           });
         } else {
@@ -358,36 +361,32 @@
     function validateStartAndEndTime() {
       if ($scope.bookingForm) {
         var bool = (Date.parse($scope.eventTime.mEndToServer) > Date.parse($scope.eventTime.mStartToServer));
-        $scope.bookingForm.end.$setValidity("greater", bool);
-        $scope.bookingForm.start.$setValidity("lesser", bool);
+        $scope.bookingForm.end.$setValidity('greater', bool);
+        $scope.bookingForm.start.$setValidity('lesser', bool);
       }
-    };
+    }
 
     function getTimeToDisplay(date) {
       return moment(date).format('hh:mm:a');
-    };
+    }
 
     function getTimeToServer(date) {
       var dt = (new Date(selectedDate)).setHours(date.getHours(), date.getMinutes(), 0, 0);
       var dtGMT = new Date((new Date(dt)).toUTCString()).toISOString();
 
       return dtGMT;
-    };
+    }
 
     $scope.onFileSelected = function(files, events, b) {
-      
+
       $scope.ui.isDataChanged = true;
-      if (files.length>0) 
-      {
-        $scope.ui.photoIdFile = files[0];  
+      if (files.length > 0) {
+        $scope.ui.photoIdFile = files[0];
         var fileExtension = $scope.ui.photoIdFile.name.split('.').pop();
-        if (fileExtension === 'png' || fileExtension === 'jpg' || fileExtension=== 'jpeg') 
-        {          
-          $scope.ui.fileSelected = true;        
-        }
-        else
-        {
-          $scope.ui.fileSelected = false; 
+        if (fileExtension === 'png' || fileExtension === 'jpg' || fileExtension === 'jpeg') {
+          $scope.ui.fileSelected = true;
+        } else {
+          $scope.ui.fileSelected = false;
           $scope.ui.photoIdFile = '';
 
           Notification.error({
@@ -395,25 +394,24 @@
             title: '<i class="glyphicon glyphicon-remove"></i> Image Error !!!'
           });
         }
-      }      
+      }
     };
 
-    $scope.cancelFile = function()
-    {
-      $scope.ui.fileSelected = false; 
+    $scope.cancelFile = function() {
+      $scope.ui.fileSelected = false;
       $scope.ui.photoIdFile = '';
     };
-        
+
     var init = function() {
       if ($scope.mixins._id) {
         $scope.ui.createMode = false;
         $scope.ui.showMdSelect = false;
-      };
-      //$scope.disabledSelectedHalls = CommonService.makeFirstLetterCapitalizeinArray(_.map($scope.mixins.mSelectedHalls, 'name'));
+      }
+      //  $scope.disabledSelectedHalls = CommonService.makeFirstLetterCapitalizeinArray(_.map($scope.mixins.mSelectedHalls, 'name'));
       var hasContainsTaxName = CommonService.hasContainsTaxName($scope.model.taxes);
       if (!hasContainsTaxName) {
         Notification.error({
-          message: "Please add both CGST and SGST tax rate.",
+          message: 'Please add both CGST and SGST tax rate.',
           title: '<i class="glyphicon glyphicon-remove"></i> Tax Missing Error !!!'
         });
         $mdDialog.cancel();
@@ -433,16 +431,16 @@
 
     $scope.setForm = function(form) {
       $scope.bookingForm = form;
-    }
+    };
 
     // Save Newbooking
     $scope.save = function(form) {
 
       if (form.$valid) {
-        
+
         if ($scope.mixins.mBalanceDue < 0) {
           Notification.error({
-            message: "Please enter valid data.",
+            message: 'Please enter valid data.',
             title: '<i class="glyphicon glyphicon-remove"></i> Error !!!'
           });
 
@@ -453,8 +451,8 @@
         $scope.mixins.mEndDateTime = $scope.eventTime.mEndToServer;
         $scope.mixins.date = new Date($scope.eventTime.mStartToServer).getDate();
         $scope.mixins.month = new Date($scope.eventTime.mStartToServer).getMonth() + 1;
-        $scope.mixins.year = new Date($scope.eventTime.mStartToServer).getFullYear();      
-        
+        $scope.mixins.year = new Date($scope.eventTime.mStartToServer).getFullYear();
+
         $scope.mixins.mSelectedHalls = _.uniqBy($scope.mixins.mSelectedHalls, '_id');
 
         var startOfTheDayInLocal = new Date($scope.eventTime.mStartToServer);
@@ -482,7 +480,7 @@
             var commonHallNamesArray = _.intersection(_.map(eventItem.mSelectedHalls, 'name'), _.map($scope.mixins.mSelectedHalls, 'name'));
 
             if (commonHallIdsArray.length > 0) {
-              //already booked hall selected              
+              //  already booked hall selected              
               if (($scope.eventTime.mStartToServer < addHours(eventItem.mEndDateTime, 3)) && ($scope.eventTime.mEndToServer > subtractHours(eventItem.mStartDateTime, 3))) { // overlaps
                 isEventOverlaps = true;
 
@@ -503,7 +501,7 @@
             } else {
               $scope.ui.isBookingInProgress = true;
             }
-            
+
             if ($scope.ui.createMode) {
               proRateAmountPaid();
               $scope.mixins.mPaymentHistories.push($scope.mPaymentHistory);
@@ -513,61 +511,55 @@
             }
 
             // Calculate Prorate Charges
-            calculateProrateCharges();                    
+            calculateProrateCharges();
 
-            if ($scope.ui.photoIdFile && $scope.ui.photoIdFile!=='') 
-            {
-              //Uploading PhotoId 
+            if ($scope.ui.photoIdFile && $scope.ui.photoIdFile !== '') {
+              //  Uploading PhotoId
               Upload.upload({
                 url: '/api/users/picture',
                 data: {
                   newProfilePicture: $scope.ui.photoIdFile
                 }
-              }).then(function(response) { //Success
+              }).then(function(response) { // Success
                 $timeout(function() {
                   $scope.mixins.mPhotoIdPath = response.data.path;
                   saveOrUpdate();
                 });
-              }, function(response) { //failed
+              }, function(response) { //  failed
                 saveOrUpdate();
               }, function(evt) {
-                //var progress = parseInt(100.0 * evt.loaded / evt.total, 10);
+                //  var progress = parseInt(100.0 * evt.loaded / evt.total, 10);
               });
-            }
-            else
-            {
+            } else {
               saveOrUpdate();
-            }           
+            }
           }
         });
 
-        function saveOrUpdate()
-        {
+        function saveOrUpdate() {
           if ($scope.mixins._id) {
-              NewbookingsService.update($scope.mixins, successCallback, errorCallback);
-            } else {
-              NewbookingsService.save($scope.mixins, successCallback, errorCallback);
-            }
-        };
+            NewbookingsService.update($scope.mixins, successCallback, errorCallback);
+          } else {
+            NewbookingsService.save($scope.mixins, successCallback, errorCallback);
+          }
+        }
 
         function successCallback(res) {
-          if ($scope.ui.createMode) //Create booking
-          {
+          if ($scope.ui.createMode) { //  Create booking
             createEventsInGoogleCalendar(res);
-          } else //Edit booking
-          {
+          } else { // Edit booking
             updateEventsInGoogleCalendar(res);
           }
-        };
+        }
 
         function errorCallback(res) {
           Notification.error({
             message: res.data.message,
             title: '<i class="glyphicon glyphicon-remove"></i> Create Booking Error !!!'
           });
-        };
+        }
 
-      };
+      }
     };
 
     function createEventsInGoogleCalendar(res) {
@@ -612,8 +604,7 @@
               insertEventReq.execute(function(insertEventRes) {
                 processedHalls++;
 
-                if (insertEventRes && insertEventRes.hasOwnProperty('error')) // error
-                {
+                if (insertEventRes && insertEventRes.hasOwnProperty('error')) { // error
                   Notification.error({
                     message: "Unable to add the event in " + matchedCalendar.summary,
                     title: '<i class="glyphicon glyphicon-remove"></i> Google Calendar Error !!!'
@@ -646,24 +637,22 @@
     };
 
     function updateEventsInGoogleCalendar(res) {
-     
+
       var removedHalls = _.pullAllBy(selectedEvent.mSelectedHalls, $scope.mixins.mSelectedHalls, '_id');
-      if (removedHalls.length > 0) 
-      {
+      if (removedHalls.length > 0) {
         var deleteProcessedHalls = 0;
         angular.forEach(removedHalls, function(hall) {
 
           var deleteEventReq = gapi.client.calendar.events.delete({
-                calendarId: hall.mCalendarId,
-                eventId: hall.mEventId
-              });
+            calendarId: hall.mCalendarId,
+            eventId: hall.mEventId
+          });
 
           deleteEventReq.execute(function(response) {
             deleteProcessedHalls++;
-            if (response && response.hasOwnProperty('error')) // error
-            {
+            if (response && response.hasOwnProperty('error')) { // error
               Notification.warning({
-                message: "Unable to remove the event from "+hall.displayName+" hall in Google Calendar",
+                message: "Unable to remove the event from " + hall.displayName + " hall in Google Calendar",
                 title: '<i class="glyphicon glyphicon-remove"></i> Google Calendar Error !!!'
               });
             } else // success
@@ -671,37 +660,32 @@
               //no need to do anything.
             }
 
-            if (deleteProcessedHalls == removedHalls.length) 
-            {
+            if (deleteProcessedHalls == removedHalls.length) {
               insertOrUpdateEventInGoogleCalendar(res);
             }
           });
 
         });
-      }
-      else
-      {
+      } else {
         insertOrUpdateEventInGoogleCalendar(res);
-      }      
+      }
     };
 
     function getCommonHalls() {
       var calendarListReq = gapi.client.calendar.calendarList.list();
       calendarListReq.execute(function(respCalList) {
-        if (respCalList && respCalList.hasOwnProperty('error')) // error
-        {
+        if (respCalList && respCalList.hasOwnProperty('error')) { // error
           Notification.error({
             message: "Unable to fetch the halls from Google Calendar",
             title: '<i class="glyphicon glyphicon-remove"></i> Google Calendar Error !!!'
           });
         } else // success
-        {     
+        {
           var withOutFutureRateHalls = [];
           angular.forEach($scope.model.halls, function(hall) {
             var effectiveSummaries = CommonService.findRateSummariesByDateOfFutureHalls(hall.rateSummaries, new Date($scope.eventTime.mStartToServer));
-            console.log(hall.displayName+" "+effectiveSummaries.length);
-            if (effectiveSummaries.length > 0) 
-            {
+            console.log(hall.displayName + " " + effectiveSummaries.length);
+            if (effectiveSummaries.length > 0) {
               withOutFutureRateHalls.push(hall);
             }
           });
@@ -712,22 +696,14 @@
 
           var commonHalls = [];
           angular.forEach(withOutFutureRateHalls, function(hall) {
-            if (_.includes(googleCalendarHallNames, hall.name.toLowerCase().trim())) 
-            {
+            if (_.includes(googleCalendarHallNames, hall.name.toLowerCase().trim())) {
               commonHalls.push(hall);
-            }
-            else if(selectedEvent && _.includes(_.map(selectedEvent.mSelectedHalls, '_id'), hall._id))
-            {
+            } else if (selectedEvent && _.includes(_.map(selectedEvent.mSelectedHalls, '_id'), hall._id)) {
               commonHalls.push(hall);
-            }
-            else
-            {
-              if (hallsNotInGoogleCalendar == "") 
-              {
+            } else {
+              if (hallsNotInGoogleCalendar == "") {
                 hallsNotInGoogleCalendar = hall.displayName;
-              } 
-              else 
-              {
+              } else {
                 hallsNotInGoogleCalendar = hallsNotInGoogleCalendar.trim() + ', ' + hall.displayName;
               }
             }
@@ -737,19 +713,17 @@
           $scope.model.halls = commonHalls;
 
           if (!$scope.ui.viewMode)
-            shownHallsNotInGoogleCalendarMessage();          
+            shownHallsNotInGoogleCalendarMessage();
         }
       });
     }
 
-    function insertOrUpdateEventInGoogleCalendar(res)
-    {
+    function insertOrUpdateEventInGoogleCalendar(res) {
       var calendarListReq = gapi.client.calendar.calendarList.list();
       calendarListReq.execute(function(respCalList) {
-        if (respCalList && respCalList.hasOwnProperty('error')) // error
-        {
+        if (respCalList && respCalList.hasOwnProperty('error')) { // error
           Notification.error({
-            message: "Unable to fetch the halls from Google Calendar",
+            message: 'Unable to fetch the halls from Google Calendar',
             title: '<i class="glyphicon glyphicon-remove"></i> Google Calendar Error !!!'
           });
 
@@ -848,7 +822,7 @@
                 }
 
                 Notification.warning({
-                  message: "Unable to find the " + hall.displayName + " in Google Calendar",
+                  message: 'Unable to find the ' + hall.displayName + ' in Google Calendar',
                   title: '<i class="glyphicon glyphicon-remove"></i> Google Calendar Warning !!!'
                 });
               }
@@ -871,13 +845,13 @@
 
       function updateErrorCallback(res) {
         Notification.error({
-          message: "Unable to update the Google calendar event details in database",
+          message: 'Unable to update the Google calendar event details in database',
           title: '<i class="glyphicon glyphicon-remove"></i> Error !!!'
         });
 
         showBookingCompleteMessage(res);
-      };
-    };
+      }
+    }
 
     $scope.cancel = function(bookingForm) {
       if (bookingForm.$dirty || $scope.ui.isDataChanged) {
@@ -886,7 +860,7 @@
             $mdDialog.cancel();
           },
           function() {
-            console.log("no");
+            console.log('no');
           });
       } else
         $mdDialog.cancel();
@@ -904,14 +878,14 @@
           $scope.$apply();
         },
         function() {
-          console.log("no");
+          console.log('no');
         });
     };
 
     $scope.editBooking = function() {
       $scope.ui.viewMode = false;
       shownHallsNotInGoogleCalendarMessage();
-    }
+    };
 
     $scope.shiftChargesView = function(isShowActualChargesView) {
 
@@ -927,10 +901,10 @@
           $scope.ui.isActualChargesView = isShowActualChargesView;
         },
         function() {
-          console.log("no");
+          console.log('no');
         });
     };
-    
+
     $scope.saveActualCharges = function(actualChargesForm) {
       if (actualChargesForm.$invalid)
         return;
@@ -944,18 +918,18 @@
 
       function updateActuralChargesSuccessCallback(res) {
         Notification.success({
-          message: "Actual charges updated successfully",
+          message: 'Actual charges updated successfully',
           title: '<i class="glyphicon glyphicon-remove"></i> Success !!!'
         });
         $mdDialog.cancel();
-      };
+      }
 
       function updateActuralChargesErrorCallback(res) {
         Notification.error({
           message: res.data.message,
           title: '<i class="glyphicon glyphicon-remove"></i> Error !!!'
         });
-      };
+      }
     };
 
     $scope.deleteBooking = function() {
@@ -972,37 +946,35 @@
                 eventId: hall.mEventId
               });
 
-              deleteEventReq.execute(function(response) {
-                deleteProcessedHalls++;
-                if (response && response.hasOwnProperty('error')) // error
-                {
-                  Notification.error({
-                    message: "Unable to delete the event from " + hall.displayName + " hall in Google Calendar",
-                    title: '<i class="glyphicon glyphicon-remove"></i> Google Calendar Error !!!'
-                  });
-                } else // success
-                {
-                  //no need to do anything.
-                }
+            deleteEventReq.execute(function(response) {
+              deleteProcessedHalls++;
+              if (response && response.hasOwnProperty('error')) { // error
+                Notification.error({
+                  message: 'Unable to delete the event from ' + hall.displayName + ' hall in Google Calendar',
+                  title: '<i class="glyphicon glyphicon-remove"></i> Google Calendar Error !!!'
+                });
+              } else { // success
+                //  no need to do anything.
+              }
 
-                if (deleteProcessedHalls == $scope.mixins.mSelectedHalls.length) {
-                  res.isDelete = true;
-                  $mdDialog.hide(res);
-                }
-              });
+              if (deleteProcessedHalls === $scope.mixins.mSelectedHalls.length) {
+                res.isDelete = true;
+                $mdDialog.hide(res);
+              }
+            });
 
             });
           }
 
-          function deleteErrorCallback(res) {
-            Notification.error({
-              message: res.data.message,
-              title: '<i class="glyphicon glyphicon-remove"></i> Delete Booking Detail Error !!!'
-            });
-          }
-        },
+        function deleteErrorCallback(res) {
+          Notification.error({
+            message: res.data.message,
+            title: '<i class="glyphicon glyphicon-remove"></i> Delete Booking Detail Error !!!'
+          });
+        }
+      },
         function() {
-          console.log("no");
+          console.log('no');
         });
     };
 
@@ -1011,7 +983,7 @@
      */
     function showBookingCompleteMessage(res) {
       Notification.success({
-        message: $scope.ui.createMode ? "Booked successfully" : "Updated successfully",
+        message: $scope.ui.createMode ? 'Booked successfully' : 'Updated successfully',
         title: '<i class="glyphicon glyphicon-remove"></i> Success !!!'
       });
 
@@ -1021,8 +993,8 @@
       }
       $scope.ui.isBookingInProgress = false;
       $mdDialog.hide(res);
-    };
-    
+    }
+
     function clearPaymentHistory() {
       $scope.mPaymentHistory = {
         amountPaid: null,
@@ -1035,7 +1007,7 @@
         paidCGST: 0,
         paidSGST: 0
       };
-    };
+    }
 
     $scope.addPayment = function() {
       pushPayment();
@@ -1055,20 +1027,20 @@
 
         $scope.mixins.mPaymentHistories.unshift($scope.mPaymentHistory);
       }
-    };
+    }
 
     function proRateAmountPaid() {
       $scope.mPaymentHistory.paidSubTotal = ($scope.mPaymentHistory.amountPaid * pendingSubTotalPercentage) / 100;
       $scope.mPaymentHistory.paidCGST = ($scope.mPaymentHistory.amountPaid * pendingCGSTPercentage) / 100;
       $scope.mPaymentHistory.paidSGST = ($scope.mPaymentHistory.amountPaid * pendingSGSTPercentage) / 100;
-    };
+    }
 
     /**
      * Date convertion to YYYY-MM-DD HH:MM:SS
      */
 
     function convertDate(date) {
-      return new Date(date).toString().replace(/GMT.+/, "");
+      return new Date(date).toString().replace(/GMT.+/, '');
     }
 
     /**
@@ -1109,78 +1081,75 @@
     function shownHallsNotInGoogleCalendarMessage() {
       isShownHallsNotInGoogleCalendar = true;
 
-      if (hallsNotInGoogleCalendar !== "") {
+      if (hallsNotInGoogleCalendar !== '') {
         var message;
         if (hallsNotInGoogleCalendar.indexOf(',') > -1)
-          message = hallsNotInGoogleCalendar + " halls are not in Google Calendar.";
+          message = hallsNotInGoogleCalendar + ' halls are not in Google Calendar.';
         else
-          message = hallsNotInGoogleCalendar + " hall is not in Google Calendar.";
+          message = hallsNotInGoogleCalendar + ' hall is not in Google Calendar.';
 
         Notification.warning({
           message: message,
           title: '<i class="glyphicon glyphicon-remove"></i> Google Calendar Error !!!'
         });
       }
-    };
+    }
 
-    $scope.calculateBalanceDue = function() {      
-      
-      var previouslyPaidSubTotal = selectedEvent ? CommonService.sumOfArray(_.map($scope.mixins.mPaymentHistories, 'paidSubTotal')) : 0 ;
+    $scope.calculateBalanceDue = function() {
 
-      //without payment history subtotal
+      var previouslyPaidSubTotal = selectedEvent ? CommonService.sumOfArray(_.map($scope.mixins.mPaymentHistories, 'paidSubTotal')) : 0;
+
+      //  without payment history subtotal
       $scope.mixins.mPendingSubTotal = Number(Number(Number($scope.taxableChargesBeforeDiscount) - Number($scope.mixins.mDiscount) - Number(previouslyPaidSubTotal)).toFixed(2));
       $scope.mixins.mPendingCGST = Number(Number(Number($scope.mixins.mPendingSubTotal) * cgstPercent).toFixed(2));
       $scope.mixins.mPendingSGST = Number(Number(Number($scope.mixins.mPendingSubTotal) * sgstPercent).toFixed(2));
       $scope.mixins.mPendingGrandTotal = Number(Number(Math.round(Number($scope.mixins.mPendingSubTotal) + Number($scope.mixins.mPendingCGST) + Number($scope.mixins.mPendingSGST))).toFixed(2));
-      
-      if ($scope.mixins.mPendingSubTotal===0 && $scope.mixins.mPendingGrandTotal===0)// 0/0 returns undefined
-      {
-        pendingSubTotalPercentage =  0;
+
+      if ($scope.mixins.mPendingSubTotal === 0 && $scope.mixins.mPendingGrandTotal === 0) { // 0/0 returns undefined
+        pendingSubTotalPercentage = 0;
         pendingCGSTPercentage = 0;
-        pendingSGSTPercentage = 0; 
+        pendingSGSTPercentage = 0;
+      } else {
+        pendingSubTotalPercentage = ($scope.mixins.mPendingSubTotal / $scope.mixins.mPendingGrandTotal) * 100;
+        pendingCGSTPercentage = ($scope.mixins.mPendingCGST / $scope.mixins.mPendingGrandTotal) * 100;
+        pendingSGSTPercentage = ($scope.mixins.mPendingSGST / $scope.mixins.mPendingGrandTotal) * 100;
       }
-      else
-      {
-        pendingSubTotalPercentage = ($scope.mixins.mPendingSubTotal/$scope.mixins.mPendingGrandTotal)*100;
-        pendingCGSTPercentage = ($scope.mixins.mPendingCGST/$scope.mixins.mPendingGrandTotal)*100;
-        pendingSGSTPercentage = ($scope.mixins.mPendingSGST/$scope.mixins.mPendingGrandTotal)*100;         
-      }
-      
+
       var paymentHistorySubTotal = ($scope.mPaymentHistory.amountPaid * pendingSubTotalPercentage) / 100;
       var paymentHistoryCGST = ($scope.mPaymentHistory.amountPaid * pendingCGSTPercentage) / 100;
       var paymentHistorySGST = ($scope.mPaymentHistory.amountPaid * pendingSGSTPercentage) / 100;
 
-      //with payment history subtotal
+      //  with payment history subtotal
       $scope.mixins.mPendingSubTotal = Number(Number(Number($scope.taxableChargesBeforeDiscount) - Number($scope.mixins.mDiscount) - Number(previouslyPaidSubTotal) - Number(paymentHistorySubTotal)).toFixed(2));
       $scope.mixins.mPendingCGST = Number(Number(Number($scope.mixins.mPendingSubTotal) * cgstPercent).toFixed(2));
       $scope.mixins.mPendingSGST = Number(Number(Number($scope.mixins.mPendingSubTotal) * sgstPercent).toFixed(2));
       $scope.mixins.mPendingGrandTotal = Number(Number(Math.round(Number($scope.mixins.mPendingSubTotal) + Number($scope.mixins.mPendingCGST) + Number($scope.mixins.mPendingSGST))).toFixed(2));
-      
+
       $scope.mixins.mReceivedSubTotal = Number(Number(Number(previouslyPaidSubTotal) + Number(paymentHistorySubTotal)).toFixed(2));
       $scope.mixins.mReceivedCGST = Number(Number(Number(selectedEvent ? CommonService.sumOfArray(_.map($scope.mixins.mPaymentHistories, 'paidCGST')) : 0) + Number(paymentHistoryCGST)).toFixed(2));
       $scope.mixins.mReceivedSGST = Number(Number(Number(selectedEvent ? CommonService.sumOfArray(_.map($scope.mixins.mPaymentHistories, 'paidSGST')) : 0) + Number(paymentHistorySGST)).toFixed(2));
       $scope.mixins.mReceivedGrandTotal = Number(Number(Math.round(Number($scope.mixins.mReceivedSubTotal) + Number($scope.mixins.mReceivedCGST) + Number($scope.mixins.mReceivedSGST))).toFixed(2));
-      
+
       $scope.mixins.mSubTotal = Number(Number(Math.round(Number($scope.mixins.mPendingSubTotal) + Number($scope.mixins.mReceivedSubTotal))).toFixed(2));
       $scope.mixins.mCGST = Number(Number(Math.round(Number($scope.mixins.mPendingCGST) + Number($scope.mixins.mReceivedCGST))).toFixed(2));
       $scope.mixins.mSGST = Number(Number(Math.round(Number($scope.mixins.mPendingSGST) + Number($scope.mixins.mReceivedSGST))).toFixed(2));
       $scope.mixins.mGrandTotal = Number(Number(Math.round(Number($scope.mixins.mPendingGrandTotal) + Number($scope.mixins.mReceivedGrandTotal))).toFixed(2));
 
-      $scope.mixins.mBalanceDue = Number(Number(Math.round(Number($scope.mixins.mPendingGrandTotal))).toFixed(2));    
-              
+      $scope.mixins.mBalanceDue = Number(Number(Math.round(Number($scope.mixins.mPendingGrandTotal))).toFixed(2));
+
     };
 
     function calculateProrateCharges() {
       for (var i = 0; i < $scope.mixins.mSelectedHalls.length; i++) {
 
-        //individual discounts
+        //  individual discounts
         $scope.mixins.mSelectedHalls[i].Discount = {
           mRateDiscount: ($scope.mixins.mSelectedHalls[i].mBasicCost / totalCostToDiscountProrate) * $scope.mixins.mDiscount,
           mElectricityDiscount: ($scope.mixins.mSelectedHalls[i].mElectricityCharges / totalCostToDiscountProrate) * $scope.mixins.mDiscount,
           mCleaningDiscount: ($scope.mixins.mSelectedHalls[i].mCleaningCharges / totalCostToDiscountProrate) * $scope.mixins.mDiscount
         };
 
-        //Total discount
+        //  Total discount
         var sHall = $scope.mixins.mSelectedHalls[i];
         var discounts = sHall.Discount;
         $scope.mixins.mSelectedHalls[i].mTotalDiscount = discounts.mRateDiscount + discounts.mElectricityDiscount + discounts.mCleaningDiscount;
@@ -1197,36 +1166,31 @@
           mMiscellaneousCGST: (sHall.mMiscellaneousCharges / $scope.mixins.mSubTotal) * $scope.mixins.mCGST,
           mMiscellaneousSGST: (sHall.mMiscellaneousCharges / $scope.mixins.mSubTotal) * $scope.mixins.mSGST,
           mDamagesCGST: (sHall.mDamages / $scope.mixins.mSubTotal) * $scope.mixins.mCGST,
-          mDamagesSGST: (sHall.mDamages / $scope.mixins.mSubTotal) * $scope.mixins.mSGST,
+          mDamagesSGST: (sHall.mDamages / $scope.mixins.mSubTotal) * $scope.mixins.mSGST
         };
-        
+
         var GSTs = $scope.mixins.mSelectedHalls[i].GST;
         $scope.mixins.mSelectedHalls[i].mTotalCGST = GSTs.mRateCGST + GSTs.mElectricityCGST + GSTs.mCleaningCGST + GSTs.mGeneratorCGST + GSTs.mMiscellaneousCGST + GSTs.mDamagesCGST;
 
         $scope.mixins.mSelectedHalls[i].mTotalSGST = GSTs.mRateSGST + GSTs.mElectricitySGST + GSTs.mCleaningSGST + GSTs.mGeneratorSGST + GSTs.mMiscellaneousSGST + GSTs.mDamagesSGST;
 
-        //All rate before applying the discount 
-        $scope.mixins.mSelectedHalls[i].mRevenue = $scope.mixins.mSelectedHalls[i].mBasicCost + $scope.mixins.mSelectedHalls[i].mElectricityCharges 
-                                                  + $scope.mixins.mSelectedHalls[i].mCleaningCharges + $scope.mixins.mSelectedHalls[i].mGeneratorCharges 
-                                                  + $scope.mixins.mSelectedHalls[i].mMiscellaneousCharges + $scope.mixins.mSelectedHalls[i].mDamages 
-                                                  + $scope.mixins.mSelectedHalls[i].mTotalCGST + $scope.mixins.mSelectedHalls[i].mTotalSGST;
-        
-        //Collection including CGST and SGST taxes.
-        var receivedPayment = CommonService.sumOfArray(_.map($scope.mixins.mPaymentHistories, 'amountPaid'));                
+        //  All rate before applying the discount
+        $scope.mixins.mSelectedHalls[i].mRevenue = $scope.mixins.mSelectedHalls[i].mBasicCost + $scope.mixins.mSelectedHalls[i].mElectricityCharges + $scope.mixins.mSelectedHalls[i].mCleaningCharges + $scope.mixins.mSelectedHalls[i].mGeneratorCharges + $scope.mixins.mSelectedHalls[i].mMiscellaneousCharges + $scope.mixins.mSelectedHalls[i].mDamages + $scope.mixins.mSelectedHalls[i].mTotalCGST + $scope.mixins.mSelectedHalls[i].mTotalSGST;
+
+        //  Collection including CGST and SGST taxes.
+        var receivedPayment = CommonService.sumOfArray(_.map($scope.mixins.mPaymentHistories, 'amountPaid'));
         $scope.mixins.mSelectedHalls[i].Collection = {
-          mBasicCostCollection : ((sHall.mBasicCost - discounts.mRateDiscount) / $scope.mixins.mSubTotal) * receivedPayment,
-          mElectricityCollection : ((sHall.mElectricityCharges - discounts.mElectricityDiscount) / $scope.mixins.mSubTotal) * receivedPayment,
-          mCleaningCollection : ((sHall.mCleaningCharges - discounts.mCleaningDiscount) / $scope.mixins.mSubTotal) * receivedPayment,
-          mGeneratorCollection : (sHall.mGeneratorCharges /  $scope.mixins.mSubTotal) * receivedPayment,
-          mMiscellaneousCollection : (sHall.mMiscellaneousCharges /  $scope.mixins.mSubTotal) * receivedPayment,
-          mDamageCollection : (sHall.mDamages /  $scope.mixins.mSubTotal) * receivedPayment
-        }
+          mBasicCostCollection: ((sHall.mBasicCost - discounts.mRateDiscount) / $scope.mixins.mSubTotal) * receivedPayment,
+          mElectricityCollection: ((sHall.mElectricityCharges - discounts.mElectricityDiscount) / $scope.mixins.mSubTotal) * receivedPayment,
+          mCleaningCollection: ((sHall.mCleaningCharges - discounts.mCleaningDiscount) / $scope.mixins.mSubTotal) * receivedPayment,
+          mGeneratorCollection: (sHall.mGeneratorCharges / $scope.mixins.mSubTotal) * receivedPayment,
+          mMiscellaneousCollection: (sHall.mMiscellaneousCharges / $scope.mixins.mSubTotal) * receivedPayment,
+          mDamageCollection: (sHall.mDamages / $scope.mixins.mSubTotal) * receivedPayment
+        };
 
         var Collections = $scope.mixins.mSelectedHalls[i].Collection;
-        $scope.mixins.mSelectedHalls[i].mTotalCollection = Collections.mBasicCostCollection + Collections.mElectricityCollection 
-                                                          + Collections.mCleaningCollection + Collections.mGeneratorCollection 
-                                                          + Collections.mMiscellaneousCollection + Collections.mDamageCollection;
-        
+        $scope.mixins.mSelectedHalls[i].mTotalCollection = Collections.mBasicCostCollection + Collections.mElectricityCollection + Collections.mCleaningCollection + Collections.mGeneratorCollection + Collections.mMiscellaneousCollection + Collections.mDamageCollection;
+
       }
     }
 
@@ -1241,7 +1205,7 @@
       $scope.taxableChargesBeforeDiscount = Number(basicCost) + Number(electricityCost) + Number(cleaningCost) +
         Number(generatorCost) + Number(miscellaneousCost) + Number(damageCost);
 
-      totalCostToDiscountProrate = Number(basicCost) + Number(electricityCost) + Number(cleaningCost);      
+      totalCostToDiscountProrate = Number(basicCost) + Number(electricityCost) + Number(cleaningCost);
     }
 
     function calculateTaxRate() {

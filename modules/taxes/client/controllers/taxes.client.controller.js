@@ -1,4 +1,4 @@
-(function () {
+(function() {
   'use strict';
 
   // Taxes controller
@@ -8,14 +8,13 @@
 
   TaxesController.$inject = ['CommonService', 'DATA_BACKGROUND_COLOR', '$scope', '$state', '$rootScope', '$window', 'Authentication', '$mdDialog', 'Notification', 'taxResolve', 'TaxesService', '$mdpDatePicker', 'taxTypeResolve'];
 
-  function TaxesController (CommonService, DATA_BACKGROUND_COLOR, $scope, $state, $rootScope, $window, Authentication, $mdDialog, Notification, tax, TaxesService, $mdpDatePicker, taxTypeResolve) 
-  {   
+  function TaxesController(CommonService, DATA_BACKGROUND_COLOR, $scope, $state, $rootScope, $window, Authentication, $mdDialog, Notification, tax, TaxesService, $mdpDatePicker, taxTypeResolve) {
     $scope.model = {
       tax: {
         name: tax ? tax.name : undefined,
         _id: tax ? tax._id : undefined,
         effectiveDate: tax ? dateConvertion(tax.effectiveDate) : dateConvertion(new Date()),
-        rateSummaries: tax ? tax.rateSummaries : [],
+        rateSummaries: tax ? tax.rateSummaries : []
       },
       percentage: undefined,
       taxTypes: taxTypeResolve
@@ -23,12 +22,12 @@
 
     $scope.ui = {
       mNumberPattern: /^[0-9]+(\.[0-9]{1,2})?$/,
-      createMode: true,
+      createMode: true
     };
 
     $scope.DATA_BACKGROUND_COLOR = DATA_BACKGROUND_COLOR;
 
-     $scope.loadInitial = function() {
+    $scope.loadInitial = function() {
       if ($scope.model.tax._id) {
         $scope.ui.createMode = false;
         var currentDate = new Date();
@@ -37,14 +36,11 @@
         $scope.model.tax.effectiveDate = dateConvertion(summaryRate[0].effectiveDate);
       }
     };
-    
-    $scope.save = function(createTaxForm)
-    {       
+
+    $scope.save = function(createTaxForm) {
       $scope.createTaxForm = createTaxForm;
-      if (createTaxForm.$valid) 
-      {     
-        if ($scope.model.tax._id) 
-        {
+      if (createTaxForm.$valid) {
+        if ($scope.model.tax._id) {
           var requestedEffectiveDate = new Date($scope.model.tax.effectiveDate);
           var summaryRate = CommonService.findRateSummariesByDateBeforeSave($scope.model.tax.rateSummaries, requestedEffectiveDate);
           if (summaryRate.length > 0) {
@@ -60,41 +56,39 @@
             });
           }
           TaxesService.update($scope.model.tax, successCallback, errorCallback);
-        } 
-        else 
-        {
+        } else {
           $scope.model.tax.rateSummaries.push({
             percentage: $scope.model.percentage,
             effectiveDate: $scope.model.tax.effectiveDate
           });
           TaxesService.save($scope.model.tax, successCallback, errorCallback);
-        }        
+        }
 
-        function successCallback(res) 
-        {          
+        function successCallback(res) {
           $mdDialog.hide(res);
         }
 
-        function errorCallback(res) 
-        {
-          Notification.error({ message: res.data.message, title: '<i class="glyphicon glyphicon-remove"></i> Create Tax Error !!!' });
+        function errorCallback(res) {
+          Notification.error({
+            message: res.data.message,
+            title: '<i class="glyphicon glyphicon-remove"></i> Create Tax Error !!!'
+          });
         }
       }
-    }
+    };
 
-    $scope.cancel = function()
-    {
+    $scope.cancel = function() {
       $mdDialog.cancel();
-    }
+    };
 
     $scope.showStartDatePicker = function(ev) {
       $mdpDatePicker($scope.model.tax.effectiveDate, {
-          targetEvent: ev,
-        })
+        targetEvent: ev
+      })
         .then(function(dateTime) {
           $scope.model.tax.effectiveDate = moment(dateTime).format('DD, MMM YYYY');
         });
-    }
+    };
 
     // $scope.showStartDatePicker = function() {
     //   new MaterialDatepicker('#taxEffectiveDatePicker', {

@@ -1,4 +1,4 @@
-/*(function () {
+/*  (function () {
   'use strict';
 
   angular
@@ -77,4 +77,5 @@
     return new NewbookingsService();
   }
 }());
+
 */

@@ -1,4 +1,4 @@
-(function () {
+(function() {
   'use strict';
 
   // Eventtypes controller
@@ -8,8 +8,7 @@
 
   EventtypesController.$inject = ['DATA_BACKGROUND_COLOR', '$scope', '$state', '$rootScope', '$window', '$mdDialog', 'Notification', 'eventtypeResolve', 'otherEventTypesResolve', 'EventtypesService', 'COLOURS', 'colorsResolve'];
 
-  function EventtypesController (DATA_BACKGROUND_COLOR, $scope, $state, $rootScope, $window, $mdDialog, Notification, eventtype, otherEventTypesResolve, EventtypesService, COLOURS, colorsResolve) 
-  {
+  function EventtypesController(DATA_BACKGROUND_COLOR, $scope, $state, $rootScope, $window, $mdDialog, Notification, eventtype, otherEventTypesResolve, EventtypesService, COLOURS, colorsResolve) {
     $scope.colours = colorsResolve;
     $scope.model = {
       eventType: {
@@ -18,7 +17,7 @@
         colour: eventtype ? eventtype.colour : undefined,
         _id: eventtype ? eventtype._id : undefined
       }
-    }
+    };
 
     $scope.DATA_BACKGROUND_COLOR = DATA_BACKGROUND_COLOR;
 
@@ -26,23 +25,19 @@
       $scope.model.eventType.name = $scope.model.eventType.displayName;
     }, true);
 
-    if (eventtype) 
-    { 
+    if (eventtype) {
       $scope.model.eventType.colour = $scope.colours[_.findIndex($scope.colours, eventtype.colour)];
     }
-    
-    $scope.onEventTypeColourSelected = function()
-    {
-      console.log("eventType "+JSON.stringify($scope.model.eventType));
-    }
-    
+
+    $scope.onEventTypeColourSelected = function() {
+      console.log('eventType ' + JSON.stringify($scope.model.eventType));
+    };
+
     // Save Eventtype
-    $scope.save = function(eventtypeForm) 
-    {
+    $scope.save = function(eventtypeForm) {
       $scope.eventtypeForm = eventtypeForm;
 
-      if (eventtypeForm.$valid) 
-      { 
+      if (eventtypeForm.$valid) {
         if (_.includes(otherEventTypesResolve, $scope.model.eventType.name.toLowerCase().trim())) {
           Notification.error({
             message: 'Name already exists',
@@ -51,31 +46,28 @@
 
           return;
         }
-        
-        if ($scope.model.eventType._id) 
-        {
+
+        if ($scope.model.eventType._id) {
           EventtypesService.update($scope.model.eventType, successCallback, errorCallback);
-        } 
-        else 
-        {
+        } else {
           EventtypesService.save($scope.model.eventType, successCallback, errorCallback);
         }
 
-        function successCallback(res) 
-        {
+        function successCallback(res) {
           $mdDialog.hide(res);
         }
 
-        function errorCallback(res) 
-        {
-          Notification.error({ message: res.data.message, title: '<i class="glyphicon glyphicon-remove"></i> Create Event Error !!!' });
+        function errorCallback(res) {
+          Notification.error({
+            message: res.data.message,
+            title: '<i class="glyphicon glyphicon-remove"></i> Create Event Error !!!'
+          });
         }
       }
-    }
+    };
 
-    $scope.cancel = function()
-    {
+    $scope.cancel = function() {
       $mdDialog.cancel();
-    }  
+    };
   }
 }());

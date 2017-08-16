@@ -14,22 +14,22 @@
         name: hall ? hall.name : undefined,
         displayName: hall ? hall.displayName : undefined,
         description: hall ? hall.description : undefined,
-        _id: hall ? hall._id : undefined,        
+        _id: hall ? hall._id : undefined,
         effectiveDate: hall ? dateConvertion(hall.effectiveDate) : dateConvertion(new Date()),
-        rateSummaries: hall ? hall.rateSummaries : [],
+        rateSummaries: hall ? hall.rateSummaries : []
       },
       taxes: TaxesService.query(),
       rate: undefined,
       powerConsumpationCharges: undefined,
       cleaningCharges: undefined,
       CGSTTax: undefined,
-      SGSTTax: undefined,
+      SGSTTax: undefined
     };
 
     $scope.ui = {
       mNumberPattern: /^[0-9]+(\.[0-9]{1,2})?$/,
-      createMode: true,
-    }
+      createMode: true
+    };
 
     $scope.DATA_BACKGROUND_COLOR = DATA_BACKGROUND_COLOR;
 
@@ -37,7 +37,7 @@
       $scope.model.hall.name = $scope.model.hall.displayName;
     }, true);
 
-    $scope.loadInitial = function() {  
+    $scope.loadInitial = function() {
       if ($scope.model.hall._id) {
         $scope.ui.createMode = false;
         var currentDate = new Date();
@@ -47,7 +47,7 @@
         $scope.model.cleaningCharges = summaryRate[0].cleaningCharges;
         $scope.model.CGSTTax = summaryRate[0].CGSTTax;
         $scope.model.SGSTTax = summaryRate[0].SGSTTax;
-        $scope.model.hall.effectiveDate = dateConvertion(summaryRate[0].effectiveDate);       
+        $scope.model.hall.effectiveDate = dateConvertion(summaryRate[0].effectiveDate);
       }
     };
 
@@ -55,7 +55,7 @@
       var hasContainsTaxName = CommonService.hasContainsTaxName($scope.model.taxes);
       if (!hasContainsTaxName) {
         Notification.error({
-          message: "Please add both CGST and SGST tax rate.",
+          message: 'Please add both CGST and SGST tax rate.',
           title: '<i class="glyphicon glyphicon-remove"></i> Tax Missing Error !!!'
         });
         $mdDialog.cancel();
@@ -132,11 +132,11 @@
           });
         }
       }
-    }
+    };
 
     $scope.cancel = function() {
       $mdDialog.cancel();
-    }
+    };
 
     $scope.showStartDatePicker = function(ev) {
       var today = new Date();
@@ -147,7 +147,7 @@
         .then(function(dateTime) {
           $scope.model.hall.effectiveDate = moment(dateTime).format('DD, MMM YYYY');
         });
-    }
+    };
 
     // $scope.showStartDatePicker = function() {
     //   new MaterialDatepicker('#hallEffectiveDatePicker', {

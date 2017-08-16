@@ -1,4 +1,4 @@
-(function () {
+(function() {
   'use strict';
 
   angular
@@ -8,7 +8,7 @@
   routeConfig.$inject = ['$stateProvider', '$urlRouterProvider'];
 
   function routeConfig($stateProvider, $urlRouterProvider) {
-    $urlRouterProvider.rule(function ($injector, $location) {
+    $urlRouterProvider.rule(function($injector, $location) {
       var path = $location.path();
       var hasTrailingSlash = path.length > 1 && path[path.length - 1] === '/';
 
@@ -20,13 +20,13 @@
     });
 
     // Redirect to 404 when route not found
-    $urlRouterProvider.otherwise(function ($injector, $location) {
+    $urlRouterProvider.otherwise(function($injector, $location) {
       $injector.get('$state').transitionTo('not-found', null, {
         location: false
       });
     });
 
-    $stateProvider      
+    $stateProvider
       .state('login', {
         url: '/login',
         templateUrl: '/modules/core/client/views/login.client.view.html',
@@ -99,34 +99,34 @@
       });
 
 
-      bookedHallData.$inject = ['NewbookingsService'];
+    bookedHallData.$inject = ['NewbookingsService'];
 
-      function bookedHallData(NewbookingsService) {
-        return NewbookingsService.query();
-      }
+    function bookedHallData(NewbookingsService) {
+      return NewbookingsService.query();
+    }
 
-      eventTypesData.$inject = ['EventtypesService'];
+    eventTypesData.$inject = ['EventtypesService'];
 
-      function eventTypesData(EventtypesService) {
-        return EventtypesService.query();
-      }
+    function eventTypesData(EventtypesService) {
+      return EventtypesService.query();
+    }
 
-      paymentStatusesData.$inject = ['PaymentstatusesService'];
+    paymentStatusesData.$inject = ['PaymentstatusesService'];
 
-      function paymentStatusesData(PaymentstatusesService) {
-        return PaymentstatusesService.query();
-      }
+    function paymentStatusesData(PaymentstatusesService) {
+      return PaymentstatusesService.query();
+    }
 
-      taxesData.$inject = ['TaxesService'];
+    taxesData.$inject = ['TaxesService'];
 
-      function taxesData(TaxesService) {
-        return TaxesService.query();
-      }
+    function taxesData(TaxesService) {
+      return TaxesService.query();
+    }
 
-      hallsData.$inject = ['HallsService'];
+    hallsData.$inject = ['HallsService'];
 
-      function hallsData(HallsService) {
-        return HallsService.query();
-      }
+    function hallsData(HallsService) {
+      return HallsService.query();
+    }
   }
 }());
