@@ -207,7 +207,7 @@ gulp.task('wiredep', function () {
 
 // wiredep task to production
 gulp.task('wiredep:prod', function () {
-  return gulp.src('config/assets/production.js')
+  /*return gulp.src('config/assets/production.js')
     .pipe(wiredep({
       ignorePath: '../../',
       fileTypes: {
@@ -235,7 +235,7 @@ gulp.task('wiredep:prod', function () {
         }
       }
     }))
-    .pipe(gulp.dest('config/assets/'));
+    .pipe(gulp.dest('config/assets/'));*/
 });
 
 // Copy local development environment config example
@@ -409,7 +409,8 @@ gulp.task('lint', function (done) {
 
 // Lint project files and minify them into two production files.
 gulp.task('build', function (done) {
-  runSequence('env:dev', 'wiredep:prod', 'lint', ['uglify', 'cssmin'], done);
+  //runSequence('env:dev', 'wiredep:prod', 'lint', ['uglify', 'cssmin'], done);
+  runSequence('env:dev', 'wiredep:prod', 'lint', ['cssmin'], done);
 });
 
 // Run the project tests
