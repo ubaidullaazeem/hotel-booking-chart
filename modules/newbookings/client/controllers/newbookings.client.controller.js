@@ -409,6 +409,40 @@
       }
       //  $scope.disabledSelectedHalls = CommonService.makeFirstLetterCapitalizeinArray(_.map($scope.mixins.mSelectedHalls, 'name'));
       var hasContainsTaxName = CommonService.hasContainsTaxName($scope.model.taxes);
+
+      var isCGSTRatePresentforToday = false;
+      var isSGSTRatePresentforToday = false;
+      if (hasContainsTaxName) {
+        var cgst = CommonService.findRateSummariesByDateOfFutureTax(CommonService.getTaxRateByName($scope.model.taxes, CGST).rateSummaries, new Date());
+        var sgst = CommonService.findRateSummariesByDateOfFutureTax(CommonService.getTaxRateByName($scope.model.taxes, SGST).rateSummaries, new Date());
+  
+        if (cgst.length > 0) {
+          isCGSTRatePresentforToday = true;
+        }
+
+        if (sgst.length > 0) {
+          isSGSTRatePresentforToday = true;
+        }
+      }
+      
+      if (!isCGSTRatePresentforToday) {
+        Notification.error({
+          message: 'CGST tax rate is not found for today.',
+          title: '<i class="glyphicon glyphicon-remove"></i> Tax Missing Error !!!'
+        });
+        $mdDialog.cancel();
+        return;
+      }
+
+      if (!isSGSTRatePresentforToday) {
+        Notification.error({
+          message: 'SGST tax rate is not found for today.',
+          title: '<i class="glyphicon glyphicon-remove"></i> Tax Missing Error !!!'
+        });
+        $mdDialog.cancel();
+        return;
+      }
+
       if (!hasContainsTaxName) {
         Notification.error({
           message: 'Please add both CGST and SGST tax rate.',
@@ -684,7 +718,7 @@
           var withOutFutureRateHalls = [];
           angular.forEach($scope.model.halls, function(hall) {
             var effectiveSummaries = CommonService.findRateSummariesByDateOfFutureHalls(hall.rateSummaries, new Date($scope.eventTime.mStartToServer));
-            console.log(hall.displayName + " " + effectiveSummaries.length);
+            console.log(hall.displayName + ' ' + effectiveSummaries.length);
             if (effectiveSummaries.length > 0) {
               withOutFutureRateHalls.push(hall);
             }

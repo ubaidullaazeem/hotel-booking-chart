@@ -40,6 +40,21 @@
 
         };
 
+        CommonService.findRateSummariesByDateOfFutureTax = function(rateSummaries, date) {
+            try {
+                var summaries = rateSummariesByDateImpl(rateSummaries, date);
+                if (summaries.length > 0) {
+                    return summaries;
+                } else {
+                    var previousDate = date.setDate(date.getDate() - 1);
+                    return CommonService.findRateSummariesByDateOfFutureTax(rateSummaries, new Date(previousDate));
+                }
+            } catch (exe) {
+                return [];
+            }
+
+        };
+
         CommonService.getTaxRateByName = function(taxes, name) {
             var taxArray = _.filter(taxes, function(tax) {
                 return tax.name === name;

@@ -9,7 +9,7 @@
 					<h4 class="card-title">Search</h4>
 					<div layout="row">
 						<md-input-container flex=30>
-							<label>Halls</label>
+							<label class="my-label">Halls</label>
 							<md-select required multiple 
 							name="halls"
 							ng-model="searchParams.selectedHalls"
@@ -23,13 +23,13 @@
 
 						<div flex></div>
 						<md-input-container flex=30>
-							<label>Start Date</label>
+							<label class="my-label">Start Date</label>
 							<div ng-click="showStartDatePicker($event)">
 								<input class="form-control datepicker" required name="start" id="reportStartDatePicker" ng-model="model.startDate" onfocus="this.blur()"></input>
 							</div>
 						</md-input-container>
 						<md-input-container flex=30>
-							<label>End Date</label>
+							<label class="my-label">End Date</label>
 							<div ng-click="showEndDatePicker($event)">
 								<input class="form-control datepicker" required name="start" id="reportEndDatePicker"  ng-model="model.endDate" onfocus="this.blur()"></input>
 							</div>

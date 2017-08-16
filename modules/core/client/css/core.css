@@ -84,3 +84,7 @@ th{
     position: relative; /* relative or absolute positioning required by Perfect Scrollbar */
     max-height: 700px;  /* height must be limited to induce scrolling behavior */
 }
+
+.my-label{
+  font-size: 17px;
+}

@@ -65,11 +65,14 @@
     }
 
     $scope.showEffectiveDatePicker = function(ev, rate) {
-      $mdpDatePicker(rate.effectiveDate, {
+      var today = new Date();
+      $mdpDatePicker(new Date(rate.effectiveDate), {
           targetEvent: ev,
+          minDate: today
         })
         .then(function(dateTime) {
           rate.effectiveDate = moment(dateTime).format('DD, MMM YYYY');
+          $scope.ui.isDataChanged = true;
         });
     };
 

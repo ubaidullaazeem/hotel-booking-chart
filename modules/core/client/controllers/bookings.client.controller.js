@@ -94,12 +94,8 @@
     $scope.dayClick = function(date, allDay, jsEvent, view) {
       validateSettings();
       if (!$scope.ui.validateSettings) {
-        console.log("day click date " + date);
         if (moment(date) < moment(new Date().setHours(0, 0, 0, 0))) {
-          Notification.error({
-            message: MESSAGES.PAST_DATE,
-            title: '<i class="glyphicon glyphicon-remove"></i> Past Date Error !!!'
-          });
+          $mdDialog.show($mdDialog.alert().clickOutsideToClose(true).title(MESSAGES.PAST_DATE).ok('OK'));
         } else {
           var confirm = $mdDialog.confirm().title('Do you want to create new booking?').ok('Yes').cancel('No');
 

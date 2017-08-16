@@ -16,14 +16,14 @@
             <div layout="column" flex>
 
               <md-input-container flex>
-                <label>Name</label>
+                <label class="my-label">Name</label>
                 <input required name="name" ng-model="model.eventType.displayName" ng-disabled="model.eventType.name === 'others'"/>
                 <div ng-messages="eventtypeForm.name.$error">
                   <div ng-message="required">Event type name is required.</div>
                 </div>
               </md-input-container> 
               <md-input-container flex>
-                  <label>Colour</label>
+                  <label class="my-label">Colour</label>
                   <md-select  required
                               name="colour"
                               ng-model="model.eventType.colour"

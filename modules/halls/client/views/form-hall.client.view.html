@@ -16,7 +16,7 @@
             <div layout="row" flex>
 
               <md-input-container flex>
-                <label>Name</label>
+                <label class="my-label">Name</label>
                 <input required name="name" ng-model="model.hall.displayName"/>
                 <div ng-messages="hallForm.name.$error">
                   <div ng-message="required">Hall name is required.</div>
@@ -24,7 +24,7 @@
               </md-input-container>
 
               <md-input-container flex>
-                <label>Rate</label>
+                <label class="my-label">Rate</label>
                 <input required type="number" name="rate" ng-model="model.rate" ng-change="calculateTaxRate()" min="0" ng-pattern="ui.mNumberPattern" step="0.01"/>
                 <div ng-messages="hallForm.rate.$error">
                   <div ng-message="required">Hall rate is required.</div>
@@ -36,7 +36,7 @@
             <div layout="row" flex>
 
               <md-input-container flex>
-                <label>Electricity Charge</label>
+                <label class="my-label">Electricity Charge</label>
                 <input required type="number" name="powerConsumpationCharges" ng-change="calculateTaxRate()" min="0" ng-model="model.powerConsumpationCharges" ng-pattern="ui.mNumberPattern" step="0.01"/>
                 <div ng-messages="hallForm.powerConsumpationCharges.$error">
                   <div ng-message="required">Electricity Charge is required.</div>
@@ -44,7 +44,7 @@
               </md-input-container>
 
               <md-input-container flex>
-                <label>Cleaning Charge</label>
+                <label class="my-label">Cleaning Charge</label>
                 <input required type="number" name="cleaningCharges" ng-change="calculateTaxRate()" min="0" ng-model="model.cleaningCharges" ng-pattern="ui.mNumberPattern" step="0.01"/>
                 <div ng-messages="hallForm.cleaningCharges.$error">
                   <div ng-message="required">Cleaning Charge is required.</div>
@@ -56,7 +56,7 @@
             <!-- <div layout="row" flex>
 
               <md-input-container flex>
-                <label>CGST</label>
+                <label class="my-label">CGST</label>
                 <input required name="CGSTTax" ng-model="model.CGSTTax"/>
                 <div ng-messages="hallForm.CGSTTax.$error">
                   <div ng-message="required">CGST Tax is required.</div>
@@ -64,7 +64,7 @@
               </md-input-container>
 
               <md-input-container flex>
-                <label>SGST</label>
+                <label class="my-label">SGST</label>
                 <input required name="SGSTTax" ng-model="model.SGSTTax"/>
                 <div ng-messages="hallForm.SGSTTax.$error">
                   <div ng-message="required">SGST Tax is required.</div>
@@ -75,7 +75,7 @@
 
             <div layout="row" flex>
               <md-input-container flex>
-                <label>Effective Date</label>
+                <label class="my-label">Effective Date</label>
                 <div ng-click="ui.createMode ? showStartDatePicker() : ''">
                   <input class="form-control datepicker" id="hallEffectiveDatePicker" required name="start" ng-model="model.hall.effectiveDate" onfocus="this.blur()" ng-disabled="!ui.createMode"></input>
                 </div>
@@ -84,7 +84,7 @@
 
             <div layout="column" flex>
               <md-input-container flex>
-                <label>Description</label>
+                <label class="my-label">Description</label>
                 <textarea style="resize: none;" rows="3" ng-model="model.hall.description"></textarea> 
               </md-input-container>  
             </div>

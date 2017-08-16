@@ -46,7 +46,7 @@ module.exports = {
         'public/lib/perfect-scrollbar/js/perfect-scrollbar.jquery.min.js',
         'public/lib/angular-perfect-scrollbar/src/angular-perfect-scrollbar.js',
         'public/lib/sweetalert/dist/sweetalert.min.js',
-        'modules/core/client/js/material-datepicker.min.js',
+        'public/js/material-datepicker.min.js',
         'public/lib/ngstorage/ngStorage.min.js'
         // endbower
       ],

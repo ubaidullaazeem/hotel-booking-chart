@@ -15,11 +15,11 @@
       <div class="md-dialog-content" id="printThis" ng-if="!ui.isActualChargesView">
         <div layout="row" flex>
           <!-- <md-input-container flex ng-show="!ui.showMdSelect">
-            <label>Halls</label>           
+            <label class="my-label">Halls</label>           
            <input style="text-transform: capitalize; cursor: pointer" ng-click="showMdselect()" name="selectedHalls" ng-model="disabledSelectedHalls" ng-disabled="ui.viewMode" readonly></input>
           </md-input-container>  -->        
           <md-input-container flex>
-            <label>Halls</label>           
+            <label class="my-label">Halls</label>           
             <md-select  multiple 
                         required
                         name="halls"
@@ -37,14 +37,14 @@
           </md-input-container>
 
           <md-input-container flex=40>
-            <label>Date</label>
+            <label class="my-label">Date</label>
             <input ng-model="ui.mSelectedDateToDisplay" ng-click="showEventDatePicker($event)" onfocus="this.blur()" ng-disabled="ui.viewMode || ui.createMode" readonly/>
           </md-input-container>
         </div>
 
         <div layout="column" flex>
           <md-input-container flex>
-              <label>Event</label>
+              <label class="my-label">Event</label>
               <md-select  required
                           name="event"
                           ng-model="mixins.mSelectedEventType"
@@ -70,7 +70,7 @@
 
         <div layout="row" flex>
           <md-input-container flex>
-            <label>Time</label>
+            <label class="my-label">Time</label>
               <div ng-click="!ui.viewMode ? showStartTimePicker($event) : ''">
                 <input class="form-control timepicker" required name="start" ng-model="eventTime.mStartToDisplay" onfocus="this.blur()" ng-disabled="ui.viewMode" readonly></input>
               </div>
@@ -81,7 +81,7 @@
           </md-input-container>
 
           <md-input-container flex>
-            <label>To</label>
+            <label class="my-label">To</label>
               <div ng-click="!ui.viewMode ? showEndTimePicker($event) : ''">
                 <input required name="end" ng-model="eventTime.mEndToDisplay" onfocus="this.blur()" ng-disabled="ui.viewMode" readonly></input>
               </div>
@@ -94,14 +94,14 @@
 
         <!-- <div layout="column" flex>
           <md-input-container flex>
-            <label>Description</label>
+            <label class="my-label">Description</label>
             <textarea style="resize: none;" rows="3" ng-model="mixins.mDescription" ng-disabled="ui.viewMode"></textarea> 
           </md-input-container>  
         </div> -->
 
         <div layout="column" flex>
           <md-input-container flex>
-            <label>Name</label>
+            <label class="my-label">Name</label>
             <input required name="name" ng-model="mixins.mName" ng-disabled="ui.viewMode"/>
             <div ng-messages="bookingForm.name.$error">
               <div ng-message="required">Name is required.</div>
@@ -111,7 +111,7 @@
 
         <div layout="column" flex>
           <md-input-container flex>
-            <label>Phone</label>
+            <label class="my-label">Phone</label>
             <input required name="phone" ng-pattern="/^[0-9 _ ,]*$/" ng-disabled="ui.viewMode" ng-model="mixins.mPhone"/>
             <div ng-messages="bookingForm.phone.$error">
               <div ng-message="required">Phone is required.</div>
@@ -121,7 +121,7 @@
 
         <div layout="column" flex>
           <md-input-container flex>
-            <label>Email</label>
+            <label class="my-label">Email</label>
             <input type="email" name="email" ng-model="mixins.mEmail" ng-disabled="ui.viewMode" ng-pattern="ui.mEmailPattern" />
             <div ng-messages="bookingForm.email.$error" role="alert">
               <div ng-message-exp="['pattern']">
@@ -133,7 +133,7 @@
         
         <div layout="column" flex>
           <md-input-container flex>
-            <label>Address</label>
+            <label class="my-label">Address</label>
             <textarea style="resize: none;" required name="address" rows="3" ng-model="mixins.mAddress" ng-disabled="ui.viewMode"></textarea> 
             <div ng-messages="bookingForm.address.$error">
               <div ng-message="required">Address is required.</div>
@@ -143,14 +143,14 @@
 
         <!-- <div layout="column" flex>
           <md-input-container flex>
-            <label>Photo ID of the Person</label>
+            <label class="my-label">Photo ID of the Person</label>
             <input ng-model="mixins.mPhotoId" ng-disabled="ui.viewMode"/>
           </md-input-container>  
         </div> -->
 
         <div layout="column" flex>
           <md-input-container flex>
-            <label>Photo ID of the Person</label>        
+            <label style="font-size: 15px;">Photo ID of the Person</label>        
             <div class="form-group text-center" ng-hide="!ui.fileSelected && !mixins.mPhotoIdPath">
               <img  ngf-src="ui.fileSelected ? ui.photoIdFile : '/' + mixins.mPhotoIdPath" class="img-thumbnail user-profile-picture" ngf-drop>
             </div>
@@ -169,7 +169,7 @@
                         
         <div layout="column" flex>
           <md-input-container flex>
-            <label>Manager Name</label>
+            <label class="my-label">Manager Name</label>
             <input required name="managerName" ng-model="mixins.mManagerName" ng-disabled="ui.viewMode"/>
             <div ng-messages="bookingForm.managerName.$error">
               <div ng-message="required">Manager Name is required.</div>
@@ -186,7 +186,7 @@
               <h4 class="card-title">{{hallRateSummary.displayName}}</h4>
               <div layout="row" flex>
                 <md-input-container flex>
-                  <label>Basic Cost</label>
+                  <label class="my-label">Basic Cost</label>
                   <input required name="basicCost" ng-model="hallRateSummary.mBasicCost" ng-disabled="ui.viewMode" type="number" min="0" ng-pattern="ui.mPricePattern" step="0.01"/>
                   <div ng-messages="bookingForm.basicCost.$error">
                     <div ng-message="required">Basic cost is required.</div>
@@ -194,7 +194,7 @@
                 </md-input-container>  
 
                 <md-input-container flex>
-                  <label>Electricity Charges</label>
+                  <label class="my-label">Electricity Charges</label>
                   <input required name="electricity" ng-disabled="ui.viewMode" ng-model="hallRateSummary.mElectricityCharges" type="number" min="0" ng-pattern="ui.mPricePattern" step="0.01"/>
                   <div ng-messages="bookingForm.electricity.$error">
                     <div ng-message="required">Electricity Charges is required.</div>
@@ -202,7 +202,7 @@
                 </md-input-container> 
 
                 <md-input-container flex>
-                  <label>Cleaning Charges</label>
+                  <label class="my-label">Cleaning Charges</label>
                   <input required name="cleaning" ng-model="hallRateSummary.mCleaningCharges" ng-disabled="ui.viewMode" type="number" min="0" ng-pattern="ui.mPricePattern" step="0.01"/>
                   <div ng-messages="bookingForm.cleaning.$error">
                     <div ng-message="required">Cleaning Charges is required.</div>
@@ -212,7 +212,7 @@
 
               <div layout="row" flex>    
                 <md-input-container flex>
-                  <label>Generator Charges</label>
+                  <label class="my-label">Generator Charges</label>
                   <input name="generator" ng-model="hallRateSummary.mGeneratorCharges" ng-disabled="ui.viewMode" type="number" min="0" ng-pattern="ui.mPricePattern" step="0.01"/>
                   <!-- <div ng-messages="bookingForm.generator.$error">
                     <div ng-message="required">Generator Charges is required.</div>
@@ -220,7 +220,7 @@
                 </md-input-container>
 
                 <md-input-container flex>
-                  <label>Miscellaneous Charges</label>
+                  <label class="my-label">Miscellaneous Charges</label>
                   <input name="miscellaneous" ng-model="hallRateSummary.mMiscellaneousCharges" ng-disabled="ui.viewMode" type="number" min="0" ng-pattern="ui.mPricePattern" step="0.01"/>
                   <!-- <div ng-messages="bookingForm.miscellaneous.$error">
                     <div ng-message="required">Miscellaneous Charges is required.</div>
@@ -228,7 +228,7 @@
                 </md-input-container>
 
                 <md-input-container flex>
-                  <label>Damages</label>
+                  <label class="my-label">Damages</label>
                   <input name="damages" ng-model="hallRateSummary.mDamages" ng-disabled="ui.viewMode" type="number" min="0" ng-pattern="ui.mPricePattern" step="0.01"/>
                   <!-- <div ng-messages="bookingForm.miscellaneous.$error">
                     <div ng-message="required">Damages Charges is required.</div>
@@ -241,14 +241,14 @@
         <!-- End  -->
         <div layout="row" flex>
           <md-input-container flex>
-            <label>Discount</label>
+            <label class="my-label">Discount</label>
             <input required name="discount" ng-model="mixins.mDiscount" type="number" ng-disabled="ui.viewMode" min="0" ng-change="calculateBalanceDue()" ng-pattern="ui.mPricePattern" step="0.01"/>
             <div ng-messages="bookingForm.discount.$error">
               <div ng-message="required">Discount is required.</div>
             </div>
           </md-input-container>  
           <md-input-container flex>
-            <label>Pending Grand Total</label>
+            <label class="my-label">Pending Grand Total</label>
             <input style="font-weight:bold; color:red" required name="pendingGrandTotal" ng-model="mixins.mPendingGrandTotal" ng-disabled="ui.viewMode" onfocus="this.blur()" type="number" readonly/>
             <div ng-messages="bookingForm.pendingGrandTotal.$error">
               <div ng-message="required">Pending Grand Total is required.</div>
@@ -257,10 +257,10 @@
         </div>
         
         <div layout="column" flex>
-            <label>Payment Received</label>  
+            <label style="font-size: 15px;">Payment Received</label>  
             <div layout="row" ng-hide="ui.viewMode || (ui.isFullyPaid && mixins.mBalanceDue <= 0)" flex>
               <md-input-container flex>
-                <label>Amount Paid</label>
+                <label class="my-label">Amount Paid</label>
                 <input ng-required="ui.createMode || mixins.mPaymentHistories.length <= 0 || mPaymentHistory.paymentMode" name="amountPaid" ng-model="mPaymentHistory.amountPaid" type="number" min="1" ng-change="calculateBalanceDue()" ng-pattern="ui.mPricePattern" step="0.01"/>
                 <div ng-messages="bookingForm.amountPaid.$error">
                   <div ng-message="required">Amount paid is required.</div>
@@ -268,7 +268,7 @@
               </md-input-container>  
 
               <md-input-container flex>
-                  <label>Payment Mode</label>
+                  <label class="my-label">Payment Mode</label>
                   <md-select  ng-required="ui.createMode || mixins.mPaymentHistories.length <= 0 || mPaymentHistory.amountPaid"
                               name="payMode"
                               ng-model="mPaymentHistory.paymentMode"
@@ -283,7 +283,7 @@
               </md-input-container> 
 
               <md-input-container flex ng-show="mPaymentHistory.paymentMode && mPaymentHistory.paymentMode !== model.paymentModes[2]">
-                  <label>Details</label>                      
+                  <label class="my-label">Details</label>                      
                   <input name="details" ng-required="mPaymentHistory.paymentMode && mPaymentHistory.paymentMode !== model.paymentModes[2]" ng-model="mPaymentHistory.details" />
                   <div ng-messages="bookingForm.details.$error">
                     <div ng-message="required">{{mPaymentHistory.paymentMode}} Details is required.</div>
@@ -291,7 +291,7 @@
               </md-input-container> 
               
               <md-input-container flex>
-                <label>Paid Date</label>
+                <label class="my-label">Paid Date</label>
                   <div ng-click="!ui.viewMode ? showPaidDatePicker($event) : ''">
                     <input type="date" ng-required="ui.createMode || mixins.mPaymentHistories.length <= 0" name="paidDate" ng-model="mPaymentHistory.paidDate" onfocus="this.blur()" readonly></input>
                   </div>                  
@@ -307,12 +307,12 @@
             <!-- Payment Histories -->
             <div ng-if="!ui.createMode" layout="row" flex ng-repeat="mPaymentHistory in mixins.mPaymentHistories track by $index">              
               <md-input-container flex>
-                <label>Amount Paid</label>
+                <label class="my-label">Amount Paid</label>
                 <input name="amountPaid" ng-model="mPaymentHistory.amountPaid" type="number" min="1" ng-change="calculateBalanceDue()" ng-pattern="ui.mPricePattern" ng-disabled="true" step="0.01"/>                
               </md-input-container>  
                             
               <md-input-container flex>
-                  <label>Payment Mode</label>
+                  <label class="my-label">Payment Mode</label>
                   <md-select name="payMode"
                               ng-model="mPaymentHistory.paymentMode" ng-disabled="true">                
                     <md-optgroup label="Payment Mode">
@@ -322,12 +322,12 @@
               </md-input-container>   
 
               <md-input-container flex ng-if="mPaymentHistory.paymentMode !== model.paymentModes[2]">
-                  <label>Details</label>                      
+                  <label class="my-label">Details</label>                      
                   <input ng-model="mPaymentHistory.details" ng-disabled="true"/>
               </md-input-container>
 
               <md-input-container flex>
-                <label>Paid Date</label>
+                <label class="my-label">Paid Date</label>
                   <div>
                     <input mo-date-input="YYYY-MM-DD" name="paidDate" ng-model="mPaymentHistory.paidDate" ng-disabled="true"></input>
                   </div>
@@ -341,79 +341,79 @@
 
         <div layout="row" flex>
           <md-input-container flex>
-            <label>Pending Sub Total</label>
+            <label class="my-label">Pending Sub Total</label>
             <input required name="pendingSubTotal" ng-model="mixins.mPendingSubTotal" onfocus="this.blur()" ng-disabled="ui.viewMode" type="number" readonly/>
             <div ng-messages="bookingForm.pendingSubTotal.$error">
               <div ng-message="required">Pending Sub Total is required.</div>
             </div>
           </md-input-container>
           <md-input-container flex>
-            <label>Received Sub Total</label>
+            <label class="my-label">Received Sub Total</label>
             <input name="receivedSubTotal" ng-model="mixins.mReceivedSubTotal" onfocus="this.blur()" ng-disabled="ui.viewMode" type="number" readonly/>
           </md-input-container>
           <md-input-container flex>
-            <label>Total Sub Total</label>
+            <label class="my-label">Total Sub Total</label>
             <input name="totalSubTotal" ng-model="mixins.mSubTotal" onfocus="this.blur()" ng-disabled="ui.viewMode" type="number" readonly/>
           </md-input-container>
         </div>
 
         <div layout="row" flex>
           <md-input-container flex>
-            <label>Pending CGST</label>
+            <label class="my-label">Pending CGST</label>
             <input required name="pendingcgst" ng-model="mixins.mPendingCGST" onfocus="this.blur()" ng-disabled="ui.viewMode" type="number" readonly/>
             <div ng-messages="bookingForm.pendingcgst.$error">
               <div ng-message="required">Pending CGST is required.</div>
             </div>
           </md-input-container>
           <md-input-container flex>
-            <label>Received CGST</label>
+            <label class="my-label">Received CGST</label>
             <input name="receivedcgst" ng-model="mixins.mReceivedCGST" onfocus="this.blur()" ng-disabled="ui.viewMode" type="number" readonly/>
           </md-input-container>
           <md-input-container flex>
-            <label>Total CGST</label>
+            <label class="my-label">Total CGST</label>
             <input name="cgst" ng-model="mixins.mCGST" onfocus="this.blur()" ng-disabled="ui.viewMode" type="number" readonly/>
           </md-input-container>  
         </div>
 
         <div layout="row" flex>
           <md-input-container flex>
-            <label>Pending SGST</label>
+            <label class="my-label">Pending SGST</label>
             <input required name="pendingsgst" ng-model="mixins.mPendingSGST" onfocus="this.blur()" ng-disabled="ui.viewMode" type="number" readonly/>
             <div ng-messages="bookingForm.pendingsgst.$error">
               <div ng-message="required">Pending SGST is required.</div>
             </div>
           </md-input-container>  
           <md-input-container flex>
-            <label>Received SGST</label>
+            <label class="my-label">Received SGST</label>
             <input name="receivedsgst" ng-model="mixins.mReceivedSGST" onfocus="this.blur()" ng-disabled="ui.viewMode" type="number" readonly/>
           </md-input-container>  
           <md-input-container flex>
-            <label>Total SGST</label>
+            <label class="my-label">Total SGST</label>
             <input name="totalsgst" ng-model="mixins.mSGST" onfocus="this.blur()" ng-disabled="ui.viewMode" type="number" readonly/>
           </md-input-container>  
         </div>
 
         <div layout="row" flex>
           <md-input-container flex>
-            <label>Pending Grand Total</label>
+            <label class="my-label">Pending Grand Total</label>
             <input required name="pendingGrandTotal" ng-model="mixins.mPendingGrandTotal" ng-disabled="ui.viewMode" onfocus="this.blur()" type="number" readonly/>
             <div ng-messages="bookingForm.pendingGrandTotal.$error">
               <div ng-message="required">Pending Grand Total is required.</div>
             </div>
           </md-input-container>
           <md-input-container flex>
-            <label>Received Grand Total</label>
+            <label class="my-label">Received Grand Total</label>
             <input name="receivedGrandTotal" ng-model="mixins.mReceivedGrandTotal" ng-disabled="ui.viewMode" onfocus="this.blur()" type="number" readonly/>
           </md-input-container>  
           <md-input-container flex>
-            <label>Total Grand Total</label>
+            <label class="my-label">Total Grand Total</label>
             <input name="totalGrandTotal" ng-model="mixins.mGrandTotal" ng-disabled="ui.viewMode" onfocus="this.blur()" type="number" readonly/>
           </md-input-container>  
         </div>              
         
         <div layout="column" flex>
           <md-input-container flex>
-            <label>Balance Due</label>
+            <label class="my-label">Balance Due</label>
             <input required name="balanceDue" ng-model="mixins.mBalanceDue" ng-disabled="ui.viewMode" onfocus="this.blur()" type="number" min="0" step="any" readonly/>
             <div ng-messages="bookingForm.balanceDue.$error">
               <div ng-message="required">Balance Due is required.</div>
@@ -423,7 +423,7 @@
 
         <div layout="column" flex>
           <md-input-container flex>
-            <label>Description</label>
+            <label class="my-label">Description</label>
             <textarea style="resize: none;" rows="3" ng-model="mixins.mDescription" ng-disabled="ui.viewMode"></textarea> 
           </md-input-container>  
         </div>
@@ -443,22 +443,22 @@
               <h4 class="card-title">{{hallRateSummary.displayName}}</h4>
               <div layout="row" flex>                
                 <md-input-container flex>
-                  <label>Electricity Charges</label>
+                  <label class="my-label">Electricity Charges</label>
                   <input ng-disabled="ui.viewMode" ng-model="hallRateSummary.mElectricityCharges" onfocus="this.blur()" readonly/>                  
                 </md-input-container> 
                 <md-input-container flex>
-                    <label>Actual Electricity Charges</label>
+                    <label class="my-label">Actual Electricity Charges</label>
                     <input ng-disabled="ui.viewMode" ng-model="hallRateSummary.mActualElectricityCharges" type="number" min="0" ng-pattern="ui.mPricePattern" step="0.01"/>                    
                 </md-input-container> 
               </div>
 
               <div layout="row" flex>    
                 <md-input-container flex>
-                  <label>Cleaning Charges</label>
+                  <label class="my-label">Cleaning Charges</label>
                   <input ng-model="hallRateSummary.mCleaningCharges" ng-disabled="ui.viewMode" onfocus="this.blur()" readonly/>                  
                 </md-input-container> 
                 <md-input-container flex>
-                  <label>Actual Cleaning Charges</label>
+                  <label class="my-label">Actual Cleaning Charges</label>
                   <input ng-model="hallRateSummary.mActualCleaningCharges" ng-disabled="ui.viewMode" type="number" min="0" ng-pattern="ui.mPricePattern" step="0.01"/>                  
                 </md-input-container> 
               </div>              
