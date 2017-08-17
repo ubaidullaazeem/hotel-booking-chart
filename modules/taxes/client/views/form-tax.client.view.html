@@ -41,7 +41,7 @@
               <md-input-container flex ng-show="!ui.createMode">
                 <label class="my-label">Effective Date</label>
                 <div>
-                  <input class="form-control datepicker" id="taxEffectiveDatePicker" required name="start" ng-model="model.tax.effectiveDate" onfocus="this.blur()" ng-disabled="true"></input>
+                  <input class="form-control datepicker" id="taxEffectiveDatePicker" required name="start" ng-model="model.tax.effectiveDate" onfocus="this.blur()" ng-click="showStartDatePicker($event)"></input>
                 </div>
               </md-input-container>
 

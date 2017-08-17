@@ -26,14 +26,14 @@
     $scope.loadInitial = function() {
       if (isHallRate) {
         $scope.unconfirmed = {
-          effectiveDate: moment(new Date()).format('YYYY-MM-DD'),
+          effectiveDate: dateConvertion(new Date()),
           rate: null,
           powerConsumpationCharges: null,
           cleaningCharges: null
         };
       } else {
         $scope.unconfirmed = {
-          effectiveDate: moment(new Date()).format('YYYY-MM-DD'),
+          effectiveDate: dateConvertion(new Date()),
           percentage: null
         }
       }
@@ -61,18 +61,34 @@
     };
 
     function dateConvertion(date) {
-      return moment(date).format('DD, MMM YYYY');
+      return moment(date).format('YYYY-MM-DD');
     }
 
     $scope.showEffectiveDatePicker = function(ev, rate) {
       var today = new Date();
       $mdpDatePicker(new Date(rate.effectiveDate), {
           targetEvent: ev,
-          minDate: today
+          minDate: (moment(new Date(rate.effectiveDate).setHours(0, 0, 0, 0)) < moment(today.setHours(0, 0, 0, 0))) ? new Date(rate.effectiveDate) : today
         })
         .then(function(dateTime) {
-          rate.effectiveDate = moment(dateTime).format('DD, MMM YYYY');
-          $scope.ui.isDataChanged = true;
+          var summaryRate = CommonService.findRateSummariesByDateBeforeSave($scope.model.rate.rateSummaries, new Date(dateTime));
+          console.log(summaryRate.length);
+          if (summaryRate.length > 0) {
+            if (rate !== summaryRate[0]) {
+              var index = _.indexOf($scope.model.rate.rateSummaries, summaryRate[0]);
+              rate.effectiveDate = dateConvertion(dateTime);
+
+              $scope.model.rate.rateSummaries.splice(index, 1);
+              $scope.ui.isDataChanged = true;
+            }
+            else
+            {
+              console.log('same item');
+            }
+          } else {
+            rate.effectiveDate = dateConvertion(dateTime);
+            $scope.ui.isDataChanged = true;
+          }
         });
     };
 
@@ -83,7 +99,7 @@
           minDate: today
         })
         .then(function(dateTime) {
-          $scope.unconfirmed.effectiveDate = moment(dateTime).format('YYYY-MM-DD');
+          $scope.unconfirmed.effectiveDate = dateConvertion(dateTime);
         });
     };
 

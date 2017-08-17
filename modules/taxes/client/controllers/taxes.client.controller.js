@@ -13,19 +13,20 @@
       tax: {
         name: tax ? tax.name : undefined,
         _id: tax ? tax._id : undefined,
-        effectiveDate: tax ? dateConvertion(tax.effectiveDate) : dateConvertion(new Date()),
+        effectiveDate: tax ? dateConvertion(tax.effectiveDate) : dateConvertion(new Date().setHours(0, 0, 0, 0)),
         rateSummaries: tax ? tax.rateSummaries : []
       },
       percentage: undefined,
       taxTypes: taxTypeResolve
     };
-
+    
     $scope.ui = {
       mNumberPattern: /^[0-9]+(\.[0-9]{1,2})?$/,
       createMode: true
     };
 
     $scope.DATA_BACKGROUND_COLOR = DATA_BACKGROUND_COLOR;
+    var currentRateSummaryId;
 
     $scope.loadInitial = function() {
       if ($scope.model.tax._id) {
@@ -34,6 +35,7 @@
         var summaryRate = CommonService.findRateSummariesByDate($scope.model.tax.rateSummaries, currentDate);
         $scope.model.percentage = summaryRate[0].percentage;
         $scope.model.tax.effectiveDate = dateConvertion(summaryRate[0].effectiveDate);
+        currentRateSummaryId = summaryRate[0]._id;
       }
     };
 
@@ -44,16 +46,35 @@
           var requestedEffectiveDate = new Date($scope.model.tax.effectiveDate);
           var summaryRate = CommonService.findRateSummariesByDateBeforeSave($scope.model.tax.rateSummaries, requestedEffectiveDate);
           if (summaryRate.length > 0) {
-            var index = _.indexOf($scope.model.tax.rateSummaries, summaryRate[0]);
+            var indexToRemove = _.indexOf($scope.model.tax.rateSummaries, summaryRate[0]);
+
+            /*$scope.model.tax.rateSummaries[index] = {
+              percentage: $scope.model.percentage,
+              effectiveDate: $scope.model.tax.effectiveDate
+            };*/
+
+            var index = _.findIndex($scope.model.tax.rateSummaries, function(o) {
+              return o._id == currentRateSummaryId;
+            });
             $scope.model.tax.rateSummaries[index] = {
               percentage: $scope.model.percentage,
               effectiveDate: $scope.model.tax.effectiveDate
             };
+
+            $scope.model.tax.rateSummaries.splice(indexToRemove, 1);
+
           } else {
-            $scope.model.tax.rateSummaries.push({
+            /*$scope.model.tax.rateSummaries.push({
               percentage: $scope.model.percentage,
               effectiveDate: $scope.model.tax.effectiveDate
+            });*/
+            var index = _.findIndex($scope.model.tax.rateSummaries, function(o) {
+              return o._id == currentRateSummaryId;
             });
+            $scope.model.tax.rateSummaries[index] = {
+              percentage: $scope.model.percentage,
+              effectiveDate: $scope.model.tax.effectiveDate
+            };
           }
           TaxesService.update($scope.model.tax, successCallback, errorCallback);
         } else {
@@ -82,11 +103,13 @@
     };
 
     $scope.showStartDatePicker = function(ev) {
-      $mdpDatePicker($scope.model.tax.effectiveDate, {
-        targetEvent: ev
+      var today = new Date();
+      $mdpDatePicker(new Date($scope.model.tax.effectiveDate), {
+        targetEvent: ev,
+        minDate: (moment(new Date($scope.model.tax.effectiveDate).setHours(0, 0, 0, 0)) < moment(today.setHours(0, 0, 0, 0))) ? new Date($scope.model.tax.effectiveDate) : today
       })
         .then(function(dateTime) {
-          $scope.model.tax.effectiveDate = moment(dateTime).format('DD, MMM YYYY');
+          $scope.model.tax.effectiveDate = dateConvertion(dateTime);
         });
     };
 
@@ -104,7 +127,8 @@
     // }
 
     function dateConvertion(date) {
-      return moment(date).format('DD, MMM YYYY');
+      console.log('date'+date);
+      return moment(date).format('YYYY-MM-DD');
     }
   }
 }());
