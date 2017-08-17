@@ -46,22 +46,27 @@
           var requestedEffectiveDate = new Date($scope.model.tax.effectiveDate);
           var summaryRate = CommonService.findRateSummariesByDateBeforeSave($scope.model.tax.rateSummaries, requestedEffectiveDate);
           if (summaryRate.length > 0) {
-            var indexToRemove = _.indexOf($scope.model.tax.rateSummaries, summaryRate[0]);
+            if (summaryRate[0]._id === currentRateSummaryId) {
+              var index = _.findIndex($scope.model.tax.rateSummaries, function(o) {
+                return o._id == currentRateSummaryId;
+              });
+              $scope.model.tax.rateSummaries[index] = {
+                percentage: $scope.model.percentage,
+                effectiveDate: $scope.model.tax.effectiveDate
+              };
+            } else {
+              var indexToRemove = _.indexOf($scope.model.tax.rateSummaries, summaryRate[0]);
 
-            /*$scope.model.tax.rateSummaries[index] = {
-              percentage: $scope.model.percentage,
-              effectiveDate: $scope.model.tax.effectiveDate
-            };*/
+              var index = _.findIndex($scope.model.tax.rateSummaries, function(o) {
+                return o._id == currentRateSummaryId;
+              });
+              $scope.model.tax.rateSummaries[index] = {
+                percentage: $scope.model.percentage,
+                effectiveDate: $scope.model.tax.effectiveDate
+              };
 
-            var index = _.findIndex($scope.model.tax.rateSummaries, function(o) {
-              return o._id == currentRateSummaryId;
-            });
-            $scope.model.tax.rateSummaries[index] = {
-              percentage: $scope.model.percentage,
-              effectiveDate: $scope.model.tax.effectiveDate
-            };
-
-            $scope.model.tax.rateSummaries.splice(indexToRemove, 1);
+              $scope.model.tax.rateSummaries.splice(indexToRemove, 1);
+            }
 
           } else {
             /*$scope.model.tax.rateSummaries.push({
