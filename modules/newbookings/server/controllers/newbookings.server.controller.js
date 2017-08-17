@@ -13,6 +13,8 @@ var path = require('path'),
   async = require('async'),
   _ = require('lodash'),
   pdf = require('html-pdf'),
+  multer = require('multer'),
+  config = require(path.resolve('./config/config')),
   fs = require('fs');
 
 
@@ -351,6 +353,97 @@ exports.searchReports = function(req, res) {
       }
 
     });
+};
+
+/**
+ * Update photoid picture
+ */
+exports.changePhotoIdPicture = function(req, res) {
+  var existingImageUrl;
+
+  // Filtering to upload only images
+  var multerConfig = config.uploads.profile.image;
+  multerConfig.fileFilter = require(path.resolve('./config/lib/multer')).imageFileFilter;
+  var upload = multer(multerConfig).single('newPhotoIdPicture');
+
+  //My code
+  existingImageUrl = '';
+  uploadImage()
+    .then(function() {
+      var photoIdImageURL = config.uploads.profile.image.dest + req.file.filename;
+      var resPath = {
+        path: photoIdImageURL
+      };
+      res.json(resPath);
+    })
+    .catch(function(err) {
+      res.status(422).send(err);
+    });
+
+  function uploadImage() {
+    return new Promise(function(resolve, reject) {
+      upload(req, res, function(uploadError) {
+        if (uploadError) {
+          reject(errorHandler.getErrorMessage(uploadError));
+        } else {
+          resolve();
+        }
+      });
+    });
+  }
+
+  function deleteOldImage() {
+    return new Promise(function(resolve, reject) {
+      fs.unlink(existingImageUrl, function(unlinkError) {
+        if (unlinkError) {
+          console.log(unlinkError);
+          reject({
+            message: 'Error occurred while deleting old profile picture'
+          });
+        } else {
+          resolve();
+        }
+      });
+    });
+  }
+
+};
+
+/**
+ * Delete photoid picture
+ */
+exports.deletePhotoIdPicture = function(req, res) {
+  var existingImageUrl;
+
+  // Filtering to upload only images
+
+  //My code
+  existingImageUrl = req.body.mPhotoIdPath;
+  deleteOldImage()
+    .then(function() {      
+      res.json({
+        'status': 'success'
+      });
+    })
+    .catch(function(err) {
+      res.status(422).send(err);
+    });
+  
+  function deleteOldImage() {
+    return new Promise(function(resolve, reject) {
+      fs.unlink(existingImageUrl, function(unlinkError) {
+        if (unlinkError) {
+          console.log(unlinkError);
+          reject({
+            message: 'Error occurred while deleting old profile picture'
+          });
+        } else {
+          resolve();
+        }
+      });
+    });
+  }
+
 };
 
 

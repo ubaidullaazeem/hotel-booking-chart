@@ -21,6 +21,7 @@ coverage/
 # ======================
 uploads
 modules/users/client/img/profile/uploads
+modules/newbookings/client/img/photoid/uploads
 config/env/local.js
 config/env/local-*.js
 *.pem

@@ -32,6 +32,12 @@ module.exports = function(app) {
   app.route('/api/newbookings/searchreports')
     .post(newbookings.searchReports);
 
+  app.route('/api/newbookings/picture')
+    .post(newbookings.changePhotoIdPicture);
+
+  /*app.route('/api/newbookings/picture')
+  .delete(newbookings.deletePhotoIdPicture);*/
+
   // Finish by binding the Newbooking middleware
   app.param('newbookingId', newbookings.newbookingByID);
 };

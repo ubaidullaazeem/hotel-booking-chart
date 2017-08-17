@@ -550,9 +550,9 @@
             if ($scope.ui.photoIdFile && $scope.ui.photoIdFile !== '') {
               //  Uploading PhotoId
               Upload.upload({
-                url: '/api/users/picture',
+                url: '/api/newbookings/picture',
                 data: {
-                  newProfilePicture: $scope.ui.photoIdFile
+                  newPhotoIdPicture: $scope.ui.photoIdFile
                 }
               }).then(function(response) { // Success
                 $timeout(function() {

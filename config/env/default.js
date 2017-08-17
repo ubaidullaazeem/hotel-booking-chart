@@ -48,7 +48,7 @@ module.exports = {
   uploads: {
     profile: {
       image: {
-        dest: './modules/users/client/img/profile/uploads/',
+        dest: './modules/newbookings/client/img/photoid/uploads/',
         limits: {
           fileSize: 1 * 1024 * 1024 // Max file size in bytes (1 MB)
         }

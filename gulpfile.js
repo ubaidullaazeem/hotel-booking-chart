@@ -255,7 +255,7 @@ gulp.task('copyLocalEnvConfig', function () {
 
 // Make sure upload directory exists
 gulp.task('makeUploadsDir', function () {
-  return fs.mkdir('modules/users/client/img/profile/uploads', function (err) {
+  return fs.mkdir('modules/newbookings/client/img/photoid/uploads', function (err) {
     if (err && err.code !== 'EEXIST') {
       console.error(err);
     }
