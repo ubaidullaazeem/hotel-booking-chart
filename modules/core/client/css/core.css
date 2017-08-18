@@ -47,21 +47,10 @@ a:hover .header-profile-image {
 table, td, th {
     border: 1px solid black;
 }
-
 table {
     border-collapse: collapse;
     width: 100%;
 }
-
-td {
-  padding-top:8px;
-  padding-bottom:8px;
-  padding-right:15px;   
-  padding-left:15px;   
-  height: 15px;
-}
-
-
 th{
   padding-top:15px;
   padding-bottom:15px;
@@ -70,21 +59,25 @@ th{
   text-align: center;
   height: 50px;
 }
+td {
+  padding-top:8px;
+  padding-bottom:8px;
+  padding-right:15px;   
+  padding-left:15px;   
+  height: 15px;
+}
 
 .nonecase {
     text-transform: none;
 }
-
 .scroller {
     position: relative; /* relative or absolute positioning required by Perfect Scrollbar */
     max-height: 430px;  /* height must be limited to induce scrolling behavior */
 }
-
 .mainscroller {
-    position: relative; /* relative or absolute positioning required by Perfect Scrollbar */
     max-height: 700px;  /* height must be limited to induce scrolling behavior */
+    position: relative; /* relative or absolute positioning required by Perfect Scrollbar */
 }
-
 .my-label{
   font-size: 17px;
 }
