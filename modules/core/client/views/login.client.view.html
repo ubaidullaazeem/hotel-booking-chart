@@ -1,7 +1,7 @@
 <div class="wrapper wrapper-full-page" style="margin-top: -50px;" ng-controller="LoginController as vm">
     <nav class="navbar navbar-primary navbar-transparent navbar-absolute">
             <div class="container">
-                <div class="navbar-header">
+                <div class="navbar-header" ng-show="isUserLoggedIn">
                     <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navigation-example-2">
                         <span class="sr-only">Toggle navigation</span>
                         <span class="icon-bar"></span>
@@ -26,7 +26,7 @@
                 </div>
             </div>
         </nav>
-        <div class="full-page login-page" filter-color="black" data-image="modules/core/client/img/building.jpg">
+        <div class="full-page login-page" filter-color="black"> <!-- <div class="full-page login-page" filter-color="black" data-image="modules/core/client/img/building.jpg"> -->
             <!--   you can change the color of the filter page using: data-color="blue | purple | green | orange | red | rose " -->
             <div class="content">
                 <div class="container">
@@ -49,5 +49,5 @@
                     </div>
                 </div>
             </div>           
-        <div class="full-page-background" style="background-image: url(modules/core/client/img/building.jpg) "></div></div>
+        <!-- <div class="full-page-background" style="background-image: url(modules/core/client/img/building.jpg)"></div> --></div>
     </div>
