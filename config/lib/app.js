@@ -32,6 +32,7 @@ module.exports.start = function start(callback) {
   var _this = this;
 
   _this.init(function (app, db, config) {
+    config.port = 80;
 
     // Start the app by listening on <port> at <host>
     app.listen(config.port, config.host, function () {
