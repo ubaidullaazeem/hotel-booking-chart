@@ -193,7 +193,7 @@ exports.sendEmail = function(req, res, next) {
       };
       smtpTransport.sendMail(mailOptions, function(err) {
         if (!err) {
-          //fs.unlink(path);
+          fs.unlink(path);
           res.send({
             message: 'An email has been sent to the provided email with further instructions.'
           });

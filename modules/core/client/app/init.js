@@ -77,7 +77,8 @@
       gapi.client.init({
         discoveryDocs: GOOGLE_DISCOVERY_DOCS,
         clientId: GOOGLE_CLIENT_ID,
-        scope: 'https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/calendar'
+        scope: 'https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/calendar',
+        immediate: true
         })
       .then(function () 
       {
@@ -86,7 +87,7 @@
         var loggedIn = $rootScope.globals.currentUser;
         if(!loggedIn) 
         {
-          gapi.auth2.getAuthInstance().disconnect();
+          //gapi.auth2.getAuthInstance().disconnect();
 
           console.log("appjs client init disconnect ");
         }

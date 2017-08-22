@@ -55,7 +55,7 @@
        AuthenticationService.ClearCredentials();
        $rootScope.isUserLoggedIn = false;
        $state.go('login');
-       gapi.auth2.getAuthInstance().disconnect();
+       //gapi.auth2.getAuthInstance().disconnect();
     };
 
   }
