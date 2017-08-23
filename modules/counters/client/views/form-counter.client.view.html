@@ -1,0 +1,41 @@
+ <md-dialog flex="30" ng-init="loadInitial()">
+  <form name="startNumberForm" autocomplete="off">
+    <div class="card">
+      <div class="card-header" data-background-color="{{DATA_BACKGROUND_COLOR}}">
+        <div class="md-toolbar-tools">        
+          <span flex="100" align="left"><h1>{{ui.isInvoice ? 'Invoice' : 'Receipt'}}</h1></span>
+          <md-button class="md-icon-button" ng-click="cancel()">
+            <i class="material-icons">close</i>
+          </md-button>
+        </div>
+      </div>
+      <div class="card-content table-responsive">
+        <md-dialog-content>
+          <div class="md-dialog-content">
+
+            <div layout="column" flex>
+              
+              <md-input-container flex>
+                <label class="my-label">{{ui.isInvoice ? 'Invoice' : 'Receipt'}} start number</label>
+                <input required type="number" name="startNumber" ng-model="model.seq" ng-pattern="ui.mNumberPattern" min="1"/>
+                <div ng-messages="startNumberForm.startNumber.$error">
+                  <div ng-message="required">{{ui.isInvoice ? 'Invoice' : 'Receipt'}} start number is required.</div>
+                </div>
+              </md-input-container>
+             
+            </div>
+            
+          </div>
+        </md-dialog-content>
+      </div>
+    
+      <md-dialog-actions layout="row">  
+        <span flex></span>
+        <input class="btn btn-next btn-fill btn-rose btn-wd" name="submit" value="Submit" ng-click="save(startNumberForm.$valid)" ng-disabled="startNumberForm.$invalid" type="button">
+        <span flex></span>
+        <input class="btn btn-next btn-fill btn-rose btn-wd" name="cancel" value="Cancel" ng-click="cancel()" type="button">
+        <span flex></span>
+      </md-dialog-actions>
+    </div>
+  </form>
+</md-dialog>

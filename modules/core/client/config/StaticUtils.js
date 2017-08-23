@@ -11,6 +11,8 @@
 		.constant('CALENDAR_CHANGE_VIEW', ['agendaDay', 'agendaWeek', 'month'])
 		.constant('CGST', 'CGST')
 		.constant('SGST', 'SGST')
+		.constant('INVOICE', 'invoice')
+		.constant('RECEIPT', 'receipt')
 		.constant('CLEANING_HOURS', 3)
 		.constant('PAYMENT_STATUS', ['Advance Paid', 'Fully Paid'])
 		.constant('TAX_TYPES', ['CGST', 'SGST'])

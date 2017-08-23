@@ -51,6 +51,7 @@
       paidDate: new Date(),
       paymentMode: null,
       details: '',
+      drawnOn: '',
       CGSTPercent: 0,
       SGSTPercent: 0,
       paidSubTotal: 0,
@@ -303,19 +304,26 @@
       var halls = _.map($scope.mixins.mSelectedHalls, 'displayName');
       var eventName = ($scope.mixins.mSelectedEventType.name === HARDCODE_VALUES[0]) ? $scope.mixins.mOtherEvent : $scope.mixins.mSelectedEventType.displayName;
 
+      var receiptNumbers = _.map($scope.mixins.mPaymentHistories, 'receiptNo');
+      var latestReceiptNumber = Math.max.apply(Math, receiptNumbers);
+      var latestReceipts = _.filter($scope.mixins.mPaymentHistories, function(item) {
+        return item.receiptNo === latestReceiptNumber;
+      });
+      var latestReceiptDate = latestReceipts.length > 0 ? latestReceipts[0].receiptDate : '';
+
       return '<html><head><link rel="stylesheet" type="text/css" href="style.css" /></head>'+
                     '<body onload="window.print()"><html><head> <title>Mirth</title></head>'+
                     '<body><html><head> <title>Mirth</title></head>'+
                     '<body><div ><div>'+
-                    '<table width="100%" style="border-collapse: collapse; border: 1px solid black; table-layout: fixed;" > <tbody>'+
+                    '<table width="100%" style="border-collapse: collapse; border: 1px solid black; table-layout: fixed;" cellspacing="0" cellpadding="0"> <tbody>'+
                     '<tr width="100%" style="border-bottom: 1px solid black;">'+
                       '<td width="20%"><img style="width: 140px;" src="' + baseUrl + '/modules/core/client/img/logo-bw.png"/></td>'+
                       '<td width="45%" style="text-align:left;">Dev&apos;s Ark, Second Floor AD-79&80, 5th Avenue,<br/> Anna Nagar, Chennai - 600 040</td>'+
                       '<td width="35%" height="100%" style="border-left: 1px solid black;">'+
-                        '<table width="100%" height="100%" style="border-collapse: collapse;" >'+
+                        '<table width="100%" height="100%" style="border-collapse: collapse;">'+
                           '<tr height="20" style="border-bottom: 1px solid black; text-align:center;"><td colspan="2"><b>RECEIPT</b></td></tr>'+
-                          '<tr height="20" style="border-bottom: 1px solid black;"><td width="50%" style="border-right: 1px solid black; text-align:center;">Number</td><td width="50%" style="text-align:center;">Date</td></tr>'+
-                          '<tr height="70"><td width="50%" style="border-right: 1px solid black;"></td><td width="50%"></td></tr>'+
+                          '<tr height="20" style="border-bottom: 1px solid black; text-align:center;"><td width="50%" style="border-right: 1px solid black;">Number</td><td width="50%">Date</td></tr>'+
+                          '<tr height="70" style="text-align:center;"><td width="50%" style="border-right: 1px solid black;">'+latestReceiptNumber+'</td><td width="50%">'+moment(latestReceiptDate).format('DD/MM/YYYY')+'</td></tr>'+
                          '</table>'+
                       '</td>'+
                     '</tr>'+
@@ -333,10 +341,10 @@
                       '<td colspan="3">'+
                         '<table width="100%" style="border-collapse: collapse; table-layout: fixed;" >'+
                           '<tr style="border-bottom: 1px solid black;">'+
-                            '<th width="32.5%" style="border-right: 1px solid black;">Cash/Cheque/Draft No. & Date</th>'+
-                            '<th width="32.5%" style="border-right: 1px solid black;">Drawn on</th>'+
+                            '<th width="32.4%" style="border-right: 1px solid black;">Cash/Cheque/Draft No. & Date</th>'+
+                            '<th width="32.4%" style="border-right: 1px solid black;">Drawn on</th>'+
                             '<th width="35%">Amount</th>'+
-                          '</tr>'+ getPaymentHistoryRowsToPrintReceipt()+                     
+                          '</tr>'+ getPaymentHistoryRowsToPrintReceipt(latestReceiptNumber)+                     
                         '</table>'+
                       '</td>'+
                     '</tr>'+
@@ -355,7 +363,7 @@
                   '<body onload="window.print()"><html><head> <title>Mirth</title></head>'+
                   '<body><html><head> <title>Mirth</title></head>'+
                   '<body><div><div>'+
-                  '<table width="100%" style="border-collapse: collapse; border: 1px solid black; table-layout: fixed;"> <tbody>'+
+                  '<table width="100%" style="border-collapse: collapse; border: 1px solid black; table-layout: fixed;" cellspacing="0" cellpadding="0"> <tbody>'+
                   '<tr style="border-bottom: 1px solid black; text-align:center;"><td width="20%"></td><td width="45%">INVOICE</td><td width="35%"></td></tr>'+
                   '<tr style="border-bottom: 1px solid black; text-align:left;">'+
                     '<td width="20%"><img style="width: 140px;" src="' + baseUrl + '/modules/core/client/img/logo-bw.png"/></td>'+
@@ -366,16 +374,16 @@
                     '<td>'+
                     '<table width="100%"style="border-collapse: collapse; table-layout: fixed;">'+
                       '<tr style="border-bottom: 1px solid black;"><td width="50%" style="border-right: 1px solid black;">Invoice No.</td>'+
-                          '<td width="50%"></td>'+
+                          '<td width="50%">'+selectedEvent.invoiceNo+'</td>'+
                       '</tr>'+
                       '<tr><td width="50%" style="border-right: 1px solid black;">Date</td>'+
-                          '<td width="50%">'+moment(new Date()).format('DD/MM/YYYY')+'</td>'+
+                          '<td width="50%">'+moment(selectedEvent.invoiceDate).format('DD/MM/YYYY')+'</td>'+
                       '</tr>'+
                     '</table>'+
                     '</td>'+
                   '</tr>'+
                   '<tr style="border-bottom: 1px solid black;">'+
-                    '<td colspan="2" style="border-right: 1px solid black;">Address'+$scope.mixins.mAddress+'</td>'+
+                    '<td colspan="2" style="border-right: 1px solid black;">Address: '+$scope.mixins.mAddress+'</td>'+
                     '<td>'+
                     '<table width="100%" style="border-collapse: collapse; table-layout: fixed;">'+
                       '<tr style="border-bottom: 1px solid black;"><td width="50%" style="border-right: 1px solid black;">Hall Name</td>'+
@@ -395,7 +403,7 @@
                   '</tr>'+
                   '<tr><td colspan="3">'+
                     '<table width="100%" style="border-collapse: collapse; table-layout: fixed;">'+
-                      '<tr style="border-bottom: 1px solid black;"><th width="7%" style="border-right: 1px solid black;">Sl.No.</th><th width="37%" style="border-right: 1px solid black;">Particulars</th><th width="7%" style="border-right: 1px solid black;">Units</th><th width="7%" style="border-right: 1px solid black;">Qty</th><th width="7%" style="border-right: 1px solid black;">Rate</th><th width="35%">Amount</th></tr>'+
+                      '<tr style="border-bottom: 1px solid black;"><th width="7%" style="border-right: 1px solid black;">Sl.No.</th><th width="36.5%" style="border-right: 1px solid black;">Particulars</th><th width="7%" style="border-right: 1px solid black;">Units</th><th width="7%" style="border-right: 1px solid black;">Qty</th><th width="7%" style="border-right: 1px solid black;">Rate</th><th width="35%">Amount</th></tr>'+
                       '<tr><td style="border-right: 1px solid black;"/><td style="border-right: 1px solid black;">HSN CODE: 997212</td><td style="border-right: 1px solid black;"/><td style="border-right: 1px solid black;"/><td style="border-right: 1px solid black;"/><td/>'+
                       getPaymentHistoryRowsToInvoice()+
                       '<tr height="20px"><td style="border-right: 1px solid black;"/><td style="border-right: 1px solid black;"></td><td style="border-right: 1px solid black;"/><td style="border-right: 1px solid black;"/><td style="border-right: 1px solid black;"/><td></td>'+
@@ -415,18 +423,19 @@
                 '</body></html></body></html></body></html>';
     };
 
-    function getPaymentHistoryRowsToPrintReceipt() {
+    function getPaymentHistoryRowsToPrintReceipt(latestReceiptNumber) {
       var paymentList = '';
-      for(var i=$scope.mixins.mPaymentHistories.length-1; i>=0; i--)
-      {
+      for (var i = $scope.mixins.mPaymentHistories.length - 1; i >= 0; i--) {
         var paymentHistory = $scope.mixins.mPaymentHistories[i];
 
-        paymentList = paymentList + '<tr>' +
-          '<td width="32.5%" style="border-right: 1px solid black;">' + paymentHistory.paymentMode + '</td>' +
-          '<td width="32.5%" style="border-right: 1px solid black;">' + moment(paymentHistory.paidDate).format('DD/MM/YYYY') + '</td>' +
-          '<td width="35%">' + paymentHistory.amountPaid + '</td>' +
-          '</tr>';
-      }      
+        if (paymentHistory.receiptNo === latestReceiptNumber) {
+          paymentList = paymentList + '<tr>' +
+            '<td width="32.5%" style="border-right: 1px solid black;">' + paymentHistory.paymentMode + ' ' + moment(paymentHistory.paidDate).format('DD/MM/YYYY') + '</td>' +
+            '<td width="32.5%" style="border-right: 1px solid black;">' + paymentHistory.drawnOn + '</td>' +
+            '<td width="35%">' + paymentHistory.amountPaid + '</td>' +
+            '</tr>';
+        }
+      }
       paymentList = paymentList + '<tr>' +
           '<td width="32.5%" style="border-right: 1px solid black;">(Subject to Realisation)</td>' +
           '<td width="32.5%" style="border-right: 1px solid black;"></td>' +
@@ -449,7 +458,7 @@
                         '<td style="border-right: 1px solid black;  text-align:center;">'+serialNumber+'</td>'+
                         '<td style="border-right: 1px solid black;">'+
                           '<table width="100%" style="border-collapse: collapse; table-layout: fixed;">'+
-                            '<tr><td>Rent Received for'+halls+'</td></tr>'+
+                            '<tr><td>Rent Received for '+halls+'</td></tr>'+
                             '<tr height="20px"><td/></tr>'+
                             '<tr><td>Add: CGST @'+item.CGSTPercent+'%</td></tr>'+
                             '<tr><td>&emsp;&emsp; SGST @'+item.SGSTPercent+'%</td></tr>'+
@@ -474,11 +483,7 @@
     function getEventDateTime() {
       return $scope.ui.mSelectedDateToDisplay + ' ' + $scope.eventTime.mStartToDisplay + ' - ' + $scope.eventTime.mEndToDisplay;
     }
-
-    // function getTotalCharges() {
-    //   return $scope.mixins.mBasicCost + $scope.mixins.mElectricityCharges + $scope.mixins.mCleaningCharges + $scope.mixins.mGeneratorCharges + $scope.mixins.mMiscellaneousCharges;
-    // }
-
+    
     function getValidValue(data) {
       return (data !== null && data !== undefined) ? data : '--';
     }
@@ -1207,6 +1212,7 @@
         paidDate: new Date(),
         paymentMode: null,
         details: '',
+        drawnOn: '',
         CGSTPercent: 0,
         SGSTPercent: 0,
         paidSubTotal: 0,

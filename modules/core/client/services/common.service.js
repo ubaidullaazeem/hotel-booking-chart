@@ -2,7 +2,7 @@
     'use strict';
     angular.module('core')
 
-    .factory('CommonService', ['CGST', 'SGST', '$http', function(CGST, SGST, $http) {
+    .factory('CommonService', ['CGST', 'SGST', 'INVOICE', 'RECEIPT', '$http', function(CGST, SGST, INVOICE, RECEIPT, $http) {
 
         var CommonService = {};
 
@@ -137,6 +137,16 @@
             var day = bookedDate.getDay();
             var weekOfMonth = Math.ceil((date - 1 - day) / 7);
             return weekOfMonth;
+        };
+
+        CommonService.hasContainsReceiptNumber = function(counters) {
+            var isPresent = _.includes(_.map(counters, 'counterName'), RECEIPT);
+            return isPresent;
+        };
+
+        CommonService.hasContainsInvoiceNumber = function(counters) {
+            var isPresent = _.includes(_.map(counters, 'counterName'), INVOICE);
+            return isPresent;
         };
 
         return CommonService;

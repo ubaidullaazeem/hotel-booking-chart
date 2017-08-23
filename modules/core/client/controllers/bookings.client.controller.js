@@ -5,9 +5,9 @@
     .module('core')
     .controller('BookingsController', BookingsController);
 
-  BookingsController.$inject = ['bookedHallsResolve', 'CommonService', 'CALENDAR_CHANGE_VIEW', 'eventTypesResolve', 'paymentStatusesResolve', 'taxesResolve', '$scope', '$state', '$rootScope', '$mdDialog', '$timeout', 'hallsResolve', 'MESSAGES', 'Notification', 'NewbookingsService', 'SearchBookingServices', 'HARDCODE_VALUES'];
+  BookingsController.$inject = ['bookedHallsResolve', 'CommonService', 'CALENDAR_CHANGE_VIEW', 'eventTypesResolve', 'paymentStatusesResolve', 'taxesResolve', 'counterResolve', '$scope', '$state', '$rootScope', '$mdDialog', '$timeout', 'hallsResolve', 'MESSAGES', 'Notification', 'NewbookingsService', 'SearchBookingServices', 'HARDCODE_VALUES'];
 
-  function BookingsController(bookedHallsResolve, CommonService, CALENDAR_CHANGE_VIEW, eventTypesResolve, paymentStatusesResolve, taxesResolve, $scope, $state, $rootScope, $mdDialog, $timeout, hallsResolve, MESSAGES, Notification, NewbookingsService, SearchBookingServices, HARDCODE_VALUES) {
+  function BookingsController(bookedHallsResolve, CommonService, CALENDAR_CHANGE_VIEW, eventTypesResolve, paymentStatusesResolve, taxesResolve, counterResolve, $scope, $state, $rootScope, $mdDialog, $timeout, hallsResolve, MESSAGES, Notification, NewbookingsService, SearchBookingServices, HARDCODE_VALUES) {
     $rootScope.isUserLoggedIn = true;
 
     $scope.model = {
@@ -17,6 +17,7 @@
       eventTypes: eventTypesResolve,
       paymentStatuses: paymentStatusesResolve,
       taxes: taxesResolve,
+      counters: counterResolve
     };
 
     $scope.ui = {
@@ -273,6 +274,8 @@
     };
 
     function validateSettings() {
+      $scope.ui.validateSettings = false;
+
       if ($scope.halls.mAllHalls.length == 0) {
         Notification.error({
           message: "Please add halls in settings.",
@@ -296,6 +299,37 @@
         });
         $scope.ui.validateSettings = true;
       }
+      
+      if (!CommonService.hasContainsReceiptNumber($scope.model.counters)) {
+        $scope.ui.validateSettings = true;
+        $scope.showPrompt(false);
+        return;
+      }
+
+      if (!CommonService.hasContainsInvoiceNumber($scope.model.counters)) {
+        $scope.ui.validateSettings = true;
+        $scope.showPrompt(true);
+      }
+    };
+
+    $scope.showPrompt = function(isInvoice) {
+      $mdDialog.show({
+          controller: 'CountersController',
+          templateUrl: 'modules/counters/client/views/form-counter.client.view.html',
+          parent: angular.element(document.body),
+          clickOutsideToClose: true,
+          fullscreen: true,
+          resolve: {
+              isInvoice: function() {
+                return isInvoice;
+              }
+            }
+        })
+        .then(function(res) {
+          $scope.model.counters.push(res);          
+        }, function() {
+          console.log('You cancelled the dialog.');
+        });
     };
 
     function chartSummary(bookedHalls) {

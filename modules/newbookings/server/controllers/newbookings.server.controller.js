@@ -15,7 +15,9 @@ var path = require('path'),
   pdf = require('html-pdf'),
   multer = require('multer'),
   config = require(path.resolve('./config/config')),
-  fs = require('fs');
+  fs = require('fs'),
+  Counter = mongoose.model('Counter'),
+  Paymentstatus = mongoose.model('Paymentstatus');
 
 
 /**
@@ -24,6 +26,79 @@ var path = require('path'),
 exports.create = function(req, res) {
   var newbooking = new Newbooking(req.body);
   newbooking.user = req.user;
+
+  console.log("CREATE");
+
+  if (newbooking.mSelectedPaymentStatus.name === 'Fully Paid') {
+    assignInvoiceNumber(newbooking, res);
+  } else {
+    assignReceiptNumberAndSave(newbooking, res);
+  }
+};
+
+function assignInvoiceNumber(newbooking, res) {
+  Counter.findOneAndUpdate({
+    counterName: 'invoice'
+  }, {
+    $inc: {
+      seq: 1
+    }
+  }, function(err, result) {
+    if (err) {
+      return res.status(500).send({
+        message: errorHandler.getErrorMessage(err)
+      });
+    } else {
+      newbooking.invoiceNo = result.seq;
+      newbooking.invoiceDate = new Date();
+
+      assignReceiptNumberAndSave(newbooking, res);
+    }
+  });
+}
+
+function assignReceiptNumberAndSave(newbooking, res) {
+  var isReceiptNoAllotedToAll = true;
+
+  
+  for (var i = 0; i < newbooking.mPaymentHistories.length; i++) {
+    if (newbooking.mPaymentHistories[i].receiptNo === null || newbooking.mPaymentHistories[i].receiptNo === undefined || newbooking.mPaymentHistories[i].receiptNo === '') {
+      isReceiptNoAllotedToAll = false;
+      break;
+    }
+  }
+
+  if (isReceiptNoAllotedToAll) {
+    saveAfterReceiptAndInvoiceNumberUpdate(newbooking, res);
+  } else {
+
+    Counter.findOneAndUpdate({
+      counterName: 'receipt'
+    }, {
+      $inc: {
+        seq: 1
+      }
+    }, function(err, result) {
+      if (err) {
+        return res.status(500).send({
+          message: errorHandler.getErrorMessage(err)
+        });
+      } else {
+
+        for (var i = 0; i < newbooking.mPaymentHistories.length; i++) {
+          if (newbooking.mPaymentHistories[i].receiptNo === null || newbooking.mPaymentHistories[i].receiptNo === undefined || newbooking.mPaymentHistories[i].receiptNo === '') {
+            newbooking.mPaymentHistories[i].receiptNo = result.seq;
+            newbooking.mPaymentHistories[i].receiptDate = new Date();
+          }
+        }
+
+        saveAfterReceiptAndInvoiceNumberUpdate(newbooking, res);
+      }
+    });
+  }
+}
+
+function saveAfterReceiptAndInvoiceNumberUpdate(newbooking, res) {
   newbooking.save(function(err) {
     if (err) {
       return res.status(400).send({
@@ -33,23 +108,8 @@ exports.create = function(req, res) {
       res.jsonp(newbooking);
     }
   });
-};
+}
 
-/**
- * Save New Booking
- */
-
- function saveBooking(newbooking, res) {
-    newbooking.save(function(err) {
-    if (err) {
-      return res.status(400).send({
-        message: errorHandler.getErrorMessage(err)
-      });
-    } else {
-      res.jsonp(newbooking);
-    }
-  });
- }
 
 /**
  * Show the current Newbooking
@@ -73,15 +133,13 @@ exports.update = function(req, res) {
 
   newbooking = _.extend(newbooking, req.body);
 
-  newbooking.save(function(err) {
-    if (err) {
-      return res.status(400).send({
-        message: errorHandler.getErrorMessage(err)
-      });
-    } else {
-      res.jsonp(newbooking);
-    }
-  });
+  console.log("UPDATE");
+
+  if (newbooking.mSelectedPaymentStatus.name === 'Fully Paid' && !newbooking.invoiceNo) {
+    assignInvoiceNumber(newbooking, res);
+  } else {
+    assignReceiptNumberAndSave(newbooking, res);
+  }
 };
 
 /**
@@ -325,7 +383,7 @@ exports.search = function(req, res) {
  * Search of Reports
  */
 exports.searchReports = function(req, res) {
-  var mapSelectedHallsByName = _.map(req.body.selectedHalls, 'name');
+  var mapSelectedHallsByName = _.map(req.body.selectedHalls, '_id');
     Newbooking.find({
       $and: [{
         mStartDateTime: {
@@ -338,7 +396,7 @@ exports.searchReports = function(req, res) {
       }],
       mSelectedHalls: {
         $elemMatch: {
-          name: {
+          _id: {
             $in: mapSelectedHallsByName
           }
         }

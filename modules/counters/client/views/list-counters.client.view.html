@@ -1,0 +1,22 @@
+<section>
+  <div class="page-header">
+    <h1>Counters</h1>
+  </div>
+  <div class="list-group">
+    <a ng-repeat="counter in vm.counters"
+       ui-sref="counters.view({ counterId: counter._id })"
+       class="list-group-item">
+      <small class="list-group-item-text">
+        Posted on
+        <span ng-bind="counter.created | date:'mediumDate'"></span>
+        by
+        <span ng-if="counter.user" ng-bind="counter.user.displayName"></span>
+        <span ng-if="!counter.user">Deleted User</span>
+      </small>
+      <h4 class="list-group-item-heading" ng-bind="counter.name"></h4>
+    </a>
+  </div>
+  <div class="alert alert-warning text-center" ng-if="vm.counters.$resolved && !vm.counters.length">
+    No Counters yet, why don't you <a ui-sref="counters.create">create one</a>?
+  </div>
+</section>

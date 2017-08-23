@@ -4,7 +4,8 @@
  * Module dependencies.
  */
 var mongoose = require('mongoose'),
-  Schema = mongoose.Schema;
+  Schema = mongoose.Schema,  
+  Counter = mongoose.model('Counter');
 
 /**
  * Newbooking Schema
@@ -173,17 +174,26 @@ var NewbookingSchema = new Schema({
     paidDate : Date,
     paymentMode : String,
     details : String,
+    drawnOn : String,
     CGSTPercent : Number,
     SGSTPercent : Number,
     paidSubTotal : Number,
     paidCGST : Number,
-    paidSGST : Number
+    paidSGST : Number,
+    receiptNo : Number,
+    receiptDate: Date
   }],
   mBalanceDue: {
     type: Number,
     default: '',
     required: 'Please enter balance due amount',
     trim: true
+  },
+  invoiceNo:{
+    type: Number
+  },
+  invoiceDate:{
+    type: Date
   }
 },
 {

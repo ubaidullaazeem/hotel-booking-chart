@@ -46,7 +46,8 @@
           eventTypesResolve: eventTypesData,
           paymentStatusesResolve: paymentStatusesData,
           taxesResolve: taxesData,
-          hallsResolve: hallsData
+          hallsResolve: hallsData,
+          counterResolve: counterData
         }
       })
       .state('reports', {
@@ -127,6 +128,12 @@
 
     function hallsData(HallsService) {
       return HallsService.query();
+    }
+
+    counterData.$inject = ['CountersService'];
+
+    function counterData(CountersService) {
+      return CountersService.query();
     }
   }
 }());

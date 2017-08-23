@@ -91,8 +91,8 @@
 		};
 
 		$scope.selectHallsByDefault = function(hall) {
-			var pluckHalls = _.map($scope.searchParams.selectedHalls, 'name');
-			return _.includes(pluckHalls, hall.name);
+			var pluckHalls = _.map($scope.searchParams.selectedHalls, '_id');
+			return _.includes(pluckHalls, hall._id);
 		};
 
 		$scope.searchReports = function() {
@@ -133,21 +133,26 @@
 				 * Group by month
 				 */
 				var groupByMonthHalls = _.groupBy(searchResults, 'month');
+				console.log("groupByMonthHalls "+JSON.stringify(groupByMonthHalls));
 				/**
 				 * When getting mSelectedHalls object array from groupByMonthHalls we're using _.map
 				 * After _.map mSelectedHalls array looks like [[][]], after we convert into single array [] with help of _.flatten
-				 * similarly we're getting name object from $scope.searchParams.selectedHalls, because we need to reject extra halls apart from searched halls
+				 * similarly we're getting _id object from $scope.searchParams.selectedHalls, because we need to reject extra halls apart from searched halls
 				 * Because for single booking we select multiple halls. 
 				 */
 				angular.forEach($scope.labels, function(month) {
 					var indexMonth = _.indexOf($scope.months, month);
+				console.log("indexMonth "+indexMonth);
 					var mapsearchResultsHalls = _.flatten(_.map(groupByMonthHalls[indexMonth + 1], 'mSelectedHalls'));
-					var mapSelectedHalls = _.map($scope.searchParams.selectedHalls, 'name');
+				console.log("mapsearchResultsHalls "+JSON.stringify(mapsearchResultsHalls));
+					var mapSelectedHalls = _.map($scope.searchParams.selectedHalls, '_id');
+				console.log("mapSelectedHalls "+JSON.stringify(mapSelectedHalls));
 					var rejectHalls = _.filter(mapsearchResultsHalls, function(mapsearchResultsHall) {
-						return _.includes(mapSelectedHalls, mapsearchResultsHall.name);
+						return _.includes(mapSelectedHalls, mapsearchResultsHall._id);
 					});
-					var mCollection = CommonService.sumOfArray(_.map(rejectHalls, 'mBasicCost'));
-					var mRevenue = CommonService.sumOfArray(_.map(rejectHalls, 'mBasicCost'));
+				console.log("rejectHalls "+JSON.stringify(rejectHalls));
+					var mCollection = CommonService.sumOfArray(_.map(rejectHalls, 'mTotalCollection'));
+					var mRevenue = CommonService.sumOfArray(_.map(rejectHalls, 'mRevenue'));
 					var mDiscount = CommonService.sumOfArray(_.map(rejectHalls, 'mTotalDiscount'));
 					var mActualElectricityCharges = CommonService.sumOfArray(_.map(rejectHalls, 'mActualElectricityCharges'));
 					var taxes = CommonService.sumOfArray(_.map(rejectHalls, 'mTotalCGST')) + CommonService.sumOfArray(_.map(rejectHalls, 'mTotalSGST'));
