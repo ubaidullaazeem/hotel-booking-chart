@@ -5,13 +5,18 @@
 		.module('core')
 		.controller('ReportsController', ReportsController);
 
-	ReportsController.$inject = ['CommonService', 'EmailBookingServices', 'DATA_BACKGROUND_COLOR', 'hallsResolve', '$filter', '$scope', 'Notification', '$rootScope', '$mdpDatePicker', 'SearchBookingServices'];
+	ReportsController.$inject = ['CommonService', 'NewbookingsService', 'EmailBookingServices', 'DATA_BACKGROUND_COLOR', 'hallsResolve', '$filter', '$scope', 'Notification', '$rootScope', '$mdpDatePicker', 'SearchBookingServices', '$mdDialog'];
 
-	function ReportsController(CommonService, EmailBookingServices, DATA_BACKGROUND_COLOR, hallsResolve, $filter, $scope, Notification, $rootScope, $mdpDatePicker, SearchBookingServices) {
+	function ReportsController(CommonService, NewbookingsService, EmailBookingServices, DATA_BACKGROUND_COLOR, hallsResolve, $filter, $scope, Notification, $rootScope, $mdpDatePicker, SearchBookingServices, $mdDialog) {
 
 		$scope.DATA_BACKGROUND_COLOR = DATA_BACKGROUND_COLOR;
 
 		$rootScope.isUserLoggedIn = true;
+
+		$scope.newbookings = NewbookingsService.query();
+		$scope.newbookings.$promise.then(function(result) {
+			$scope.ui.isBookingsLoadingDone = true;
+		});
 
 		var today = new Date();
 		$scope.model = {
@@ -22,45 +27,82 @@
 
 		$scope.ui = {
 			searching: false,
-			email: false
+			email: false,
+			isBookingsLoadingDone: false
 		}
 
 		$scope.searchParams = {
-			selectedHalls: hallsResolve
+			selectedHalls: []
 		};
-
+		
 		$scope.months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-		$scope.colors = ['#45b7cd', '#ff6384', '#ff8e72', '#ff0000', '#333333'];
 		$scope.labels = [];
-
-		$scope.type = 'StackedBar';
-		$scope.series = ['Collection', 'Revenue', 'Discount', 'ActualElectricityCharges', 'Taxes'];
-		$scope.options = {
-			scales: {
-				xAxes: [{
-					stacked: false,
-				}],
-				yAxes: [{
-					stacked: false
-				}]
-			},
-			legend: {
-				display: true,
-				position: "bottom"
-			}
-		};
-
-		$scope.chart = {
-			monthData: [
+		
+		$scope.summaryChart = {
+			data: [
+				[],
+				[],
+				[],
 				[],
 				[],
 				[],
 				[],
 				[]
-			]
+			],
+			series: ['Revenue', 'Collection', 'CGST', 'SGST', 'Discount', 'Generator Charges', 'Damages', 'Miscellaneous Charges'],
+			colors: ['#0000FF', '#00FFFF', '#8A2BE2', '#A52A2A', '#008080', '#FF4500', '#008000', '#800080'],
+			options: {
+				scales: {
+					xAxes: [{
+						stacked: false,
+					}],
+					yAxes: [{
+						stacked: false,
+						ticks: {
+							beginAtZero: true
+						}
+					}]
+				},
+				legend: {
+					display: true,
+					position: "bottom"
+				}
+			}
+
+		};
+		
+		$scope.actualChargesChart = {
+			data: [
+				[],
+				[],
+				[],
+				[]
+			],
+			series: ['Electricity Charges', 'Actual Electricity Charges', 'Cleaning Charges', 'Actual Cleaning Charges'],
+			colors: ['#00008B', '#1E90FF', '#006400', '#90EE90'],
+			options: {
+				scales: {
+					xAxes: [{
+						stacked: false,
+					}],
+					yAxes: [{
+						stacked: false,
+						ticks: {
+							beginAtZero: true
+						}
+					}]
+				},
+				legend: {
+					display: true,
+					position: "bottom"
+				}
+			}
 		};
 
 		$scope.model.halls.$promise.then(function(result) {
+			$scope.searchParams.selectedHalls = result;
+			$scope.showStartDatePicker();// First time date picker is not showing. so I am calling this function here.
+			$scope.showEndDatePicker();// First time date picker is not showing. so I am calling this function here.
 			$scope.searchReports();
 		});
 
@@ -97,19 +139,30 @@
 
 		$scope.searchReports = function() {
 			if ((Date.parse($scope.model.startDate) > Date.parse($scope.model.endDate))) {
-				swal("End date should be greater than start date!")
+				$mdDialog.show($mdDialog.alert().clickOutsideToClose(true).title('End date should be after start date.').ok('OK'));
 				return false;
 			};
 			if (monthDiff(new Date($scope.model.startDate), new Date($scope.model.endDate)) > 11) {
-				swal("Report generated in between 12 months.")
+				$mdDialog.show($mdDialog.alert().clickOutsideToClose(true).title('Report generated in between 12 months only.').ok('OK'));
 				return false;
 			};
-			$scope.chart.monthData[0].length = 0;
-			$scope.chart.monthData[1].length = 0;
-			$scope.chart.monthData[2].length = 0;
-			$scope.chart.monthData[3].length = 0;
-			$scope.chart.monthData[4].length = 0;
+
 			$scope.labels.length = 0;
+
+			$scope.summaryChart.data[0].length = 0;
+			$scope.summaryChart.data[1].length = 0;
+			$scope.summaryChart.data[2].length = 0;
+			$scope.summaryChart.data[3].length = 0;
+			$scope.summaryChart.data[4].length = 0;
+			$scope.summaryChart.data[5].length = 0;
+			$scope.summaryChart.data[6].length = 0;
+			$scope.summaryChart.data[7].length = 0;
+
+			$scope.actualChargesChart.data[0].length = 0;
+			$scope.actualChargesChart.data[1].length = 0;
+			$scope.actualChargesChart.data[2].length = 0;
+			$scope.actualChargesChart.data[3].length = 0;
+
 			$scope.ui.searching = true;
 			var searchParams = {
 				selectedHalls: $scope.searchParams.selectedHalls,
@@ -133,7 +186,6 @@
 				 * Group by month
 				 */
 				var groupByMonthHalls = _.groupBy(searchResults, 'month');
-				console.log("groupByMonthHalls "+JSON.stringify(groupByMonthHalls));
 				/**
 				 * When getting mSelectedHalls object array from groupByMonthHalls we're using _.map
 				 * After _.map mSelectedHalls array looks like [[][]], after we convert into single array [] with help of _.flatten
@@ -142,32 +194,54 @@
 				 */
 				angular.forEach($scope.labels, function(month) {
 					var indexMonth = _.indexOf($scope.months, month);
-				console.log("indexMonth "+indexMonth);
 					var mapsearchResultsHalls = _.flatten(_.map(groupByMonthHalls[indexMonth + 1], 'mSelectedHalls'));
-				console.log("mapsearchResultsHalls "+JSON.stringify(mapsearchResultsHalls));
 					var mapSelectedHalls = _.map($scope.searchParams.selectedHalls, '_id');
-				console.log("mapSelectedHalls "+JSON.stringify(mapSelectedHalls));
 					var rejectHalls = _.filter(mapsearchResultsHalls, function(mapsearchResultsHall) {
 						return _.includes(mapSelectedHalls, mapsearchResultsHall._id);
 					});
-				console.log("rejectHalls "+JSON.stringify(rejectHalls));
-					var mCollection = CommonService.sumOfArray(_.map(rejectHalls, 'mTotalCollection'));
+
 					var mRevenue = CommonService.sumOfArray(_.map(rejectHalls, 'mRevenue'));
+					var mCollection = CommonService.sumOfArray(_.map(rejectHalls, 'mTotalCollection'));
+					var mCGST = CommonService.sumOfArray(_.map(rejectHalls, 'mTotalCGST'));
+					var mSGST = CommonService.sumOfArray(_.map(rejectHalls, 'mTotalSGST'));
 					var mDiscount = CommonService.sumOfArray(_.map(rejectHalls, 'mTotalDiscount'));
+					var mGeneratorCharges = CommonService.sumOfArray(_.map(rejectHalls, 'mGeneratorCharges'));
+					var mDamages = CommonService.sumOfArray(_.map(rejectHalls, 'mDamages'));
+					var mMiscellaneousCharges = CommonService.sumOfArray(_.map(rejectHalls, 'mMiscellaneousCharges'));
+
+					var mElectricityCharges = CommonService.sumOfArray(_.map(rejectHalls, 'mElectricityCharges'));
 					var mActualElectricityCharges = CommonService.sumOfArray(_.map(rejectHalls, 'mActualElectricityCharges'));
-					var taxes = CommonService.sumOfArray(_.map(rejectHalls, 'mTotalCGST')) + CommonService.sumOfArray(_.map(rejectHalls, 'mTotalSGST'));
+					var mCleaningCharges = CommonService.sumOfArray(_.map(rejectHalls, 'mCleaningCharges'));
+					var mActualCleaningCharges = CommonService.sumOfArray(_.map(rejectHalls, 'mActualCleaningCharges'));
+					
 					if (_.includes($scope.labels, $scope.months[indexMonth])) {
-						$scope.chart.monthData[0].push(mCollection);
-						$scope.chart.monthData[1].push(mRevenue);
-						$scope.chart.monthData[2].push(mDiscount);
-						$scope.chart.monthData[3].push(mActualElectricityCharges);
-						$scope.chart.monthData[4].push(taxes);
+						$scope.summaryChart.data[0].push(Number(Math.round(mRevenue)));
+						$scope.summaryChart.data[1].push(Number(Math.round(mCollection)));
+						$scope.summaryChart.data[2].push(Number(Math.round(mCGST)));
+						$scope.summaryChart.data[3].push(Number(Math.round(mSGST)));
+						$scope.summaryChart.data[4].push(Number(Math.round(mDiscount)));
+						$scope.summaryChart.data[5].push(Number(Math.round(mGeneratorCharges)));
+						$scope.summaryChart.data[6].push(Number(Math.round(mDamages)));
+						$scope.summaryChart.data[7].push(Number(Math.round(mMiscellaneousCharges)));
+
+						$scope.actualChargesChart.data[0].push(mElectricityCharges);
+						$scope.actualChargesChart.data[1].push(mActualElectricityCharges);
+						$scope.actualChargesChart.data[2].push(mCleaningCharges);
+						$scope.actualChargesChart.data[3].push(mActualCleaningCharges);
 					} else {
-						$scope.chart.monthData[0].push(0);
-						$scope.chart.monthData[1].push(0);
-						$scope.chart.monthData[2].push(0);
-						$scope.chart.monthData[3].push(0);
-						$scope.chart.monthData[4].push(0);
+						$scope.summaryChart.data[0].push(0);
+						$scope.summaryChart.data[1].push(0);
+						$scope.summaryChart.data[2].push(0);
+						$scope.summaryChart.data[3].push(0);
+						$scope.summaryChart.data[4].push(0);
+						$scope.summaryChart.data[5].push(0);
+						$scope.summaryChart.data[6].push(0);
+						$scope.summaryChart.data[7].push(0);
+
+						$scope.actualChargesChart.data[0].push(0);
+						$scope.actualChargesChart.data[1].push(0);
+						$scope.actualChargesChart.data[2].push(0);
+						$scope.actualChargesChart.data[3].push(0);
 					}
 				});
 
@@ -190,23 +264,23 @@
 			return d2.getMonth() - d1.getMonth() + (12 * (d2.getFullYear() - d1.getFullYear()));
 		};
 
-		$scope.exportReport = function() {
-			$("div").scrollTop(1000);
-			html2canvas(document.getElementById('exportData'), {
+		$scope.exportReport = function(isSummary) {
+			//$("div").scrollTop(1000);
+			html2canvas(document.getElementById(isSummary ? 'exportSummaryData' : 'actualChargesData'), {
 				onrendered: function(canvas) {
 					var canvasdata = canvas.toDataURL("image/png");
 					var a = document.createElement("a");
-					a.download = "Report.png";
+					a.download = isSummary ? 'Summary_Report.png' : 'Actual_Charges_Report.png';
 					a.href = canvasdata;
 					a.click();
 				}
 			});
 		}
 
-		$scope.emailReport = function() {
+		$scope.emailReport = function(isSummary) {
 			$scope.ui.email = true;
 			$("div").scrollTop(1000);
-			html2canvas(document.getElementById('exportData'), {
+			html2canvas(document.getElementById(isSummary ? 'exportSummaryData' : 'actualChargesData'), {
 				onrendered: function(canvas) {
 					var canvasdata = canvas.toDataURL("image/png");
 					var emailContent = {

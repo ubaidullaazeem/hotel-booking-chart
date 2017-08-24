@@ -1,24 +1,29 @@
 <div class="row">
 	<div class="col-md-12">
-		<div class="card">
+		<h4 ng-if="newbookings.length === 0 && ui.isBookingsLoadingDone">Bookings not found. Please create some bookings to generate report.</h4>
+
+		<div class="card" ng-show="newbookings.length > 0">
 			<form name="reports" id="reportSearch" action="" method="" novalidate="novalidate">
 				<div class="card-header card-header-icon" data-background-color="{{DATA_BACKGROUND_COLOR}}">
 					<i class="material-icons">search</i>
-				</div>
+				</div>				
 				<div class="card-content">
-					<h4 class="card-title">Search</h4>
+					<h4 class="card-title">Search</h4>					
 					<div layout="row">
 						<md-input-container flex=30>
 							<label class="my-label">Halls</label>
-							<md-select required multiple 
-							name="halls"
-							ng-model="searchParams.selectedHalls"
-							ng-change="selectedHallsChanged()"
-							ng-model-options= "{trackBy: '$value._id'}">
+							<md-select 	multiple 
+										required
+										name="halls"
+										ng-model="searchParams.selectedHalls"
+										ng-model-options= "{trackBy: '$value._id'}">
 								<md-optgroup label="Halls">
-								<md-option ng-value="hall" ng-selected="{{ selectHallsByDefault(hall) }}" ng-repeat="hall in model.halls">{{hall.displayName}}</md-option>
+									<md-option ng-value="hall" ng-selected="{{ selectHallsByDefault(hall) }}" ng-repeat="hall in model.halls">{{hall.displayName}}</md-option>
 								</md-optgroup>
 							</md-select>
+							<div ng-messages="reports.halls.$error">
+				              <div ng-message="required">Halls is required.</div>
+				            </div>
 						</md-input-container>
 
 						<div flex></div>
@@ -36,7 +41,7 @@
 						</md-input-container>
 						<div flex></div>
 						<md-input-container flex=11  style="margin-top: 0px">
-							<md-button class="btn btn-info btn-sm" ng-hide="ui.searching" ng-click="searchReports()"><span class="glyphicon glyphicon-search"></span> Search</md-button>
+							<md-button class="btn btn-info btn-sm"  ng-disabled="reports.$invalid" ng-hide="ui.searching" ng-click="searchReports()"><span class="glyphicon glyphicon-search"></span>Search</md-button>
 							<md-button class="btn btn-info btn-sm" ng-disabled="true" ng-show="ui.searching"><i class="fa fa-spinner fa-spin"></i> Searching</md-button>
 						</md-input-container>
 					</div>
@@ -45,23 +50,45 @@
 		</div>
 	</div>
 </div>
-<div class="row">
-	<div class="col-md-10" id="exportData">
+
+<div class="row" ng-show="newbookings.length > 0">
+	<div class="col-md-10" id="actualChargesData">
 		<div class="card">
 			<div class="card-header card-header-icon" data-background-color="rose">
 				<i class="material-icons">insert_chart</i>
 			</div>
 			<div class="card-content">
-				<h4 class="card-title">Multiple Bars Chart
-				<small>- Bar Chart</small>
+				<h4 class="card-title">Electricity/Cleaning Charges Bar Chart
+				<small></small>
 				</h4>
 			</div>
-			<canvas class="chart chart-bar" chart-colors="colors" chart-data="chart.monthData" chart-labels="labels" chart-options="options" chart-series="series" style="width:100%; height: 100%"></canvas>
+			<canvas class="chart chart-bar" chart-colors="actualChargesChart.colors" chart-data="actualChargesChart.data" chart-labels="labels" chart-options="actualChargesChart.options" chart-series="actualChargesChart.series" style="width:100%;"></canvas>
 		</div>
 	</div>
 	<div class="col-md-2">
-		<md-button class="btn btn-info btn-sm" ng-click="exportReport()">Export</md-button>
-		<md-button class="btn btn-info btn-sm" ng-hide="ui.email" ng-click="emailReport()">Email</md-button>
+		<md-button class="btn btn-info btn-sm" ng-click="exportReport(false)">Export</md-button>
+		<md-button class="btn btn-info btn-sm" ng-hide="ui.email" ng-click="emailReport(false)">Email</md-button>
+		<md-button class="btn btn-info btn-sm" ng-disabled="true" ng-show="ui.email"><i class="fa fa-spinner fa-spin"></i> Email sending</md-button>
+	</div>
+</div>
+
+<div class="row" ng-show="newbookings.length > 0">
+	<div class="col-md-10" id="exportSummaryData">
+		<div class="card">
+			<div class="card-header card-header-icon" data-background-color="rose">
+				<i class="material-icons">insert_chart</i>
+			</div>
+			<div class="card-content">
+				<h4 class="card-title">Summary Bar Chart
+				<small></small>
+				</h4>
+			</div>
+			<canvas class="chart chart-bar" chart-colors="summaryChart.colors" chart-data="summaryChart.data" chart-labels="labels" chart-options="summaryChart.options" chart-series="summaryChart.series" style="width:100%; height: 100%"></canvas>
+		</div>
+	</div>
+	<div class="col-md-2">
+		<md-button class="btn btn-info btn-sm" ng-click="exportReport(true)">Export</md-button>
+		<md-button class="btn btn-info btn-sm" ng-hide="ui.email" ng-click="emailReport(true)">Email</md-button>
 		<md-button class="btn btn-info btn-sm" ng-disabled="true" ng-show="ui.email"><i class="fa fa-spinner fa-spin"></i> Email sending</md-button>
 	</div>
 </div>
