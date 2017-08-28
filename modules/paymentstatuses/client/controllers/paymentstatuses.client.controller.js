@@ -43,7 +43,7 @@
         function errorCallback(res) {
           Notification.error({
             message: res.data.message,
-            title: '<i class="glyphicon glyphicon-remove"></i> Create Payment Status Error !!!'
+            title: '<i class="glyphicon glyphicon-remove"></i> Create Payment Status Error'
           });
         }
       }

@@ -67,13 +67,7 @@
             var isSGSTPresent = _.includes(_.map(taxes, 'name'), SGST);
             return isCGSTPresent && isSGSTPresent;
         };
-
-        CommonService.makeFirstLetterCapitalizeinArray = function(array) {
-            return array.map(function(str) {
-                return str.charAt(0).toUpperCase() + str.slice(1).replace(/ -/, ':');
-            });
-        };
-
+        
         CommonService.getPaymentCountFromBookedHall = function(bookedHalls, name) {
             var paymentFromBookedHall = _.filter(bookedHalls, function(bookedHall) {
                 return bookedHall.mSelectedPaymentStatus.name === name;

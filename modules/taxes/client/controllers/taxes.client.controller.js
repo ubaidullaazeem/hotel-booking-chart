@@ -97,7 +97,7 @@
         function errorCallback(res) {
           Notification.error({
             message: res.data.message,
-            title: '<i class="glyphicon glyphicon-remove"></i> Create Tax Error !!!'
+            title: '<i class="glyphicon glyphicon-remove"></i> Create Tax Error'
           });
         }
       }

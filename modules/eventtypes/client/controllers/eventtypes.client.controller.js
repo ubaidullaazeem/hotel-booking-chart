@@ -6,9 +6,9 @@
     .module('eventtypes')
     .controller('EventtypesController', EventtypesController);
 
-  EventtypesController.$inject = ['DATA_BACKGROUND_COLOR', '$scope', '$state', '$rootScope', '$window', '$mdDialog', 'Notification', 'eventtypeResolve', 'otherEventTypesResolve', 'EventtypesService', 'COLOURS', 'colorsResolve'];
+  EventtypesController.$inject = ['DATA_BACKGROUND_COLOR', '$scope', '$state', '$rootScope', '$window', '$mdDialog', 'Notification', 'eventtypeResolve', 'otherEventTypesResolve', 'EventtypesService', 'COLOURS', 'colorsResolve', 'HARDCODE_VALUES'];
 
-  function EventtypesController(DATA_BACKGROUND_COLOR, $scope, $state, $rootScope, $window, $mdDialog, Notification, eventtype, otherEventTypesResolve, EventtypesService, COLOURS, colorsResolve) {
+  function EventtypesController(DATA_BACKGROUND_COLOR, $scope, $state, $rootScope, $window, $mdDialog, Notification, eventtype, otherEventTypesResolve, EventtypesService, COLOURS, colorsResolve, HARDCODE_VALUES) {
     $scope.colours = colorsResolve;
     $scope.model = {
       eventType: {
@@ -20,6 +20,7 @@
     };
 
     $scope.DATA_BACKGROUND_COLOR = DATA_BACKGROUND_COLOR;
+    $scope.HARDCODE_VALUES = HARDCODE_VALUES;
 
     $scope.$watch('model.eventType.displayName', function() {
       $scope.model.eventType.name = $scope.model.eventType.displayName;
@@ -41,7 +42,7 @@
         if (_.includes(otherEventTypesResolve, $scope.model.eventType.name.toLowerCase().trim())) {
           Notification.error({
             message: 'Name already exists',
-            title: '<i class="glyphicon glyphicon-remove"></i> Create Event Error !!!'
+            title: '<i class="glyphicon glyphicon-remove"></i> Create Event Error'
           });
 
           return;
@@ -60,7 +61,7 @@
         function errorCallback(res) {
           Notification.error({
             message: res.data.message,
-            title: '<i class="glyphicon glyphicon-remove"></i> Create Event Error !!!'
+            title: '<i class="glyphicon glyphicon-remove"></i> Create Event Error'
           });
         }
       }

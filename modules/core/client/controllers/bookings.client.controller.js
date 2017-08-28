@@ -259,13 +259,13 @@
           }
         }
       }
-      var bookingTitle = booking.mSelectedEventType.name;
-      if (booking.mSelectedEventType.name === HARDCODE_VALUES[0]) {
+      var bookingTitle = booking.mSelectedEventType.displayName;
+      if (booking.mSelectedEventType.name.toLowerCase().trim() === HARDCODE_VALUES[0]) {
         bookingTitle = booking.mOtherEvent;
       }
       $scope.model.events.push({
         _id: booking._id,
-        title: bookingTitle.charAt(0).toUpperCase() + bookingTitle.slice(1),
+        title: bookingTitle,
         start: new Date(booking.mStartDateTime),
         end: new Date(booking.mEndDateTime),
         color: colorCode,
@@ -279,7 +279,7 @@
       if ($scope.halls.mAllHalls.length == 0) {
         Notification.error({
           message: "Please add halls in settings.",
-          title: '<i class="glyphicon glyphicon-remove"></i> Halls Error !!!'
+          title: '<i class="glyphicon glyphicon-remove"></i> Halls Error'
         });
         $scope.ui.validateSettings = true;
       }
@@ -287,7 +287,7 @@
       if ($scope.model.eventTypes.length == 0) {
         Notification.error({
           message: "Please add event types in settings.",
-          title: '<i class="glyphicon glyphicon-remove"></i> Event Error !!!'
+          title: '<i class="glyphicon glyphicon-remove"></i> Event Error'
         });
         $scope.ui.validateSettings = true;
       }
@@ -295,7 +295,7 @@
       if ($scope.model.paymentStatuses.length < 2) {
         Notification.error({
           message: "Please add payment statuses in settings.",
-          title: '<i class="glyphicon glyphicon-remove"></i> Payment status Error !!!'
+          title: '<i class="glyphicon glyphicon-remove"></i> Payment status Error'
         });
         $scope.ui.validateSettings = true;
       }
@@ -359,8 +359,8 @@
       angular.forEach($scope.model.eventTypes, function(eventType) {
         var length = CommonService.getEventTypeCountFromBookedHall(bookedHalls, eventType.name);
         $scope.chart.data.push(length);
-        var name = eventType.name;
-        $scope.chart.labels.push(name.charAt(0).toUpperCase() + name.slice(1));
+        var name = eventType.displayName;
+        $scope.chart.labels.push(name);
         $scope.chart.colors.push(eventType.colour.code);
       });
     };

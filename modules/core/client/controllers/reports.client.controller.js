@@ -299,7 +299,7 @@
 		function onRequestEmailReportSuccess(response) {
 			Notification.success({
 				message: response.message,
-				title: '<i class="glyphicon glyphicon-remove"></i> Email drop successfully !!!'
+				title: '<i class="glyphicon glyphicon-remove"></i> Email drop successfully'
 			});
 			$scope.ui.email = false;
 		}
@@ -307,7 +307,7 @@
 		function onRequestEmailReportError(response) {
 			Notification.error({
 				message: response.message,
-				title: '<i class="glyphicon glyphicon-remove"></i> Email failed to send !!!'
+				title: '<i class="glyphicon glyphicon-remove"></i> Email failed to send'
 			});
 			$scope.ui.email = false;
 		}

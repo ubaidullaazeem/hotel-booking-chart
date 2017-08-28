@@ -17,7 +17,7 @@
 						</tr>
 						<tr ng-repeat = "paymentStatus in paymentStatuses" style="text-align: center">
 							<td style="text-transform: capitalize; vertical-align:middle">{{ paymentStatus.name }}</td>
-							<td style="vertical-align:middle">{{ paymentStatus.colour.name }}</td>
+							<td style="vertical-align:middle"><div layout="column">{{ paymentStatus.colour.name }}<div style="width: 15px; height: 15px; background-color: {{paymentStatus.colour.code}}; margin:0 auto; "></div></div></td>
 
 							<td style="text-align: center;">
 							<md-button class="md-raised md-primary nonecase" style="min-width: 50px" ng-click="mShowPaymentStatusPopup($event, $index, paymentStatus)"><span class="glyphicon glyphicon-pencil"></span></md-button>

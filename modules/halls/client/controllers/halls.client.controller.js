@@ -56,7 +56,7 @@
       if (!hasContainsTaxName) {
         Notification.error({
           message: 'Please add both CGST and SGST tax rate.',
-          title: '<i class="glyphicon glyphicon-remove"></i> Tax Missing Error !!!'
+          title: '<i class="glyphicon glyphicon-remove"></i> Tax Missing Error'
         });
         $mdDialog.cancel();
       }
@@ -79,7 +79,7 @@
         if (_.includes(otherHallsResolve, $scope.model.hall.name.toLowerCase().trim())) {
           Notification.error({
             message: 'Name already exists',
-            title: '<i class="glyphicon glyphicon-remove"></i> Create Hall Error !!!'
+            title: '<i class="glyphicon glyphicon-remove"></i> Create Hall Error'
           });
 
           return;
@@ -128,7 +128,7 @@
         function errorCallback(res) {
           Notification.error({
             message: res.data.message,
-            title: '<i class="glyphicon glyphicon-remove"></i> Create Hall Error !!!'
+            title: '<i class="glyphicon glyphicon-remove"></i> Create Hall Error'
           });
         }
       }

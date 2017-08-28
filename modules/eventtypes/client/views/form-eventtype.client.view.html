@@ -17,7 +17,7 @@
 
               <md-input-container flex>
                 <label class="my-label">Name</label>
-                <input required name="name" ng-model="model.eventType.displayName" ng-disabled="model.eventType.name === 'others'"/>
+                <input required name="name" ng-model="model.eventType.displayName" ng-disabled="{{model.eventType.name.toLowerCase().trim() === HARDCODE_VALUES[0]}}"/>
                 <div ng-messages="eventtypeForm.name.$error">
                   <div ng-message="required">Event type name is required.</div>
                 </div>

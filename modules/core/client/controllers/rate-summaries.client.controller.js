@@ -137,7 +137,7 @@
       function errorCallback(res) {
         Notification.error({
           message: res.data.message,
-          title: '<i class="glyphicon glyphicon-remove"></i> Update Rate Summary Error !!!'
+          title: '<i class="glyphicon glyphicon-remove"></i> Update Rate Summary Error'
         });
       }
     };

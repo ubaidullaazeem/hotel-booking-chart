@@ -79,7 +79,7 @@
 
                   Notification.success({
                     message: "Authorized successfully",
-                    title: '<i class="glyphicon glyphicon-remove"></i> Success !!!'
+                    title: '<i class="glyphicon glyphicon-remove"></i> Success'
                   });
 
                   $rootScope.isUserLoggedIn = true;

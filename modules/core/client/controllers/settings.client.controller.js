@@ -82,7 +82,7 @@
           function errorCallback(res) {
             Notification.error({
               message: res.data.message,
-              title: '<i class="glyphicon glyphicon-remove"></i> Delete Hall Error !!!'
+              title: '<i class="glyphicon glyphicon-remove"></i> Delete Hall Error'
             });
           }
         },
@@ -209,7 +209,7 @@
           function errorCallback(res) {
             Notification.error({
               message: res.data.message,
-              title: '<i class="glyphicon glyphicon-remove"></i> Delete Event Error !!!'
+              title: '<i class="glyphicon glyphicon-remove"></i> Delete Event Error'
             });
           }
         },

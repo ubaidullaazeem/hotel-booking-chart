@@ -17,7 +17,7 @@
 						</tr>
 						<tr ng-repeat = "eventType in eventTypes" style="text-align: center">
 							<td>{{ eventType.displayName }}</td>
-							<td>{{ eventType.colour.name }}</td>
+							<td><div layout="column">{{ eventType.colour.name }}<div style="width: 15px; height: 15px; background-color: {{eventType.colour.code}}; margin:0 auto; "></div></div></td>
 
 							<td style="text-align: center;">
 							<md-button class="md-raised md-primary nonecase md-mini" style="min-width: 50px" ng-click="mShowEventTypePopup($event, $index, eventType)"><span class="glyphicon glyphicon-pencil"></span></md-button>
