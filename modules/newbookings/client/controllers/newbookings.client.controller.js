@@ -506,7 +506,9 @@
           halls: _.map($scope.mixins.mSelectedHalls, 'displayName'),
           paymentMode: $scope.mPaymentHistory.paymentMode,
           eventDateTime: getEventDateTime(),
-          subject: 'Mirth Hall Booking Details'
+          eventName : ($scope.mixins.mSelectedEventType.name.toLowerCase().trim() === HARDCODE_VALUES[0]) ? $scope.mixins.mOtherEvent : $scope.mixins.mSelectedEventType.displayName,
+          subject: isInvoice ? 'Mirth Hall Booking Invoice' : 'Mirth Hall Booking Receipt',
+          isInvoice: isInvoice
         };
 
         if ($scope.mixins.mEmail === null) {

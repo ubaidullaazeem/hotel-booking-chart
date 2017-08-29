@@ -217,6 +217,7 @@ exports.sendEmail = function(req, res, next) {
       if (config.secure && config.secure.ssl === true) {
         httpTransport = 'https://';
       }
+
       var baseUrl = req.app.get('domain') || httpTransport + req.headers.host;
       var templateURL = 'modules/newbookings/server/templates/customer-booking-email';
 
@@ -227,6 +228,7 @@ exports.sendEmail = function(req, res, next) {
         mPhotoId: newBooking.mPhotoId !== null ? newBooking.mPhotoId : '--',
         totalCharges:  req.body.totalCharges,
         halls: req.body.halls,
+        eventName: req.body.eventName,
         appName: config.app.title,
         paymentMode: req.body.paymentMode !== null ? req.body.paymentMode : '--',
         eventDateTime: req.body.eventDateTime !== null ? req.body.eventDateTime : '-',
@@ -244,7 +246,7 @@ exports.sendEmail = function(req, res, next) {
         subject: req.body.subject,
         html: emailHTML,
         attachments: [{
-          filename: "booking-details.pdf",
+          filename: req.body.isInvoice ? "Invoice.pdf" : "Receipt.pdf",
           path: path,
           contentType: 'application/pdf'
         }]
@@ -253,7 +255,7 @@ exports.sendEmail = function(req, res, next) {
         if (!err) {
           fs.unlink(path);
           res.send({
-            message: 'An email has been sent to the provided email with further instructions.'
+            message: 'An email has been sent to the customer email.'
           });
         } else {
           return res.status(400).send({
@@ -301,7 +303,7 @@ exports.sendReport = function(req, res, next) {
         if (!err) {
          // fs.unlink(path);
           res.send({
-            message: 'An email has been sent to the provided email with further instructions.'
+            message: 'An email has been sent.'
           });
         } else {
           return res.status(400).send({
