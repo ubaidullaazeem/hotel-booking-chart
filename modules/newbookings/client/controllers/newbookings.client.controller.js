@@ -325,7 +325,7 @@
                     '<body><div ><div>'+
                     '<table width="100%" style="border-collapse: collapse; border: 1px solid black; table-layout: fixed;" cellspacing="0" cellpadding="0"> <tbody>'+
                     '<tr width="100%" style="border-bottom: 1px solid black;">'+
-                      '<td width="20%"><img style="width: 140px;" src="' + baseUrl + '/modules/core/client/img/logo-bw.png"/></td>'+
+                      '<td width="20%"><img style="width: 110px;" src="' + baseUrl + '/modules/core/client/img/logo-bw.png"/></td>'+
                       '<td width="45%" style="text-align:left;">Dev&apos;s Ark, Second Floor AD-79&80, 5th Avenue,<br/> Anna Nagar, Chennai - 600 040</td>'+
                       '<td width="35%" height="100%" style="border-left: 1px solid black;">'+
                         '<table width="100%" height="100%" style="border-collapse: collapse;">'+
