@@ -81,7 +81,7 @@ module.exports = {
     sandbox: false
   },
   mailer: {
-    from: process.env.MAILER_FROM || 'admin@mirth.com',
+    from: process.env.MAILER_FROM || 'Mirth <admin@mirth.com>',
     options: {
       service: process.env.MAILER_SERVICE_PROVIDER || 'gmail',
       auth: {
