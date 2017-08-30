@@ -44,7 +44,7 @@
       isShownHallsNotInGoogleCalendar = false;
       
       $scope.ui = {
-        mSelectedDateToDisplay: selectedDate.format('DD-MMMM-YYYY'),
+        mSelectedDateToDisplay: moment(selectedDate).format('DD-MMMM-YYYY'),
         mPricePattern: /^[0-9]+(\.[0-9]{1,2})?$/,
         mEmailPattern: /^.+@.+\..+$/,
         createMode: true,
