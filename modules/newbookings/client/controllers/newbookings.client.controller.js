@@ -89,6 +89,7 @@
         mPhone: selectedEvent ? selectedEvent.mPhone : null,
         mEmail: selectedEvent ? selectedEvent.mEmail : null,
         mAddress: selectedEvent ? selectedEvent.mAddress : null,
+        mGSTINNumber: selectedEvent ? selectedEvent.mGSTINNumber : null,
         mPhotoId: selectedEvent ? selectedEvent.mPhotoId : null,
         mPhotoIdPath: selectedEvent ? selectedEvent.mPhotoIdPath : null,
         mSelectedPaymentStatus: selectedEvent ? selectedEvent.mSelectedPaymentStatus : null,
@@ -753,8 +754,7 @@
               $scope.ui.isBookingInProgress = true;
             }
 
-            if ($scope.ui.createMode) {
-              proRateAmountPaid();
+            if ($scope.ui.createMode) {              
               $scope.mixins.mPaymentHistories.push($scope.mPaymentHistory);
             } else {
               pushPayment();
@@ -1286,19 +1286,22 @@
       $scope.calculateBalanceDue();
     };
 
-    function pushPayment() {
-      if ($scope.mPaymentHistory.amountPaid && $scope.mPaymentHistory.paymentMode) {
+    $scope.onUnConfirmedAmountChanged = function() {
+      proRateAmountPaid();
+      $scope.calculateBalanceDue();
+    };
 
-        proRateAmountPaid();
+    function pushPayment() {
+      if ($scope.mPaymentHistory.amountPaid && $scope.mPaymentHistory.paymentMode) {        
 
         $scope.mixins.mPaymentHistories.unshift($scope.mPaymentHistory);
       }
     }
 
     function proRateAmountPaid() {
-      $scope.mPaymentHistory.paidSubTotal = ($scope.mPaymentHistory.amountPaid * pendingSubTotalPercentage) / 100;
-      $scope.mPaymentHistory.paidCGST = ($scope.mPaymentHistory.amountPaid * pendingCGSTPercentage) / 100;
-      $scope.mPaymentHistory.paidSGST = ($scope.mPaymentHistory.amountPaid * pendingSGSTPercentage) / 100;
+      $scope.mPaymentHistory.paidSubTotal = Number(($scope.mPaymentHistory.amountPaid * pendingSubTotalPercentage) / 100).toFixed(2);
+      $scope.mPaymentHistory.paidCGST = Number(($scope.mPaymentHistory.amountPaid * pendingCGSTPercentage) / 100).toFixed(2);
+      $scope.mPaymentHistory.paidSGST = Number(($scope.mPaymentHistory.amountPaid * pendingSGSTPercentage) / 100).toFixed(2);
     }
 
     /**

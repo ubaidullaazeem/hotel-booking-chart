@@ -70,6 +70,11 @@ var NewbookingSchema = new Schema({
     default: '',
     trim: true
   },
+  mGSTINNumber: {
+    type: String,
+    default: '',
+    trim: true
+  },
   mPhotoId: {
     type: String,
     default: '',
