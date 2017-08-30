@@ -6,38 +6,19 @@
     .module('newbookings')
     .controller('NewbookingsController', NewbookingsController);
 
-  NewbookingsController.$inject = ['AuthenticationService', 'CGST', 'SGST', 'DATA_BACKGROUND_COLOR', 'EmailBookingServices', 'HARDCODE_VALUES', 'PAYMENT_STATUS', '$filter', '$scope', '$state', 'selectedEvent', '$location', '$mdDialog', '$templateRequest', '$sce', 'NewbookingsService', 'selectedDate', 'HallsService', 'EventtypesService', 'TaxesService', 'PaymentstatusesService', 'Notification', '$mdpTimePicker', '$mdpDatePicker', 'PAY_MODES', 'CommonService', 'ValidateOverlapBookingServices', 'viewMode', 'GOOGLE_CALENDAR_COLOR_IDS', 'Upload', '$timeout', 'RupeeWords'];
+  NewbookingsController.$inject = ['AuthenticationService', 'CGST', 'SGST', 'DATA_BACKGROUND_COLOR', 'EmailBookingServices', 'HARDCODE_VALUES', 'PAYMENT_STATUS', '$filter', '$scope', '$state', 'selectedEvent', '$location', '$mdDialog', '$templateRequest', '$sce', 'NewbookingsService', 'selectedDate', 'HallsService', 'EventtypesService', 'TaxesService', 'PaymentstatusesService', 'Notification', '$mdpTimePicker', '$mdpDatePicker', 'PAY_MODES', 'CommonService', 'ValidateOverlapBookingServices', 'viewMode', 'GOOGLE_CALENDAR_COLOR_IDS', 'Upload', '$timeout', 'RupeeWords', '$rootScope'];
 
-  function NewbookingsController(AuthenticationService, CGST, SGST, DATA_BACKGROUND_COLOR, EmailBookingServices, HARDCODE_VALUES, PAYMENT_STATUS, $filter, $scope, $state, selectedEvent, $location, $mdDialog, $templateRequest, $sce, NewbookingsService, selectedDate, HallsService, EventtypesService, TaxesService, PaymentstatusesService, Notification, $mdpTimePicker, $mdpDatePicker, PAY_MODES, CommonService, ValidateOverlapBookingServices, viewMode, GOOGLE_CALENDAR_COLOR_IDS, Upload, $timeout, RupeeWords) {
+  function NewbookingsController(AuthenticationService, CGST, SGST, DATA_BACKGROUND_COLOR, EmailBookingServices, HARDCODE_VALUES, PAYMENT_STATUS, $filter, $scope, $state, selectedEvent, $location, $mdDialog, $templateRequest, $sce, NewbookingsService, selectedDate, HallsService, EventtypesService, TaxesService, PaymentstatusesService, Notification, $mdpTimePicker, $mdpDatePicker, PAY_MODES, CommonService, ValidateOverlapBookingServices, viewMode, GOOGLE_CALENDAR_COLOR_IDS, Upload, $timeout, RupeeWords, $rootScope) {
     $scope.DATA_BACKGROUND_COLOR = DATA_BACKGROUND_COLOR;
 
-    var cgstPercent;
-    var sgstPercent;
+    var cgstPercent = 0;
+    var sgstPercent = 0;
     var totalCostToDiscountProrate = 0;
-    var pendingSubTotalPercentage;
-    var pendingCGSTPercentage;
-    var pendingSGSTPercentage;
+    var pendingSubTotalPercentage = 0;
+    var pendingCGSTPercentage = 0;
+    var pendingSGSTPercentage = 0;
     var hallsNotInGoogleCalendar = '';
     var isShownHallsNotInGoogleCalendar = false;
-
-    console.log("selectedDate "+selectedDate);
-
-    $scope.ui = {
-      mSelectedDateToDisplay: selectedDate.format('DD-MMMM-YYYY'),
-      mPricePattern: /^[0-9]+(\.[0-9]{1,2})?$/,
-      mEmailPattern: /^.+@.+\..+$/,
-      createMode: true,
-      showMdSelect: true,
-      mailsending: false,
-      viewMode: viewMode,
-      isActualChargesView: false,
-      isBookingInProgress: false,
-      isPastEvent: selectedEvent ? moment(selectedEvent.mStartDateTime) < moment(new Date().setHours(0, 0, 0, 0)) : true,
-      isFullyPaid: selectedEvent ? selectedEvent.mSelectedPaymentStatus.name === PAYMENT_STATUS[1] : false,
-      photoIdFile: '',
-      isDataChanged: false,
-      isPageLoadingDone: false
-    };
 
     $scope.model = {
       halls: HallsService.query(),
@@ -48,67 +29,106 @@
       selectedEventSelectedHalls: selectedEvent ? selectedEvent.mSelectedHalls : []
     };
 
-    $scope.mPaymentHistory = {
-      amountPaid: null,
-      paidDate: new Date(),
-      paymentMode: null,
-      details: '',
-      drawnOn: '',
-      CGSTPercent: 0,
-      SGSTPercent: 0,
-      paidSubTotal: 0,
-      paidCGST: 0,
-      paidSGST: 0
-    };
+    setInitialScopeData(true);
+    
 
-    $scope.PAYMENT_STATUS = PAYMENT_STATUS;
+    function setInitialScopeData(isFromBookings) {  
 
-    $scope.taxableChargesBeforeDiscount = 0;
+      cgstPercent = 0;
+      sgstPercent = 0;
+      totalCostToDiscountProrate = 0;
+      pendingSubTotalPercentage = 0;
+      pendingCGSTPercentage = 0;
+      pendingSGSTPercentage = 0;
+      hallsNotInGoogleCalendar = '';
+      isShownHallsNotInGoogleCalendar = false;
+      
+      $scope.ui = {
+        mSelectedDateToDisplay: selectedDate.format('DD-MMMM-YYYY'),
+        mPricePattern: /^[0-9]+(\.[0-9]{1,2})?$/,
+        mEmailPattern: /^.+@.+\..+$/,
+        createMode: true,
+        showMdSelect: true,
+        mailsending: false,
+        viewMode: viewMode,
+        isActualChargesView: false,
+        isBookingInProgress: false,
+        isPastEvent: selectedEvent ? moment(selectedEvent.mStartDateTime) < moment(new Date().setHours(0, 0, 0, 0)) : true,
+        isFullyPaid: selectedEvent ? selectedEvent.mSelectedPaymentStatus.name === PAYMENT_STATUS[1] : false,
+        photoIdFile: '',
+        isDataChanged: false,
+        isPageLoadingDone: false
+      };
 
-    $scope.mixins = {
-      _id: selectedEvent ? selectedEvent._id : undefined,
-      mSelectedHalls: selectedEvent ? selectedEvent.mSelectedHalls : [],
-      mSelectedEventType: selectedEvent ? selectedEvent.mSelectedEventType : null,
-      mOtherEvent: selectedEvent ? selectedEvent.mOtherEvent : null,
-      mDescription: selectedEvent ? selectedEvent.mDescription : null,
-      mName: selectedEvent ? selectedEvent.mName : null,
-      mPhone: selectedEvent ? selectedEvent.mPhone : null,
-      mEmail: selectedEvent ? selectedEvent.mEmail : null,
-      mAddress: selectedEvent ? selectedEvent.mAddress : null,
-      mPhotoId: selectedEvent ? selectedEvent.mPhotoId : null,
-      mPhotoIdPath: selectedEvent ? selectedEvent.mPhotoIdPath : null,
-      mSelectedPaymentStatus: selectedEvent ? selectedEvent.mSelectedPaymentStatus : null,
-      mManagerName: selectedEvent ? selectedEvent.mManagerName : null,
-      mDiscount: selectedEvent ? selectedEvent.mDiscount : 0,
-      mSubTotal: selectedEvent ? selectedEvent.mSubTotal : 0,
-      mCGST: selectedEvent ? selectedEvent.mCGST : 0,
-      mSGST: selectedEvent ? selectedEvent.mSGST : 0,
-      mGrandTotal: selectedEvent ? selectedEvent.mGrandTotal : 0,
-      mPaymentHistories: selectedEvent ? selectedEvent.mPaymentHistories : [],
-      mBalanceDue: selectedEvent ? selectedEvent.mBalanceDue : 0,
+      $scope.model.selectedEventSelectedHalls = selectedEvent ? selectedEvent.mSelectedHalls : [];
 
-      mPendingSubTotal: selectedEvent ? selectedEvent.mPendingSubTotal : 0,
-      mReceivedSubTotal: selectedEvent ? selectedEvent.mReceivedSubTotal : 0,
-      mPendingCGST: selectedEvent ? selectedEvent.mPendingCGST : 0,
-      mReceivedCGST: selectedEvent ? selectedEvent.mReceivedCGST : 0,
-      mPendingSGST: selectedEvent ? selectedEvent.mPendingSGST : 0,
-      mReceivedSGST: selectedEvent ? selectedEvent.mReceivedSGST : 0,
-      mPendingGrandTotal: selectedEvent ? selectedEvent.mPendingGrandTotal : 0,
-      mReceivedGrandTotal: selectedEvent ? selectedEvent.mReceivedGrandTotal : 0
-    };
+      $scope.mPaymentHistory = {
+        amountPaid: null,
+        paidDate: new Date(),
+        paymentMode: null,
+        details: '',
+        drawnOn: '',
+        CGSTPercent: 0,
+        SGSTPercent: 0,
+        paidSubTotal: 0,
+        paidCGST: 0,
+        paidSGST: 0
+      };
 
-    $scope.googleCalendar = {
-      colorCode: selectedEvent ? ((selectedEvent.mSelectedPaymentStatus.name === PAYMENT_STATUS[1]) ? GOOGLE_CALENDAR_COLOR_IDS.RED : GOOGLE_CALENDAR_COLOR_IDS.GREEN) : GOOGLE_CALENDAR_COLOR_IDS.GREEN
-    };
+      $scope.PAYMENT_STATUS = PAYMENT_STATUS;
 
-    $scope.eventTime = {
-      mStartClock: selectedEvent ? new Date(selectedEvent.mStartDateTime) : new Date('1991-05-04T06:00:00'),
-      mEndClock: selectedEvent ? new Date(selectedEvent.mEndDateTime) : new Date('1991-05-04T13:00:00'),
-      mStartToDisplay: selectedEvent ? getTimeToDisplay(new Date(selectedEvent.mStartDateTime)) : getTimeToDisplay(new Date('1991-05-04T06:00:00')),
-      mEndToDisplay: selectedEvent ? getTimeToDisplay(new Date(selectedEvent.mEndDateTime)) : getTimeToDisplay(new Date('1991-05-04T13:00:00')),
-      mStartToServer: selectedEvent ? getTimeToServer(new Date(selectedEvent.mStartDateTime)) : getTimeToServer(new Date('1991-05-04T06:00:00')),
-      mEndToServer: selectedEvent ? getTimeToServer(new Date(selectedEvent.mEndDateTime)) : getTimeToServer(new Date('1991-05-04T13:00:00'))
-    };
+      $scope.taxableChargesBeforeDiscount = 0;
+      
+      $scope.mixins = {
+        _id: selectedEvent ? selectedEvent._id : undefined,
+        mSelectedHalls: selectedEvent ? selectedEvent.mSelectedHalls : [],
+        mSelectedEventType: selectedEvent ? selectedEvent.mSelectedEventType : null,
+        mOtherEvent: selectedEvent ? selectedEvent.mOtherEvent : null,
+        mDescription: selectedEvent ? selectedEvent.mDescription : null,
+        mName: selectedEvent ? selectedEvent.mName : null,
+        mPhone: selectedEvent ? selectedEvent.mPhone : null,
+        mEmail: selectedEvent ? selectedEvent.mEmail : null,
+        mAddress: selectedEvent ? selectedEvent.mAddress : null,
+        mPhotoId: selectedEvent ? selectedEvent.mPhotoId : null,
+        mPhotoIdPath: selectedEvent ? selectedEvent.mPhotoIdPath : null,
+        mSelectedPaymentStatus: selectedEvent ? selectedEvent.mSelectedPaymentStatus : null,
+        mManagerName: selectedEvent ? selectedEvent.mManagerName : null,
+        mDiscount: selectedEvent ? selectedEvent.mDiscount : 0,
+        mSubTotal: selectedEvent ? selectedEvent.mSubTotal : 0,
+        mCGST: selectedEvent ? selectedEvent.mCGST : 0,
+        mSGST: selectedEvent ? selectedEvent.mSGST : 0,
+        mGrandTotal: selectedEvent ? selectedEvent.mGrandTotal : 0,
+        mPaymentHistories: selectedEvent ? selectedEvent.mPaymentHistories : [],
+        mBalanceDue: selectedEvent ? selectedEvent.mBalanceDue : 0,
+
+        mPendingSubTotal: selectedEvent ? selectedEvent.mPendingSubTotal : 0,
+        mReceivedSubTotal: selectedEvent ? selectedEvent.mReceivedSubTotal : 0,
+        mPendingCGST: selectedEvent ? selectedEvent.mPendingCGST : 0,
+        mReceivedCGST: selectedEvent ? selectedEvent.mReceivedCGST : 0,
+        mPendingSGST: selectedEvent ? selectedEvent.mPendingSGST : 0,
+        mReceivedSGST: selectedEvent ? selectedEvent.mReceivedSGST : 0,
+        mPendingGrandTotal: selectedEvent ? selectedEvent.mPendingGrandTotal : 0,
+        mReceivedGrandTotal: selectedEvent ? selectedEvent.mReceivedGrandTotal : 0
+      };
+
+      $scope.googleCalendar = {
+        colorCode: selectedEvent ? ((selectedEvent.mSelectedPaymentStatus.name === PAYMENT_STATUS[1]) ? GOOGLE_CALENDAR_COLOR_IDS.RED : GOOGLE_CALENDAR_COLOR_IDS.GREEN) : GOOGLE_CALENDAR_COLOR_IDS.GREEN
+      };
+
+      $scope.eventTime = {
+        mStartClock: selectedEvent ? new Date(selectedEvent.mStartDateTime) : new Date('1991-05-04T06:00:00'),
+        mEndClock: selectedEvent ? new Date(selectedEvent.mEndDateTime) : new Date('1991-05-04T13:00:00'),
+        mStartToDisplay: selectedEvent ? getTimeToDisplay(new Date(selectedEvent.mStartDateTime)) : getTimeToDisplay(new Date('1991-05-04T06:00:00')),
+        mEndToDisplay: selectedEvent ? getTimeToDisplay(new Date(selectedEvent.mEndDateTime)) : getTimeToDisplay(new Date('1991-05-04T13:00:00')),
+        mStartToServer: selectedEvent ? getTimeToServer(new Date(selectedEvent.mStartDateTime)) : getTimeToServer(new Date('1991-05-04T06:00:00')),
+        mEndToServer: selectedEvent ? getTimeToServer(new Date(selectedEvent.mEndDateTime)) : getTimeToServer(new Date('1991-05-04T13:00:00'))
+      };
+
+      if (!isFromBookings) {
+        calculateHallsRate();
+        $scope.calculateBalanceDue();
+      }
+    }
 
     $scope.$watch('mixins.mSelectedHalls', function(newValue) {
       calculateHallsRate();
@@ -640,11 +660,15 @@
     };
 
     $scope.model.taxes.$promise.then(function(result) {
+      doInitialProcessing();
+    });
+
+    function doInitialProcessing() {
       init();
       $scope.ui.isPageLoadingDone = true;
       getCommonHalls();
       $scope.bookingForm.$setPristine();
-    });
+    }
 
     $scope.setForm = function(form) {
       $scope.bookingForm = form;
@@ -1186,7 +1210,10 @@
 
               if (deleteProcessedHalls === $scope.mixins.mSelectedHalls.length) {
                 res.isDelete = true;
-                $mdDialog.hide(res);
+                //$mdDialog.hide(res);
+                $mdDialog.cancel();
+                // Sending broadcast to bookings.client.controller
+                $rootScope.$broadcast('editBooking', res);
               }
             });
 
@@ -1219,7 +1246,16 @@
         bookingTitle = res.mOtherEvent;
       }
       $scope.ui.isBookingInProgress = false;
-      $mdDialog.hide(res);
+      //$mdDialog.hide(res);
+
+      // Sending broadcast to bookings.client.controller
+      $rootScope.$broadcast($scope.ui.createMode ? 'newBooking' : 'editBooking', res);
+
+      selectedEvent = res;
+      viewMode = true;
+      $scope.mixins.mSelectedHalls = null;
+      setInitialScopeData(false);
+      doInitialProcessing();
     }
 
     function clearPaymentHistory() {
@@ -1334,7 +1370,7 @@
       $scope.mixins.mPendingCGST = Number(Number($scope.mixins.mPendingSubTotal) * cgstPercent).toFixed(2);
       $scope.mixins.mPendingSGST = Number(Number($scope.mixins.mPendingSubTotal) * sgstPercent).toFixed(2);
       $scope.mixins.mPendingGrandTotal = Number(Math.round(Number($scope.mixins.mPendingSubTotal) + Number($scope.mixins.mPendingCGST) + Number($scope.mixins.mPendingSGST))).toFixed(2);
-
+      
       if (Number($scope.mixins.mPendingSubTotal) === 0 && Number($scope.mixins.mPendingGrandTotal) === 0) { // 0/0 returns undefined
         pendingSubTotalPercentage = 0;
         pendingCGSTPercentage = 0;

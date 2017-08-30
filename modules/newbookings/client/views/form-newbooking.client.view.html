@@ -49,7 +49,7 @@
                           name="event"
                           ng-model="mixins.mSelectedEventType"
                           ng-change="onEventTypeSelected()"
-                          ng-disabled="ui.viewMode">
+                          ng-disabled="ui.viewMode" ng-model-options="{trackBy: '$value._id'}">
                 <md-optgroup label="Event">
                   <md-option ng-value="eventType" ng-selected="{{ eventType._id === mixins.mSelectedEventType._id ? 'true' : 'false' }}" ng-repeat="eventType in model.eventTypes">{{eventType.displayName}}</md-option>
                 </md-optgroup>
