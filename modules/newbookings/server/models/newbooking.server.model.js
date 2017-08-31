@@ -186,7 +186,11 @@ var NewbookingSchema = new Schema({
     paidCGST : Number,
     paidSGST : Number,
     receiptNo : Number,
-    receiptDate: Date
+    receiptDate: Date,
+    isDeletedPayment: {
+      type: Boolean,
+      default: false
+    }
   }],
   mBalanceDue: {
     type: Number,

@@ -113,7 +113,7 @@
 
         CommonService.sumOfArray = function(array) {
             return _.reduce(array, function(sum, n) {
-                return sum + n;
+                return Number(sum) + Number(n);
             }, 0);
         };
 

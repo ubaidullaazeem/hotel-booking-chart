@@ -72,7 +72,8 @@
         SGSTPercent: 0,
         paidSubTotal: 0,
         paidCGST: 0,
-        paidSGST: 0
+        paidSGST: 0,
+        isDeletedPayment: false
       };
 
       $scope.PAYMENT_STATUS = PAYMENT_STATUS;
@@ -101,7 +102,6 @@
         mGrandTotal: selectedEvent ? selectedEvent.mGrandTotal : 0,
         mPaymentHistories: selectedEvent ? selectedEvent.mPaymentHistories : [],
         mBalanceDue: selectedEvent ? selectedEvent.mBalanceDue : 0,
-
         mPendingSubTotal: selectedEvent ? selectedEvent.mPendingSubTotal : 0,
         mReceivedSubTotal: selectedEvent ? selectedEvent.mReceivedSubTotal : 0,
         mPendingCGST: selectedEvent ? selectedEvent.mPendingCGST : 0,
@@ -508,6 +508,14 @@
 
       return paymentList;
     }
+
+    $scope.printReceipt = function(index) {
+      alert('Under Development');
+    };
+
+    $scope.emailReceipt = function(index) {
+      alert('Under Development');
+    };
 
     function getEventDateTime() {
       return $scope.ui.mSelectedDateToDisplay + ' ' + $scope.eventTime.mStartToDisplay + ' - ' + $scope.eventTime.mEndToDisplay;
@@ -1269,7 +1277,8 @@
         SGSTPercent: 0,
         paidSubTotal: 0,
         paidCGST: 0,
-        paidSGST: 0
+        paidSGST: 0,
+        isDeletedPayment: false
       };
 
       calculateTaxRate();
@@ -1281,18 +1290,29 @@
     };
 
     $scope.removePayment = function(index) {
-      $scope.mixins.mPaymentHistories.splice(index, 1);
+      var confirm = $mdDialog.confirm().title('Do you want to delete the payment?').ok('Yes').cancel('No').multiple(true);
+      $mdDialog.show(confirm).then(function() {
 
-      $scope.calculateBalanceDue();
+          if ($scope.mixins.mPaymentHistories[index].hasOwnProperty('_id')) { // Confirmed payment
+            $scope.mixins.mPaymentHistories[index].isDeletedPayment = true;
+            $scope.calculateBalanceDue();
+          } else { // Unconfirmed payment
+            $scope.mixins.mPaymentHistories.splice(index, 1);
+            $scope.calculateBalanceDue();
+          }
+        },
+        function() {
+          console.log('no');
+        });
     };
 
     $scope.onUnConfirmedAmountChanged = function() {
-      proRateAmountPaid();
       $scope.calculateBalanceDue();
+      proRateAmountPaid();
     };
 
     function pushPayment() {
-      if ($scope.mPaymentHistory.amountPaid && $scope.mPaymentHistory.paymentMode) {        
+      if ($scope.mPaymentHistory.amountPaid && $scope.mPaymentHistory.paymentMode && $scope.mPaymentHistory.paidDate && ($scope.mPaymentHistory.paymentMode === $scope.model.paymentModes[2] || ($scope.mPaymentHistory.details != '' && $scope.mPaymentHistory.drawnOn != ''))) {
 
         $scope.mixins.mPaymentHistories.unshift($scope.mPaymentHistory);
       }
@@ -1364,9 +1384,16 @@
       }
     }
 
+    function getUnDeletedPaymentHistories() {
+      return _.filter($scope.mixins.mPaymentHistories, function(paymentHistory) {
+
+        return paymentHistory.isDeletedPayment === false;
+      });
+    }
+
     $scope.calculateBalanceDue = function() {
 
-      var previouslyPaidSubTotal = selectedEvent ? CommonService.sumOfArray(_.map($scope.mixins.mPaymentHistories, 'paidSubTotal')) : 0;
+      var previouslyPaidSubTotal = selectedEvent ? CommonService.sumOfArray(_.map(getUnDeletedPaymentHistories(), 'paidSubTotal')) : 0;
 
       //  without payment history subtotal
       $scope.mixins.mPendingSubTotal = Number(Number($scope.taxableChargesBeforeDiscount) - Number($scope.mixins.mDiscount) - Number(previouslyPaidSubTotal)).toFixed(2);
@@ -1395,8 +1422,8 @@
       $scope.mixins.mPendingGrandTotal = Number(Math.round(Number($scope.mixins.mPendingSubTotal) + Number($scope.mixins.mPendingCGST) + Number($scope.mixins.mPendingSGST))).toFixed(2);
 
       $scope.mixins.mReceivedSubTotal = Number(Number(previouslyPaidSubTotal) + Number(paymentHistorySubTotal)).toFixed(2);
-      $scope.mixins.mReceivedCGST = Number(Number(selectedEvent ? CommonService.sumOfArray(_.map($scope.mixins.mPaymentHistories, 'paidCGST')) : 0) + Number(paymentHistoryCGST)).toFixed(2);
-      $scope.mixins.mReceivedSGST = Number(Number(selectedEvent ? CommonService.sumOfArray(_.map($scope.mixins.mPaymentHistories, 'paidSGST')) : 0) + Number(paymentHistorySGST)).toFixed(2);
+      $scope.mixins.mReceivedCGST = Number(Number(selectedEvent ? CommonService.sumOfArray(_.map(getUnDeletedPaymentHistories(), 'paidCGST')) : 0) + Number(paymentHistoryCGST)).toFixed(2);
+      $scope.mixins.mReceivedSGST = Number(Number(selectedEvent ? CommonService.sumOfArray(_.map(getUnDeletedPaymentHistories(), 'paidSGST')) : 0) + Number(paymentHistorySGST)).toFixed(2);
       $scope.mixins.mReceivedGrandTotal = Number(Math.round(Number($scope.mixins.mReceivedSubTotal) + Number($scope.mixins.mReceivedCGST) + Number($scope.mixins.mReceivedSGST))).toFixed(2);
 
       $scope.mixins.mSubTotal = Number(Math.round(Number($scope.mixins.mPendingSubTotal) + Number($scope.mixins.mReceivedSubTotal))).toFixed(2);
@@ -1447,7 +1474,7 @@
         $scope.mixins.mSelectedHalls[i].mRevenue = $scope.mixins.mSelectedHalls[i].mBasicCost + $scope.mixins.mSelectedHalls[i].mElectricityCharges + $scope.mixins.mSelectedHalls[i].mCleaningCharges + $scope.mixins.mSelectedHalls[i].mGeneratorCharges + $scope.mixins.mSelectedHalls[i].mMiscellaneousCharges + $scope.mixins.mSelectedHalls[i].mDamages + $scope.mixins.mSelectedHalls[i].mTotalCGST + $scope.mixins.mSelectedHalls[i].mTotalSGST;
 
         //  Collection including CGST and SGST taxes.
-        var receivedPayment = CommonService.sumOfArray(_.map($scope.mixins.mPaymentHistories, 'amountPaid'));
+        var receivedPayment = CommonService.sumOfArray(_.map(getUnDeletedPaymentHistories(), 'amountPaid'));
         $scope.mixins.mSelectedHalls[i].Collection = {
           mBasicCostCollection: ((sHall.mBasicCost - discounts.mRateDiscount) / Number($scope.mixins.mSubTotal)) * receivedPayment,
           mElectricityCollection: ((sHall.mElectricityCharges - discounts.mElectricityDiscount) / Number($scope.mixins.mSubTotal)) * receivedPayment,

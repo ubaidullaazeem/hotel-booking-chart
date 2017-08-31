@@ -327,16 +327,16 @@
                     </md-input-container>  
                   </div>                    
                 </div>
-                <div layoout="column">
+                <div layoout="column">                  
                   <div ng-if="!ui.createMode && !(mixins.mBalanceDue <= 0)">
-                      <md-button class="md-raised md-primary nonecase" style="min-width: 50px" ng-click="addPayment()" ng-disabled="mPaymentHistory.amountPaid == null || mPaymentHistory.paidDate == null || mPaymentHistory.paymentMode == null" type="submit"><span class="glyphicon glyphicon-plus"></span></md-button>
+                      <md-button class="md-raised md-primary nonecase" style="min-width: 50px" ng-click="addPayment()" ng-disabled="mPaymentHistory.amountPaid == null || mPaymentHistory.paidDate == null || mPaymentHistory.paymentMode == null || (mPaymentHistory.paymentMode != model.paymentModes[2] && (mPaymentHistory.details == null || mPaymentHistory.drawnOn == null))" type="submit"><span class="glyphicon glyphicon-plus"></span></md-button>
                   </div> 
                 </div>
               </md-card-content>
             </md-card >
             <!-- Payment Histories -->
             <md-card ng-if="!ui.createMode" flex ng-repeat="mPaymentHistory in mixins.mPaymentHistories track by $index">  
-              <md-card-content layout="row" flex>
+              <md-card-content layout="row" ng-if="!mPaymentHistory.isDeletedPayment" flex>
                 <div layout="column" flex>
                   <div layout="row">
                     <md-input-container flex >
@@ -391,10 +391,10 @@
                     <md-button class="md-raised md-warn" style="min-width: 50px" ng-disabled="ui.viewMode" ng-click="removePayment($index)" type="submit"><span class="glyphicon glyphicon-remove"></span></md-button>
                   </div>
                   <div >
-                    <md-button class="md-raised md-accent" style="min-width: 50px" ng-disabled="ui.viewMode" ng-click="" type="submit"><span class="glyphicon glyphicon-print"></span></md-button>
+                    <md-button class="md-raised md-accent" style="min-width: 50px" ng-disabled="!mPaymentHistory._id" ng-click="printReceipt($index)" type="submit"><span class="glyphicon glyphicon-print"></span></md-button>
                   </div>
                   <div >
-                    <md-button class="md-raised md-primary" style="min-width: 50px" ng-disabled="ui.viewMode" ng-click="" type="submit"><span class="glyphicon glyphicon-inbox"></span></md-button>
+                    <md-button class="md-raised md-primary" style="min-width: 50px" ng-disabled="!mPaymentHistory._id" ng-click="emailReceipt($index)" type="submit"><span class="glyphicon glyphicon-inbox"></span></md-button>
                   </div>
                 </div>
               </md-card-content>
