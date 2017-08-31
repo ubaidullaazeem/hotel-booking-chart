@@ -5,9 +5,9 @@
     .module('core')
     .controller('SettingsController', SettingsController);
 
-  SettingsController.$inject = ['COLOURS', 'CommonService', 'DATA_BACKGROUND_COLOR', '$scope', '$state', '$rootScope', '$mdDialog', 'HallsService', 'Notification', 'EventtypesService', 'TaxesService', 'PaymentstatusesService', 'PAYMENT_STATUS', 'TAX_TYPES'];
+  SettingsController.$inject = ['COLOURS', 'CommonService', 'DATA_BACKGROUND_COLOR', '$scope', '$state', '$rootScope', '$mdDialog', 'HallsService', 'Notification', 'EventtypesService', 'TaxesService', 'PaymentstatusesService', 'CountersService', 'PAYMENT_STATUS', 'TAX_TYPES', 'INVOICE'];
 
-  function SettingsController(COLOURS, CommonService, DATA_BACKGROUND_COLOR, $scope, $state, $rootScope, $mdDialog, HallsService, Notification, EventtypesService, TaxesService, PaymentstatusesService, PAYMENT_STATUS, TAX_TYPES) {
+  function SettingsController(COLOURS, CommonService, DATA_BACKGROUND_COLOR, $scope, $state, $rootScope, $mdDialog, HallsService, Notification, EventtypesService, TaxesService, PaymentstatusesService, CountersService, PAYMENT_STATUS, TAX_TYPES, INVOICE) {
 
     $scope.DATA_BACKGROUND_COLOR = DATA_BACKGROUND_COLOR;
 
@@ -16,6 +16,7 @@
       $scope.taxes = TaxesService.query();
       $scope.eventTypes = EventtypesService.query();
       $scope.paymentStatuses = PaymentstatusesService.query();
+      $scope.counters = CountersService.query();
     };
 
     /** CRUD Functionality for Hall **/
@@ -344,6 +345,45 @@
             $scope.taxes[index] = updatedItem;
           }
 
+        }, function() {
+          console.log('You cancelled the dialog.');
+        });
+    }
+
+    /** CRUD Functionality for Receipt/Invoice Number **/
+
+    $scope.mShowReceiptInvoicePopup = function(ev, index, counter) {
+      var oldShow = $mdDialog.show;
+      $mdDialog.show = function(options) {
+        if (options.hasOwnProperty("skipHide")) {
+          options.multiple = options.skipHide;
+        }
+        return oldShow(options);
+      };
+      
+      $mdDialog.show({
+          controller: 'CountersController',
+          templateUrl: 'modules/counters/client/views/form-counter.client.view.html',
+          parent: angular.element(document.body),
+          clickOutsideToClose: true,
+          targetEvent: ev,
+          fullscreen: true,
+          resolve: {
+            counter: function() {
+              return counter;
+            },
+            countersResolve: function() {
+              return $scope.counters;
+            }
+          }
+        })
+        .then(function(updatedItem) {
+          if (counter) {
+            $scope.counters[index] = updatedItem;
+          }
+          else {
+            $scope.counters.push(updatedItem);
+          }          
         }, function() {
           console.log('You cancelled the dialog.');
         });

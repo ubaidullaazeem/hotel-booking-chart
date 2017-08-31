@@ -18,7 +18,12 @@ var CounterSchema = new Schema({
     lowercase: true
   },
   seq: {
-    type: Number
+    type: Number,
+    required: true
+  },
+  effectiveDate: {
+    type: Date,
+    required: true
   }
 },
 {

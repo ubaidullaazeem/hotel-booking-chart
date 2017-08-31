@@ -51,6 +51,9 @@
                     <li ui-sref-active="active">
                         <a ui-sref="event">Event Name</a>
                     </li>
+                    <li ui-sref-active="active" ng-if="!isPastInvoiceReceiptEffectiveDate">
+                        <a ui-sref="receiptInvoice">Receipt/Invoice Number</a>
+                    </li>
                 </ul>
             </div>
         </li> 

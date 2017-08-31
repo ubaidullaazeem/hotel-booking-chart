@@ -313,15 +313,22 @@
                     </md-input-container>   
                   </div>   
                   <div layout="row">
-                    <md-input-container flex >
+                    <md-input-container flex>
+                        <label class="my-label">Receipt Number</label>                      
+                        <input name="receiptNo" ng-required="" ng-model="" />
+                        <div ng-messages="bookingForm.receiptNo.$error">
+                          <div ng-message="required">Receipt number is required.</div>
+                        </div>
+                    </md-input-container> 
+                    <md-input-container flex>
                       <label class="my-label">Basic Cost</label>
                       <input ng-model="mPaymentHistory.paidSubTotal" ng-disabled="true"/> 
                     </md-input-container>  
-                    <md-input-container flex >
+                    <md-input-container flex>
                       <label class="my-label">CGST</label>
                       <input ng-model="mPaymentHistory.paidCGST" ng-disabled="true"/> 
                     </md-input-container>  
-                    <md-input-container flex >
+                    <md-input-container flex>
                       <label class="my-label">SGST</label>
                       <input ng-model="mPaymentHistory.paidSGST" ng-disabled="true"/> 
                     </md-input-container>  
@@ -497,6 +504,16 @@
             </div>
           </md-input-container>  
         </div>
+
+        <div layout="column" flex>
+          <md-input-container flex>
+              <label class="my-label">Invoice Number</label>                      
+              <input name="invoiceNo" ng-required="" ng-model="" />
+              <div ng-messages="bookingForm.invoiceNo.$error">
+                <div ng-message="required">Invoice number is required.</div>
+              </div>
+          </md-input-container>  
+        </div>        
 
         <div layout="column" flex>
           <md-input-container flex>

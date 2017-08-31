@@ -5,10 +5,11 @@
     .module('core')
     .controller('BookingsController', BookingsController);
 
-  BookingsController.$inject = ['bookedHallsResolve', 'CommonService', 'CALENDAR_CHANGE_VIEW', 'eventTypesResolve', 'paymentStatusesResolve', 'taxesResolve', 'counterResolve', '$scope', '$state', '$rootScope', '$mdDialog', '$timeout', 'hallsResolve', 'MESSAGES', 'Notification', 'NewbookingsService', 'SearchBookingServices', 'HARDCODE_VALUES'];
+  BookingsController.$inject = ['bookedHallsResolve', 'CommonService', 'CALENDAR_CHANGE_VIEW', 'eventTypesResolve', 'paymentStatusesResolve', 'taxesResolve', 'counterResolve', '$scope', '$state', '$rootScope', '$mdDialog', '$timeout', 'hallsResolve', 'MESSAGES', 'Notification', 'NewbookingsService', 'SearchBookingServices', 'HARDCODE_VALUES', 'RECEIPT', 'INVOICE'];
 
-  function BookingsController(bookedHallsResolve, CommonService, CALENDAR_CHANGE_VIEW, eventTypesResolve, paymentStatusesResolve, taxesResolve, counterResolve, $scope, $state, $rootScope, $mdDialog, $timeout, hallsResolve, MESSAGES, Notification, NewbookingsService, SearchBookingServices, HARDCODE_VALUES) {
+  function BookingsController(bookedHallsResolve, CommonService, CALENDAR_CHANGE_VIEW, eventTypesResolve, paymentStatusesResolve, taxesResolve, counterResolve, $scope, $state, $rootScope, $mdDialog, $timeout, hallsResolve, MESSAGES, Notification, NewbookingsService, SearchBookingServices, HARDCODE_VALUES, RECEIPT, INVOICE) {
     $rootScope.isUserLoggedIn = true;
+    $rootScope.isPastInvoiceReceiptEffectiveDate = true;
 
     $scope.model = {
       events: [],
@@ -52,7 +53,7 @@
         }
       }
     };
-
+    
     $scope.CALENDAR_CHANGE_VIEW = CALENDAR_CHANGE_VIEW;
 
     $scope.loadinitial = function() {
@@ -68,6 +69,30 @@
         $scope.loadinitial();
       }, 0, true);
     });
+
+    $scope.model.counters.$promise.then(function(result) {
+      $rootScope.isPastInvoiceReceiptEffectiveDate = isPastReceiptInvoiceEffectiveDate();
+    });
+
+    function isPastReceiptInvoiceEffectiveDate() {
+      var isPastReceiptEffectiveDate = false;
+      var isPastInvoiceEffectiveDate = false;
+
+      var receiptCounters = _.filter($scope.model.counters, function(paramCounter) {
+        return paramCounter.counterName === RECEIPT;
+      });
+
+      var invoiceCounters = _.filter($scope.model.counters, function(paramCounter) {
+        return paramCounter.counterName === INVOICE;
+      });
+
+      if (receiptCounters.length > 0 && invoiceCounters.length > 0) {
+        isPastReceiptEffectiveDate = (moment(receiptCounters[0].effectiveDate) <= moment(new Date().setHours(0, 0, 0, 0))) ? true : false;
+        isPastInvoiceEffectiveDate = (moment(invoiceCounters[0].effectiveDate) <= moment(new Date().setHours(0, 0, 0, 0))) ? true : false;
+      }
+
+      return isPastReceiptEffectiveDate && isPastInvoiceEffectiveDate;
+    }
 
     $scope.selectedHallsChanged = function() {
       $scope.model.events.length = 0;
@@ -331,37 +356,14 @@
         $scope.ui.validateSettings = true;
       }
       
-      if (!CommonService.hasContainsReceiptNumber($scope.model.counters)) {
-        $scope.ui.validateSettings = true;
-        $scope.showPrompt(false);
-        return;
-      }
-
-      if (!CommonService.hasContainsInvoiceNumber($scope.model.counters)) {
-        $scope.ui.validateSettings = true;
-        $scope.showPrompt(true);
-      }
-    };
-
-    $scope.showPrompt = function(isInvoice) {
-      $mdDialog.show({
-          controller: 'CountersController',
-          templateUrl: 'modules/counters/client/views/form-counter.client.view.html',
-          parent: angular.element(document.body),
-          clickOutsideToClose: true,
-          fullscreen: true,
-          resolve: {
-              isInvoice: function() {
-                return isInvoice;
-              }
-            }
-        })
-        .then(function(res) {
-          $scope.model.counters.push(res);          
-        }, function() {
-          console.log('You cancelled the dialog.');
+      if (!CommonService.hasContainsReceiptNumber($scope.model.counters) || !CommonService.hasContainsInvoiceNumber($scope.model.counters)) {
+        Notification.error({
+          message: "Please add Receipt/Invoice start number in settings.",
+          title: '<i class="glyphicon glyphicon-remove"></i> Receipt/Invoice Start Number Error'
         });
-    };
+        $scope.ui.validateSettings = true;
+      }      
+    };    
 
     function chartSummary(bookedHalls) {
       $scope.chart.data.length = 0;

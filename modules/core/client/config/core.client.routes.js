@@ -68,7 +68,7 @@
         controller: 'SettingsController',
         controllerAs: 'vm',
         data: {
-          pageTitle: 'Taxes'
+          pageTitle: 'CGST/SGST Tax'
         }
       })
       .state('hall', {
@@ -77,7 +77,7 @@
         controller: 'SettingsController',
         controllerAs: 'vm',
         data: {
-          pageTitle: 'Halls'
+          pageTitle: 'Hall Management'
         }
       })
       .state('payment', {
@@ -86,7 +86,7 @@
         controller: 'SettingsController',
         controllerAs: 'vm',
         data: {
-          pageTitle: 'Payments'
+          pageTitle: 'Payment Colors'
         }
       })
       .state('event', {
@@ -95,7 +95,16 @@
         controller: 'SettingsController',
         controllerAs: 'vm',
         data: {
-          pageTitle: 'Events'
+          pageTitle: 'Event Name'
+        }
+      })
+      .state('receiptInvoice', {
+        url: '/receiptInvoice',
+        templateUrl: '/modules/core/client/views/settings/receipt.invoice.number.client.view.html',
+        controller: 'SettingsController',
+        controllerAs: 'vm',
+        data: {
+          pageTitle: 'Receipt/Invoice Number'
         }
       });
 

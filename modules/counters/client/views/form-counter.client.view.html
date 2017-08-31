@@ -17,9 +17,16 @@
               
               <md-input-container flex>
                 <label class="my-label">{{ui.isInvoice ? 'Invoice' : 'Receipt'}} start number</label>
-                <input required type="number" name="startNumber" ng-model="model.seq" ng-pattern="ui.mNumberPattern" min="1"/>
+                <input required type="number" name="startNumber" ng-model="model.counter.seq" ng-pattern="ui.mNumberPattern" min="1" ng-disabled="ui.isPastEffectiveDate"/>
                 <div ng-messages="startNumberForm.startNumber.$error">
                   <div ng-message="required">{{ui.isInvoice ? 'Invoice' : 'Receipt'}} start number is required.</div>
+                </div>
+              </md-input-container>
+
+              <md-input-container flex>
+                <label class="my-label">Effective Date</label>
+                <div>
+                  <input class="form-control datepicker" required name="effectiveDate" ng-model="model.counter.effectiveDate" onfocus="this.blur()" ng-disabled="ui.isPastEffectiveDate" ng-click="showStartDatePicker($event)"></input>
                 </div>
               </md-input-container>
              
@@ -31,7 +38,7 @@
     
       <md-dialog-actions layout="row">  
         <span flex></span>
-        <input class="btn btn-next btn-fill btn-rose btn-wd" name="submit" value="Submit" ng-click="save(startNumberForm.$valid)" ng-disabled="startNumberForm.$invalid" type="button">
+        <input class="btn btn-next btn-fill btn-rose btn-wd" name="submit" value="Submit" ng-click="save(startNumberForm.$valid)" ng-disabled="startNumberForm.$invalid || ui.isPastEffectiveDate" type="button">
         <span flex></span>
         <input class="btn btn-next btn-fill btn-rose btn-wd" name="cancel" value="Cancel" ng-click="cancel()" type="button">
         <span flex></span>
