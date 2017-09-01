@@ -29,7 +29,7 @@ exports.create = function(req, res) {
 
   console.log("CREATE");
 
-  if (newbooking.mSelectedPaymentStatus.name === 'Fully Paid') {
+  if (newbooking.mSelectedPaymentStatus.name === 'Fully Paid' && !newbooking.invoiceNo) {
     assignInvoiceNumber(newbooking, res);
   } else {
     assignReceiptNumberAndSave(newbooking, res);
@@ -59,7 +59,6 @@ function assignInvoiceNumber(newbooking, res) {
 
 function assignReceiptNumberAndSave(newbooking, res) {
   var isReceiptNoAllotedToAll = true;
-
   
   for (var i = 0; i < newbooking.mPaymentHistories.length; i++) {
     if (newbooking.mPaymentHistories[i].receiptNo === null || newbooking.mPaymentHistories[i].receiptNo === undefined || newbooking.mPaymentHistories[i].receiptNo === '') {
@@ -70,31 +69,40 @@ function assignReceiptNumberAndSave(newbooking, res) {
 
   if (isReceiptNoAllotedToAll) {
     saveAfterReceiptAndInvoiceNumberUpdate(newbooking, res);
-  } else {
+  } else {    
+    // Src https://caolan.github.io/async/docs.html#eachOf
+    async.forEachOf(newbooking.mPaymentHistories, function(item, index, callback) {
+      if (item.receiptNo === null || item.receiptNo === undefined || item.receiptNo === '') {
 
-    Counter.findOneAndUpdate({
-      counterName: 'receipt'
-    }, {
-      $inc: {
-        seq: 1
+        Counter.findOneAndUpdate({
+          counterName: 'receipt'
+        }, {
+          $inc: {
+            seq: 1
+          }
+        }, function(err, result) {
+          if (err) {
+            return callback(err);
+          } else {
+            newbooking.mPaymentHistories[index].receiptNo = result.seq;
+            newbooking.mPaymentHistories[index].receiptDate = new Date();
+
+            callback();
+          }
+        });
       }
-    }, function(err, result) {
+      else {
+        callback();
+      }
+    }, function(err) {
       if (err) {
         return res.status(500).send({
           message: errorHandler.getErrorMessage(err)
         });
       } else {
-
-        for (var i = 0; i < newbooking.mPaymentHistories.length; i++) {
-          if (newbooking.mPaymentHistories[i].receiptNo === null || newbooking.mPaymentHistories[i].receiptNo === undefined || newbooking.mPaymentHistories[i].receiptNo === '') {
-            newbooking.mPaymentHistories[i].receiptNo = result.seq;
-            newbooking.mPaymentHistories[i].receiptDate = new Date();
-          }
-        }
-
         saveAfterReceiptAndInvoiceNumberUpdate(newbooking, res);
       }
-    });
+    });    
   }
 }
 
@@ -246,7 +254,7 @@ exports.sendEmail = function(req, res, next) {
         subject: req.body.subject,
         html: emailHTML,
         attachments: [{
-          filename: req.body.isInvoice ? "Invoice.pdf" : "Receipt.pdf",
+          filename: req.body.attachmentName,
           path: path,
           contentType: 'application/pdf'
         }]

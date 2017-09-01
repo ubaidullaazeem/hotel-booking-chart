@@ -6,9 +6,9 @@
     .module('newbookings')
     .controller('NewbookingsController', NewbookingsController);
 
-  NewbookingsController.$inject = ['AuthenticationService', 'CGST', 'SGST', 'DATA_BACKGROUND_COLOR', 'EmailBookingServices', 'HARDCODE_VALUES', 'PAYMENT_STATUS', '$filter', '$scope', '$state', 'selectedEvent', '$location', '$mdDialog', '$templateRequest', '$sce', 'NewbookingsService', 'selectedDate', 'HallsService', 'EventtypesService', 'TaxesService', 'PaymentstatusesService', 'Notification', '$mdpTimePicker', '$mdpDatePicker', 'PAY_MODES', 'CommonService', 'ValidateOverlapBookingServices', 'viewMode', 'GOOGLE_CALENDAR_COLOR_IDS', 'Upload', '$timeout', 'RupeeWords', '$rootScope'];
+  NewbookingsController.$inject = ['AuthenticationService', 'CGST', 'SGST', 'DATA_BACKGROUND_COLOR', 'EmailBookingServices', 'HARDCODE_VALUES', 'PAYMENT_STATUS', '$filter', '$scope', '$state', 'selectedEvent', '$location', '$mdDialog', '$templateRequest', '$sce', 'NewbookingsService', 'selectedDate', 'HallsService', 'EventtypesService', 'TaxesService', 'PaymentstatusesService', 'Notification', '$mdpTimePicker', '$mdpDatePicker', 'PAY_MODES', 'CommonService', 'ValidateOverlapBookingServices', 'viewMode', 'GOOGLE_CALENDAR_COLOR_IDS', 'Upload', '$timeout', 'RupeeWords', '$rootScope', 'isPastReceiptEffectiveDate', 'isPastInvoiceEffectiveDate', 'BILL_TYPES'];
 
-  function NewbookingsController(AuthenticationService, CGST, SGST, DATA_BACKGROUND_COLOR, EmailBookingServices, HARDCODE_VALUES, PAYMENT_STATUS, $filter, $scope, $state, selectedEvent, $location, $mdDialog, $templateRequest, $sce, NewbookingsService, selectedDate, HallsService, EventtypesService, TaxesService, PaymentstatusesService, Notification, $mdpTimePicker, $mdpDatePicker, PAY_MODES, CommonService, ValidateOverlapBookingServices, viewMode, GOOGLE_CALENDAR_COLOR_IDS, Upload, $timeout, RupeeWords, $rootScope) {
+  function NewbookingsController(AuthenticationService, CGST, SGST, DATA_BACKGROUND_COLOR, EmailBookingServices, HARDCODE_VALUES, PAYMENT_STATUS, $filter, $scope, $state, selectedEvent, $location, $mdDialog, $templateRequest, $sce, NewbookingsService, selectedDate, HallsService, EventtypesService, TaxesService, PaymentstatusesService, Notification, $mdpTimePicker, $mdpDatePicker, PAY_MODES, CommonService, ValidateOverlapBookingServices, viewMode, GOOGLE_CALENDAR_COLOR_IDS, Upload, $timeout, RupeeWords, $rootScope, isPastReceiptEffectiveDate, isPastInvoiceEffectiveDate, BILL_TYPES) {
     $scope.DATA_BACKGROUND_COLOR = DATA_BACKGROUND_COLOR;
 
     var cgstPercent = 0;
@@ -26,13 +26,14 @@
       paymentStatuses: PaymentstatusesService.query(),
       taxes: TaxesService.query(),
       paymentModes: PAY_MODES,
-      selectedEventSelectedHalls: selectedEvent ? selectedEvent.mSelectedHalls : []
+      selectedEventSelectedHalls: selectedEvent ? selectedEvent.mSelectedHalls : [],
+      BILL_TYPES: BILL_TYPES
     };
 
     setInitialScopeData(true);
-    
 
-    function setInitialScopeData(isFromBookings) {  
+
+    function setInitialScopeData(isFromBookings) {
 
       cgstPercent = 0;
       sgstPercent = 0;
@@ -42,11 +43,12 @@
       pendingSGSTPercentage = 0;
       hallsNotInGoogleCalendar = '';
       isShownHallsNotInGoogleCalendar = false;
-      
+
       $scope.ui = {
         mSelectedDateToDisplay: moment(selectedDate).format('DD-MMMM-YYYY'),
         mPricePattern: /^[0-9]+(\.[0-9]{1,2})?$/,
         mEmailPattern: /^.+@.+\..+$/,
+        mNumberPattern: /^[0-9]*$/,
         createMode: true,
         showMdSelect: true,
         mailsending: false,
@@ -57,7 +59,9 @@
         isFullyPaid: selectedEvent ? selectedEvent.mSelectedPaymentStatus.name === PAYMENT_STATUS[1] : false,
         photoIdFile: '',
         isDataChanged: false,
-        isPageLoadingDone: false
+        isPageLoadingDone: false,
+        isPastReceiptEffectiveDate: isPastReceiptEffectiveDate,
+        isPastInvoiceEffectiveDate: isPastInvoiceEffectiveDate
       };
 
       $scope.model.selectedEventSelectedHalls = selectedEvent ? selectedEvent.mSelectedHalls : [];
@@ -73,13 +77,16 @@
         paidSubTotal: 0,
         paidCGST: 0,
         paidSGST: 0,
-        isDeletedPayment: false
+        isDeletedPayment: false,
+        receiptNo: null,
+        receiptDate: new Date(),
+        isSendingMail: false
       };
 
       $scope.PAYMENT_STATUS = PAYMENT_STATUS;
 
       $scope.taxableChargesBeforeDiscount = 0;
-      
+
       $scope.mixins = {
         _id: selectedEvent ? selectedEvent._id : undefined,
         mSelectedHalls: selectedEvent ? selectedEvent.mSelectedHalls : [],
@@ -109,7 +116,9 @@
         mPendingSGST: selectedEvent ? selectedEvent.mPendingSGST : 0,
         mReceivedSGST: selectedEvent ? selectedEvent.mReceivedSGST : 0,
         mPendingGrandTotal: selectedEvent ? selectedEvent.mPendingGrandTotal : 0,
-        mReceivedGrandTotal: selectedEvent ? selectedEvent.mReceivedGrandTotal : 0
+        mReceivedGrandTotal: selectedEvent ? selectedEvent.mReceivedGrandTotal : 0,
+        invoiceNo: selectedEvent ? selectedEvent.invoiceNo : undefined,
+        invoiceDate: selectedEvent ? selectedEvent.invoiceDate : undefined
       };
 
       $scope.googleCalendar = {
@@ -190,7 +199,10 @@
     };
 
     $scope.$watch('mixins.mBalanceDue', function() {
+      setSelectedPaymentStatus();
+    }, true);
 
+    function setSelectedPaymentStatus() {
       if (Number($scope.mixins.mBalanceDue) === 0 && $scope.mixins.mSelectedHalls.length > 0) //Fully Paid
       {
         var fullyPaid = _.filter($scope.model.paymentStatuses, function(obj) {
@@ -208,8 +220,7 @@
         $scope.mixins.mSelectedPaymentStatus = advancePaid[0];
         $scope.googleCalendar.colorCode = GOOGLE_CALENDAR_COLOR_IDS.GREEN;
       }
-
-    }, true);
+    }
 
     $scope.getOtherEvents = function() {
       var events = _.filter($scope.model.eventTypes, function(eventType) {
@@ -302,13 +313,30 @@
       });
     };
 
-    $scope.printBooking = function(form, isInvoice) {
+    $scope.printBooking = function(form, billType, index) {
       if (form.$valid) {
+
+        var documentContent;
+        switch (billType) {
+          case BILL_TYPES[0]:
+            documentContent = getBookingFormData();
+            break;
+          case BILL_TYPES[1]:
+            documentContent = getReceiptData(index);
+            break;
+          case BILL_TYPES[2]:
+            documentContent = getInvoiceData();
+            break;
+
+          default:
+            return;
+        }
+
         printElement(document.getElementById('printThis'));
         var printContents = document.getElementById('printSection').innerHTML;
         var popupWin = window.open('', '_blank', 'width=300,height=300');
         popupWin.document.open();
-        popupWin.document.write(isInvoice ? getInvoiceData() : getReceiptData());
+        popupWin.document.write(documentContent);
         popupWin.document.close();
       }
     };
@@ -327,137 +355,136 @@
       $printSection.innerHTML = '';
       $printSection.appendChild(domClone);
     }
-    
-    function getReceiptData() {      
+
+    function getReceiptData(index) {
       var baseUrl = $location.$$absUrl.replace($location.$$url, '');
       var halls = _.map($scope.mixins.mSelectedHalls, 'displayName');
       var eventName = ($scope.mixins.mSelectedEventType.name.toLowerCase().trim() === HARDCODE_VALUES[0]) ? $scope.mixins.mOtherEvent : $scope.mixins.mSelectedEventType.displayName;
+      
+      var paymentHistory = $scope.mixins.mPaymentHistories[index];
 
-      var receiptNumbers = _.map($scope.mixins.mPaymentHistories, 'receiptNo');
-      var latestReceiptNumber = Math.max.apply(Math, receiptNumbers);
-      var latestReceipts = _.filter($scope.mixins.mPaymentHistories, function(item) {
-        return item.receiptNo === latestReceiptNumber;
-      });
-      var latestReceiptDate = latestReceipts.length > 0 ? latestReceipts[0].receiptDate : '';
-
-      return '<html><head><link rel="stylesheet" type="text/css" href="style.css" /></head>'+
-                    '<body onload="window.print()"><html><head> <title>Mirth</title></head>'+
-                    '<body><html><head> <title>Mirth</title></head>'+
-                    '<body><div ><div>'+
-                    '<table width="100%" style="border-collapse: collapse; border: 1px solid black; table-layout: fixed;" cellspacing="0" cellpadding="0"> <tbody>'+
-                    '<tr width="100%" style="border-bottom: 1px solid black;">'+
-                      '<td width="20%"><img style="width: 110px;" src="' + baseUrl + '/modules/core/client/img/logo-bw.png"/></td>'+
-                      '<td width="45%" style="text-align:left;">Dev&apos;s Ark, Second Floor AD-79&80, 5th Avenue,<br/> Anna Nagar, Chennai - 600 040</td>'+
-                      '<td width="35%" height="100%" style="border-left: 1px solid black;">'+
-                        '<table width="100%" height="100%" style="border-collapse: collapse;">'+
-                          '<tr height="20" style="border-bottom: 1px solid black; text-align:center;"><td colspan="2"><b>RECEIPT</b></td></tr>'+
-                          '<tr height="20" style="border-bottom: 1px solid black; text-align:center;"><td width="50%" style="border-right: 1px solid black;">Number</td><td width="50%">Date</td></tr>'+
-                          '<tr height="70" style="text-align:center;"><td width="50%" style="border-right: 1px solid black;">'+latestReceiptNumber+'</td><td width="50%">'+moment(latestReceiptDate).format('DD/MM/YYYY')+'</td></tr>'+
-                         '</table>'+
-                      '</td>'+
-                    '</tr>'+
-                    '<tr style="border-bottom: 1px solid black;">'+
-                      '<td colspan="2">'+
-                        '<table width="100%" style="border-collapse: collapse; table-layout: fixed;" >'+
-                          '<tr height="34" style="border-bottom: 1px solid black;"><td colspan="3">Received from: '+$scope.mixins.mName+'</td></tr>'+
-                          '<tr height="66"><td width="33" style="border-right: 1px solid black;">Hall: '+halls+'</td><td width="33" style="border-right: 1px solid black;">Purpose: '+eventName+'</td><td width="33">Event Date: '+moment($scope.mixins.mStartDateTime).format('DD/MM/YYYY')+'</td></tr>'+
-                        '</table>'+
-                      '</td>'+
-                      '<td width="35%" height="100%" style="border-left: 1px solid black;">Slot: Time From '+$scope.eventTime.mStartToDisplay+' To: '+$scope.eventTime.mEndToDisplay+'</td>'+
-                    '</tr>'+
-                    '<tr style="border-bottom: 1px solid black;"><td colspan="3">Rupees <br/><br/><br/></td></tr>'+
-                    '<tr style="border-bottom: 1px solid black;">'+
-                      '<td colspan="3">'+
-                        '<table width="100%" style="border-collapse: collapse; table-layout: fixed;" >'+
-                          '<tr style="border-bottom: 1px solid black;">'+
-                            '<th width="32.4%" style="border-right: 1px solid black;">Cash/Cheque/Draft No. & Date</th>'+
-                            '<th width="32.4%" style="border-right: 1px solid black;">Drawn on</th>'+
-                            '<th width="35%">Amount</th>'+
-                          '</tr>'+ getPaymentHistoryRowsToPrintReceipt(latestReceiptNumber)+                     
-                        '</table>'+
-                      '</td>'+
-                    '</tr>'+
-                    '<tr style="vertical-align:top;"><td width="65%" style="border-right: 1px solid black; border-bottom: 1px solid black;" colspan="2"><u>Narration:</u><br/><br/><br/><br/><br/><br/></td><td width="35%" >For <b>MIRTH</b></td></tr>'+
-                    '<tr><td width="65%" style="border-right: 1px solid black;" colspan="2">Note: Booking will be confirmed only on the receipt of full & final payment.</td><td width="35%">Authorized Signatory</td></tr>'+
-                    '</tbody></table></div><br/><br/><br/>' + $scope.termsAndConditions + '</div>'+
-                '</body></html></body></html></body></html>';      
+      return '<html><head><link rel="stylesheet" type="text/css" href="style.css" /></head>' +
+        '<body onload="window.print()"><html><head> <title>Mirth</title></head>' +
+        '<body><html><head> <title>Mirth</title></head>' +
+        '<body><div ><div>' +
+        '<table width="100%" style="border-collapse: collapse; border: 1px solid black; table-layout: fixed;" cellspacing="0" cellpadding="0"> <tbody>' +
+        '<tr width="100%" style="border-bottom: 1px solid black;">' +
+        '<td width="20%"><img style="width: 110px;" src="' + baseUrl + '/modules/core/client/img/logo-bw.png"/></td>' +
+        '<td width="45%" style="text-align:left;">Dev&apos;s Ark, Second Floor AD-79&80, 5th Avenue,<br/> Anna Nagar, Chennai - 600 040</td>' +
+        '<td width="35%" height="100%" style="border-left: 1px solid black;">' +
+        '<table width="100%" height="100%" style="border-collapse: collapse;">' +
+        '<tr height="20" style="border-bottom: 1px solid black; text-align:center;"><td colspan="2"><b>RECEIPT</b></td></tr>' +
+        '<tr height="20" style="border-bottom: 1px solid black; text-align:center;"><td width="50%" style="border-right: 1px solid black;">Number</td><td width="50%">Date</td></tr>' +
+        '<tr height="70" style="text-align:center;"><td width="50%" style="border-right: 1px solid black;">' + paymentHistory.receiptNo + '</td><td width="50%">' + moment(paymentHistory.receiptDate).format('DD/MM/YYYY') + '</td></tr>' +
+        '</table>' +
+        '</td>' +
+        '</tr>' +
+        '<tr style="border-bottom: 1px solid black;">' +
+        '<td colspan="2">' +
+        '<table width="100%" style="border-collapse: collapse; table-layout: fixed;" >' +
+        '<tr height="34" style="border-bottom: 1px solid black;"><td colspan="3">Received from: ' + $scope.mixins.mName + '</td></tr>' +
+        '<tr height="66"><td width="33" style="border-right: 1px solid black;">Hall: ' + halls + '</td><td width="33" style="border-right: 1px solid black;">Purpose: ' + eventName + '</td><td width="33">Event Date: ' + moment($scope.mixins.mStartDateTime).format('DD/MM/YYYY') + '</td></tr>' +
+        '</table>' +
+        '</td>' +
+        '<td width="35%" height="100%" style="border-left: 1px solid black;">Slot: Time From ' + $scope.eventTime.mStartToDisplay + ' To: ' + $scope.eventTime.mEndToDisplay + '</td>' +
+        '</tr>' +
+        '<tr style="border-bottom: 1px solid black;"><td colspan="3">Rupees <br/><br/><br/></td></tr>' +
+        '<tr style="border-bottom: 1px solid black;">' +
+        '<td colspan="3">' +
+        '<table width="100%" style="border-collapse: collapse; table-layout: fixed;" >' +
+        '<tr style="border-bottom: 1px solid black;">' +
+        '<th width="32.4%" style="border-right: 1px solid black;">Cash/Cheque/Draft No. & Date</th>' +
+        '<th width="32.4%" style="border-right: 1px solid black;">Drawn on</th>' +
+        '<th width="35%">Amount</th>' +
+        '</tr>' + getPaymentHistoryRowsToPrintReceipt(paymentHistory.receiptNo) +
+        '</table>' +
+        '</td>' +
+        '</tr>' +
+        '<tr style="vertical-align:top;"><td width="65%" style="border-right: 1px solid black; border-bottom: 1px solid black;" colspan="2"><u>Narration:</u><br/><br/><br/><br/><br/><br/></td><td width="35%" >For <b>MIRTH</b></td></tr>' +
+        '<tr><td width="65%" style="border-right: 1px solid black;" colspan="2">Note: Booking will be confirmed only on the receipt of full & final payment.</td><td width="35%">Authorized Signatory</td></tr>' +
+        '</tbody></table></div><br/><br/><br/>' + $scope.termsAndConditions + '</div>' +
+        '</body></html></body></html></body></html>';
     }
 
-    function getInvoiceData(){
+    function getInvoiceData() {
       var baseUrl = $location.$$absUrl.replace($location.$$url, '');
       var halls = _.map($scope.mixins.mSelectedHalls, 'displayName');
       var eventName = ($scope.mixins.mSelectedEventType.name.toLowerCase().trim() === HARDCODE_VALUES[0]) ? $scope.mixins.mOtherEvent : $scope.mixins.mSelectedEventType.displayName;
 
-      return '<html><head><link rel="stylesheet" type="text/css" href="style.css" /></head>'+
-                  '<body onload="window.print()"><html><head> <title>Mirth</title></head>'+
-                  '<body><html><head> <title>Mirth</title></head>'+
-                  '<body><div><div>'+
-                  '<table width="100%" style="border-collapse: collapse; border: 1px solid black; table-layout: fixed;" cellspacing="0" cellpadding="0"> <tbody>'+
-                  '<tr style="border-bottom: 1px solid black; text-align:center;"><td width="20%"></td><td width="45%">INVOICE</td><td width="35%"></td></tr>'+
-                  '<tr style="border-bottom: 1px solid black; text-align:left;">'+
-                    '<td width="20%"><img style="width: 110px;" src="' + baseUrl + '/modules/core/client/img/logo-bw.png"/></td>'+
-                    '<td width="80%" colspan="2" >Dev&apos;s Ark, Second Floor, AD-79&80, 5th Avenue<br/> Anna Nagar, Chennai - 600 040<br/> Phone Nos : 044-45552479 / 044-26222479<br/> GSTIN No. 33AAFPJ8706K1ZM</td>'+                    
-                  '</tr>'+
-                  '<tr style="border-bottom: 1px solid black;">'+
-                    '<td colspan="2" style="border-right: 1px solid black;">Name: '+$scope.mixins.mName+'</td>'+
-                    '<td>'+
-                    '<table width="100%"style="border-collapse: collapse; table-layout: fixed;">'+
-                      '<tr style="border-bottom: 1px solid black;"><td width="50%" style="border-right: 1px solid black;">Invoice No.</td>'+
-                          '<td width="50%">'+selectedEvent.invoiceNo+'</td>'+
-                      '</tr>'+
-                      '<tr><td width="50%" style="border-right: 1px solid black;">Date</td>'+
-                          '<td width="50%">'+moment(selectedEvent.invoiceDate).format('DD/MM/YYYY')+'</td>'+
-                      '</tr>'+
-                    '</table>'+
-                    '</td>'+
-                  '</tr>'+
-                  '<tr style="border-bottom: 1px solid black;">'+
-                    '<td colspan="2" style="border-right: 1px solid black;">Address: '+$scope.mixins.mAddress+'</td>'+
-                    '<td>'+
-                    '<table width="100%" style="border-collapse: collapse; table-layout: fixed;">'+
-                      '<tr style="border-bottom: 1px solid black;"><td width="50%" style="border-right: 1px solid black;">Hall Name</td>'+
-                          '<td width="50%">'+halls+'</td>'+
-                      '</tr>'+
-                      '<tr style="border-bottom: 1px solid black;"><td width="50%" style="border-right: 1px solid black;">Purpose</td>'+
-                          '<td width="50%">'+eventName+'</td>'+
-                      '</tr>'+
-                      '<tr style="border-bottom: 1px solid black;"><td width="50%" style="border-right: 1px solid black;">Event Date</td>'+
-                          '<td width="50%">'+moment($scope.mixins.mStartDateTime).format('DD/MM/YYYY')+'</td>'+
-                      '</tr>'+
-                      '<tr><td width="50%" style="border-right: 1px solid black;">Start Time</td>'+
-                          '<td width="50%">'+$scope.eventTime.mStartToDisplay+' to '+$scope.eventTime.mEndToDisplay+'</td>'+
-                      '</tr>'+
-                    '</table>'+
-                    '</td>'+
-                  '</tr>'+
-                  '<tr><td colspan="3">'+
-                    '<table width="100%" style="border-collapse: collapse; table-layout: fixed;">'+
-                      '<tr style="border-bottom: 1px solid black;"><th width="7%" style="border-right: 1px solid black;">Sl.No.</th><th width="36.5%" style="border-right: 1px solid black;">Particulars</th><th width="7%" style="border-right: 1px solid black;">Units</th><th width="7%" style="border-right: 1px solid black;">Qty</th><th width="7%" style="border-right: 1px solid black;">Rate</th><th width="35%">Amount</th></tr>'+
-                      '<tr><td style="border-right: 1px solid black;"/><td style="border-right: 1px solid black;">HSN CODE: 997212</td><td style="border-right: 1px solid black;"/><td style="border-right: 1px solid black;"/><td style="border-right: 1px solid black;"/><td/>'+
-                      getPaymentHistoryRowsToInvoice()+
-                      '<tr height="20px"><td style="border-right: 1px solid black;"/><td style="border-right: 1px solid black;"></td><td style="border-right: 1px solid black;"/><td style="border-right: 1px solid black;"/><td style="border-right: 1px solid black;"/><td></td>'+
-                      '<tr><td style="border-right: 1px solid black;"/><td style="border-right: 1px solid black;">Total</td><td style="border-right: 1px solid black;"/><td style="border-right: 1px solid black;"/><td style="border-right: 1px solid black;"/><td style="text-align:right;"><b>'+Number($scope.mixins.mGrandTotal).toFixed(2)+'</b></td>'+
-                      '<tr height="20px"><td style="border-right: 1px solid black;"/><td style="border-right: 1px solid black;"></td><td style="border-right: 1px solid black;"/><td style="border-right: 1px solid black;"/><td style="border-right: 1px solid black;"/><td></td>'+
-                      '<tr><td style="border-right: 1px solid black;"/><td style="border-right: 1px solid black;"> (Rupees '+RupeeWords.getRupeesToWords(Number($scope.mixins.mGrandTotal))+')</td><td style="border-right: 1px solid black;"/><td style="border-right: 1px solid black;"/><td style="border-right: 1px solid black;"/><td/>'+
-                    '</table>'+
-                  '</td></tr>'+
-                  '</tbody></table>'+
-                  '<table width="100%" style="border-collapse: collapse; table-layout: fixed;">'+
-                    '<tr height="10px"><td width="65%"/><td width="35%"/></tr>'+
-                    '<tr><td width="65%"/><td width="35%">For Mirth</td></tr><br/>'+
-                    '<tr height="60px"></tr>'+
-                    '<tr><td width="65%"/><td width="35%">Authorized Signatory</td></tr>'+
-                  '</table>'+
-                  '</div><br/><br/><br/>' + $scope.termsAndConditions + '</div>'+
-                '</body></html></body></html></body></html>';
-    };
+      return '<html><head><link rel="stylesheet" type="text/css" href="style.css" /></head>' +
+        '<body onload="window.print()"><html><head> <title>Mirth</title></head>' +
+        '<body><html><head> <title>Mirth</title></head>' +
+        '<body><div><div>' +
+        '<table width="100%" style="border-collapse: collapse; border: 1px solid black; table-layout: fixed;" cellspacing="0" cellpadding="0"> <tbody>' +
+        '<tr style="border-bottom: 1px solid black; text-align:center;"><td width="20%"></td><td width="45%">INVOICE</td><td width="35%"></td></tr>' +
+        '<tr style="border-bottom: 1px solid black; text-align:left;">' +
+        '<td width="20%"><img style="width: 110px;" src="' + baseUrl + '/modules/core/client/img/logo-bw.png"/></td>' +
+        '<td width="80%" colspan="2" >Dev&apos;s Ark, Second Floor, AD-79&80, 5th Avenue<br/> Anna Nagar, Chennai - 600 040<br/> Phone Nos : 044-45552479 / 044-26222479<br/> GSTIN No. 33AAFPJ8706K1ZM</td>' +
+        '</tr>' +
+        '<tr style="border-bottom: 1px solid black;">' +
+        '<td colspan="2" style="border-right: 1px solid black;">Name: ' + $scope.mixins.mName + '</td>' +
+        '<td>' +
+        '<table width="100%"style="border-collapse: collapse; table-layout: fixed;">' +
+        '<tr style="border-bottom: 1px solid black;"><td width="50%" style="border-right: 1px solid black;">Invoice No.</td>' +
+        '<td width="50%">' + selectedEvent.invoiceNo + '</td>' +
+        '</tr>' +
+        '<tr><td width="50%" style="border-right: 1px solid black;">Date</td>' +
+        '<td width="50%">' + moment(selectedEvent.invoiceDate).format('DD/MM/YYYY') + '</td>' +
+        '</tr>' +
+        '</table>' +
+        '</td>' +
+        '</tr>' +
+        '<tr style="border-bottom: 1px solid black;">' +
+        '<td colspan="2" style="border-right: 1px solid black;">Address: ' + $scope.mixins.mAddress + '</td>' +
+        '<td>' +
+        '<table width="100%" style="border-collapse: collapse; table-layout: fixed;">' +
+        '<tr style="border-bottom: 1px solid black;"><td width="50%" style="border-right: 1px solid black;">Hall Name</td>' +
+        '<td width="50%">' + halls + '</td>' +
+        '</tr>' +
+        '<tr style="border-bottom: 1px solid black;"><td width="50%" style="border-right: 1px solid black;">Purpose</td>' +
+        '<td width="50%">' + eventName + '</td>' +
+        '</tr>' +
+        '<tr style="border-bottom: 1px solid black;"><td width="50%" style="border-right: 1px solid black;">Event Date</td>' +
+        '<td width="50%">' + moment($scope.mixins.mStartDateTime).format('DD/MM/YYYY') + '</td>' +
+        '</tr>' +
+        '<tr><td width="50%" style="border-right: 1px solid black;">Start Time</td>' +
+        '<td width="50%">' + $scope.eventTime.mStartToDisplay + ' to ' + $scope.eventTime.mEndToDisplay + '</td>' +
+        '</tr>' +
+        '</table>' +
+        '</td>' +
+        '</tr>' +
+        '<tr><td colspan="3">' +
+        '<table width="100%" style="border-collapse: collapse; table-layout: fixed;">' +
+        '<tr style="border-bottom: 1px solid black;"><th width="7%" style="border-right: 1px solid black;">Sl.No.</th><th width="36.5%" style="border-right: 1px solid black;">Particulars</th><th width="7%" style="border-right: 1px solid black;">Units</th><th width="7%" style="border-right: 1px solid black;">Qty</th><th width="7%" style="border-right: 1px solid black;">Rate</th><th width="35%">Amount</th></tr>' +
+        '<tr><td style="border-right: 1px solid black;"/><td style="border-right: 1px solid black;">HSN CODE: 997212</td><td style="border-right: 1px solid black;"/><td style="border-right: 1px solid black;"/><td style="border-right: 1px solid black;"/><td/>' +
+        getPaymentHistoryRowsToInvoice() +
+        '<tr height="20px"><td style="border-right: 1px solid black;"/><td style="border-right: 1px solid black;"></td><td style="border-right: 1px solid black;"/><td style="border-right: 1px solid black;"/><td style="border-right: 1px solid black;"/><td></td>' +
+        '<tr><td style="border-right: 1px solid black;"/><td style="border-right: 1px solid black;">Total</td><td style="border-right: 1px solid black;"/><td style="border-right: 1px solid black;"/><td style="border-right: 1px solid black;"/><td style="text-align:right;"><b>' + Number($scope.mixins.mGrandTotal).toFixed(2) + '</b></td>' +
+        '<tr height="20px"><td style="border-right: 1px solid black;"/><td style="border-right: 1px solid black;"></td><td style="border-right: 1px solid black;"/><td style="border-right: 1px solid black;"/><td style="border-right: 1px solid black;"/><td></td>' +
+        '<tr><td style="border-right: 1px solid black;"/><td style="border-right: 1px solid black;"> (Rupees ' + RupeeWords.getRupeesToWords(Number($scope.mixins.mGrandTotal)) + ')</td><td style="border-right: 1px solid black;"/><td style="border-right: 1px solid black;"/><td style="border-right: 1px solid black;"/><td/>' +
+        '</table>' +
+        '</td></tr>' +
+        '</tbody></table>' +
+        '<table width="100%" style="border-collapse: collapse; table-layout: fixed;">' +
+        '<tr height="10px"><td width="65%"/><td width="35%"/></tr>' +
+        '<tr><td width="65%"/><td width="35%">For Mirth</td></tr><br/>' +
+        '<tr height="60px"></tr>' +
+        '<tr><td width="65%"/><td width="35%">Authorized Signatory</td></tr>' +
+        '</table>' +
+        '</div><br/><br/><br/>' + $scope.termsAndConditions + '</div>' +
+        '</body></html></body></html></body></html>';
+    }
 
-    function getPaymentHistoryRowsToPrintReceipt(latestReceiptNumber) {
+    function getBookingFormData() {
+      return '<h1>Under Development</h1>';
+    }
+
+    function getPaymentHistoryRowsToPrintReceipt(receiptNumber) {
       var paymentList = '';
       for (var i = $scope.mixins.mPaymentHistories.length - 1; i >= 0; i--) {
         var paymentHistory = $scope.mixins.mPaymentHistories[i];
 
-        if (paymentHistory.receiptNo === latestReceiptNumber) {
+        if (paymentHistory.receiptNo === receiptNumber) {
           paymentList = paymentList + '<tr>' +
             '<td width="32.5%" style="border-right: 1px solid black;">' + paymentHistory.paymentMode + ' ' + moment(paymentHistory.paidDate).format('DD/MM/YYYY') + '</td>' +
             '<td width="32.5%" style="border-right: 1px solid black;">' + paymentHistory.drawnOn + '</td>' +
@@ -466,107 +493,144 @@
         }
       }
       paymentList = paymentList + '<tr>' +
-          '<td width="32.5%" style="border-right: 1px solid black;">(Subject to Realisation)</td>' +
-          '<td width="32.5%" style="border-right: 1px solid black;"></td>' +
-          '<td width="35%"></td>' +
-          '</tr>';
+        '<td width="32.5%" style="border-right: 1px solid black;">(Subject to Realisation)</td>' +
+        '<td width="32.5%" style="border-right: 1px solid black;"></td>' +
+        '<td width="35%"></td>' +
+        '</tr>';
       return paymentList;
     }
 
-    function getPaymentHistoryRowsToInvoice(){
+    function getPaymentHistoryRowsToInvoice() {
       var halls = _.map($scope.mixins.mSelectedHalls, 'displayName');
-      var paymentList ='';
+      var paymentList = '';
       var serialNumber = 0;
-      for(var i=$scope.mixins.mPaymentHistories.length-1; i>=0; i--)
-      {
+      for (var i = $scope.mixins.mPaymentHistories.length - 1; i >= 0; i--) {
         var item = $scope.mixins.mPaymentHistories[i];
         serialNumber++;
 
-        paymentList = paymentList + '<tr height="20px"><td style="border-right: 1px solid black;"/><td style="border-right: 1px solid black;"></td><td style="border-right: 1px solid black;"/><td style="border-right: 1px solid black;"/><td style="border-right: 1px solid black;"/><td></td>'+
-                      '<tr style="vertical-align:top;">'+
-                        '<td style="border-right: 1px solid black;  text-align:center;">'+serialNumber+'</td>'+
-                        '<td style="border-right: 1px solid black;">'+
-                          '<table width="100%" style="border-collapse: collapse; table-layout: fixed;">'+
-                            '<tr><td>Rent Received for '+halls+'</td></tr>'+
-                            '<tr height="20px"><td/></tr>'+
-                            '<tr><td>Add: CGST @'+item.CGSTPercent+'%</td></tr>'+
-                            '<tr><td>&emsp;&emsp; SGST @'+item.SGSTPercent+'%</td></tr>'+
-                          '</table>'+
-                        '</td>'+
-                        '<td style="border-right: 1px solid black; text-align:center; ">LS</td>'+
-                        '<td style="border-right: 1px solid black; text-align:center; "></td>'+
-                        '<td style="border-right: 1px solid black; text-align:center; "></td>'+
-                        '<td>'+
-                          '<table width="100%">'+
-                            '<tr><td style="text-align:right;">'+Number(item.paidSubTotal).toFixed(2)+'</td></tr><br/>'+
-                            '<tr><td style="text-align:right;">'+Number(item.paidCGST).toFixed(2)+'</td></tr>'+
-                            '<tr><td style="text-align:right;">'+Number(item.paidSGST).toFixed(2)+'</td></tr>'+
-                          '</table>'+
-                        '</td>'+
-                      '</tr>';
+        paymentList = paymentList + '<tr height="20px"><td style="border-right: 1px solid black;"/><td style="border-right: 1px solid black;"></td><td style="border-right: 1px solid black;"/><td style="border-right: 1px solid black;"/><td style="border-right: 1px solid black;"/><td></td>' +
+          '<tr style="vertical-align:top;">' +
+          '<td style="border-right: 1px solid black;  text-align:center;">' + serialNumber + '</td>' +
+          '<td style="border-right: 1px solid black;">' +
+          '<table width="100%" style="border-collapse: collapse; table-layout: fixed;">' +
+          '<tr><td>Rent Received for ' + halls + '</td></tr>' +
+          '<tr height="20px"><td/></tr>' +
+          '<tr><td>Add: CGST @' + item.CGSTPercent + '%</td></tr>' +
+          '<tr><td>&emsp;&emsp; SGST @' + item.SGSTPercent + '%</td></tr>' +
+          '</table>' +
+          '</td>' +
+          '<td style="border-right: 1px solid black; text-align:center; ">LS</td>' +
+          '<td style="border-right: 1px solid black; text-align:center; "></td>' +
+          '<td style="border-right: 1px solid black; text-align:center; "></td>' +
+          '<td>' +
+          '<table width="100%">' +
+          '<tr><td style="text-align:right;">' + Number(item.paidSubTotal).toFixed(2) + '</td></tr><br/>' +
+          '<tr><td style="text-align:right;">' + Number(item.paidCGST).toFixed(2) + '</td></tr>' +
+          '<tr><td style="text-align:right;">' + Number(item.paidSGST).toFixed(2) + '</td></tr>' +
+          '</table>' +
+          '</td>' +
+          '</tr>';
       }
 
       return paymentList;
     }
-
-    $scope.printReceipt = function(index) {
-      alert('Under Development');
-    };
-
-    $scope.emailReceipt = function(index) {
-      alert('Under Development');
-    };
-
+    
     function getEventDateTime() {
       return $scope.ui.mSelectedDateToDisplay + ' ' + $scope.eventTime.mStartToDisplay + ' - ' + $scope.eventTime.mEndToDisplay;
     }
-    
+
     function getValidValue(data) {
       return (data !== null && data !== undefined) ? data : '--';
     }
 
-    $scope.sendMail = function(form, isInvoice) {
+    $scope.sendMail = function(form, billType, index) {
       if (form.$valid && $scope.mixins.mEmail) {
-        $scope.ui.mailsending = true;
+
+        var documentContent;
+        var mailSubject;
+        var attachmentName;
+        switch (billType) {
+          case BILL_TYPES[0]:
+            documentContent = getBookingFormData();
+            mailSubject = 'Mirth Hall Booking Details';
+            attachmentName = 'Booking_Form.pdf';
+            break;
+          case BILL_TYPES[1]:
+            documentContent = getReceiptData(index);
+            mailSubject = 'Mirth Hall Booking Receipt';
+            attachmentName = 'Receipt.pdf';
+            break;
+          case BILL_TYPES[2]:
+            documentContent = getInvoiceData();
+            mailSubject = 'Mirth Hall Booking Invoice';
+            attachmentName = 'Invoice.pdf';
+            break;
+
+          default:
+            return;
+        }
+       
         var emailContent = {
-          content: isInvoice ? getInvoiceData() : getReceiptData(),
+          content: documentContent,
           newBooking: $scope.mixins,
           totalCharges: Number($scope.mixins.mSubTotal),
           halls: _.map($scope.mixins.mSelectedHalls, 'displayName'),
           paymentMode: $scope.mPaymentHistory.paymentMode,
           eventDateTime: getEventDateTime(),
-          eventName : ($scope.mixins.mSelectedEventType.name.toLowerCase().trim() === HARDCODE_VALUES[0]) ? $scope.mixins.mOtherEvent : $scope.mixins.mSelectedEventType.displayName,
-          subject: isInvoice ? 'Mirth Hall Booking Invoice' : 'Mirth Hall Booking Receipt',
-          isInvoice: isInvoice
+          eventName: ($scope.mixins.mSelectedEventType.name.toLowerCase().trim() === HARDCODE_VALUES[0]) ? $scope.mixins.mOtherEvent : $scope.mixins.mSelectedEventType.displayName,
+          subject: mailSubject,
+          attachmentName: attachmentName
         };
 
         if ($scope.mixins.mEmail === null) {
           Notification.error({
-            message: 'Mail not sent',
-            title: '<i class="glyphicon glyphicon-remove"></i> Email Id Missing Error'
+            message: 'Email Id Missing Error',
+            title: '<i class="glyphicon glyphicon-remove"></i> Email id not found'
           });
         } else {
+          setSendingEmail(billType, index, true);
+
           EmailBookingServices.requestSendEmail(emailContent)
             .then(onRequestEmailBookingSuccess)
             .catch(onRequestEmailBookingError);
         }
       }
+
+      function onRequestEmailBookingSuccess(response) {
+        setSendingEmail(billType, index, false);
+
+        Notification.success({
+          message: response.message,
+          title: '<i class="glyphicon glyphicon-remove"></i> Email drop successfully'
+        });
+      }
+
+      function onRequestEmailBookingError(response) {
+        setSendingEmail(billType, index, false);
+        
+        Notification.error({
+          message: response.message,
+          title: '<i class="glyphicon glyphicon-remove"></i> Email failed to send'
+        });
+      }
+
     };
+    
+    function setSendingEmail(billType, index, isSending) {
+      switch (billType) {
+        case BILL_TYPES[0]:
+          $scope.ui.mailsending = isSending;
+          break;
+        case BILL_TYPES[1]:
+          $scope.mixins.mPaymentHistories[index].isSendingMail = isSending;
+          break;
+        case BILL_TYPES[2]:
+          $scope.ui.mailsending = isSending;
+          break;
 
-    function onRequestEmailBookingSuccess(response) {
-      $scope.ui.mailsending = false;
-      Notification.success({
-        message: response.message,
-        title: '<i class="glyphicon glyphicon-remove"></i> Email drop successfully'
-      });
-    }
-
-    function onRequestEmailBookingError(response) {
-      $scope.ui.mailsending = false;
-      Notification.error({
-        message: response.message,
-        title: '<i class="glyphicon glyphicon-remove"></i> Email failed to send'
-      });
+        default:
+          return;
+      }
     }
 
     function validateStartAndEndTime() {
@@ -618,7 +682,7 @@
         $scope.ui.createMode = false;
         $scope.ui.showMdSelect = false;
       }
-      
+
       var hasContainsTaxName = CommonService.hasContainsTaxName($scope.model.taxes);
 
       var isCGSTRatePresentforToday = false;
@@ -626,7 +690,7 @@
       if (hasContainsTaxName) {
         var cgst = CommonService.findRateSummariesByDateOfFutureTax(CommonService.getTaxRateByName($scope.model.taxes, CGST).rateSummaries, new Date());
         var sgst = CommonService.findRateSummariesByDateOfFutureTax(CommonService.getTaxRateByName($scope.model.taxes, SGST).rateSummaries, new Date());
-  
+
         if (cgst.length > 0) {
           isCGSTRatePresentforToday = true;
         }
@@ -635,7 +699,7 @@
           isSGSTRatePresentforToday = true;
         }
       }
-      
+
       if (!isCGSTRatePresentforToday) {
         Notification.error({
           message: 'CGST tax rate is not found for today.',
@@ -670,6 +734,7 @@
 
     $scope.model.taxes.$promise.then(function(result) {
       doInitialProcessing();
+      setSelectedPaymentStatus();
     });
 
     function doInitialProcessing() {
@@ -697,9 +762,9 @@
           return;
         }
 
-       /* DeletePhotoIdServices.deletePhotoIdPicture({
-          mPhotoIdPath: $scope.mixins.mPhotoIdPath
-        }).then(function(res) {});*/
+        /* DeletePhotoIdServices.deletePhotoIdPicture({
+           mPhotoIdPath: $scope.mixins.mPhotoIdPath
+         }).then(function(res) {});*/
 
         $scope.mixins.mStartDateTime = $scope.eventTime.mStartToServer;
         $scope.mixins.mEndDateTime = $scope.eventTime.mEndToServer;
@@ -738,11 +803,11 @@
               if (($scope.eventTime.mStartToServer < addHours(eventItem.mEndDateTime, 3)) && ($scope.eventTime.mEndToServer > subtractHours(eventItem.mStartDateTime, 3))) { // overlaps
                 isEventOverlaps = true;
 
-                var msg='';
-                if (commonHallNamesArray.length > 1) 
-                  msg = 'Halls '+ commonHallNamesArray + ' are already booked on the date between '+$scope.eventTime.mStartToDisplay+' and '+$scope.eventTime.mEndToDisplay;
+                var msg = '';
+                if (commonHallNamesArray.length > 1)
+                  msg = 'Halls ' + commonHallNamesArray + ' are already booked on the date between ' + $scope.eventTime.mStartToDisplay + ' and ' + $scope.eventTime.mEndToDisplay;
                 else
-                  msg = commonHallNamesArray + ' hall is already booked on the date between '+$scope.eventTime.mStartToDisplay+' and '+$scope.eventTime.mEndToDisplay;
+                  msg = commonHallNamesArray + ' hall is already booked on the date between ' + $scope.eventTime.mStartToDisplay + ' and ' + $scope.eventTime.mEndToDisplay;
 
                 Notification.error({
                   message: msg,
@@ -762,7 +827,11 @@
               $scope.ui.isBookingInProgress = true;
             }
 
-            if ($scope.ui.createMode) {              
+            if (!$scope.ui.isPastInvoiceEffectiveDate && $scope.mixins.mSelectedPaymentStatus.name === PAYMENT_STATUS[1] && $scope.mixins.invoiceNo != undefined && $scope.mixins.invoiceDate === undefined) {
+              $scope.mixins.invoiceDate = new Date();
+            }
+
+            if ($scope.ui.createMode) {
               $scope.mixins.mPaymentHistories.push($scope.mPaymentHistory);
             } else {
               pushPayment();
@@ -1205,36 +1274,36 @@
                 eventId: hall.mEventId
               });
 
-            deleteEventReq.execute(function(response) {
-              deleteProcessedHalls++;
-              if (response && response.hasOwnProperty('error')) { // error
-                Notification.error({
-                  message: 'Unable to delete the event from ' + hall.displayName + ' hall in Google Calendar',
-                  title: '<i class="glyphicon glyphicon-remove"></i> Google Calendar Error'
-                });
-              } else { // success
-                //  no need to do anything.
-              }
+              deleteEventReq.execute(function(response) {
+                deleteProcessedHalls++;
+                if (response && response.hasOwnProperty('error')) { // error
+                  Notification.error({
+                    message: 'Unable to delete the event from ' + hall.displayName + ' hall in Google Calendar',
+                    title: '<i class="glyphicon glyphicon-remove"></i> Google Calendar Error'
+                  });
+                } else { // success
+                  //  no need to do anything.
+                }
 
-              if (deleteProcessedHalls === $scope.mixins.mSelectedHalls.length) {
-                res.isDelete = true;
-                //$mdDialog.hide(res);
-                $mdDialog.cancel();
-                // Sending broadcast to bookings.client.controller
-                $rootScope.$broadcast('editBooking', res);
-              }
-            });
+                if (deleteProcessedHalls === $scope.mixins.mSelectedHalls.length) {
+                  res.isDelete = true;
+                  //$mdDialog.hide(res);
+                  $mdDialog.cancel();
+                  // Sending broadcast to bookings.client.controller
+                  $rootScope.$broadcast('editBooking', res);
+                }
+              });
 
             });
           }
 
-        function deleteErrorCallback(res) {
-          Notification.error({
-            message: res.data.message,
-            title: '<i class="glyphicon glyphicon-remove"></i> Delete Booking Detail Error'
-          });
-        }
-      },
+          function deleteErrorCallback(res) {
+            Notification.error({
+              message: res.data.message,
+              title: '<i class="glyphicon glyphicon-remove"></i> Delete Booking Detail Error'
+            });
+          }
+        },
         function() {
           console.log('no');
         });
@@ -1278,7 +1347,10 @@
         paidSubTotal: 0,
         paidCGST: 0,
         paidSGST: 0,
-        isDeletedPayment: false
+        isDeletedPayment: false,
+        receiptNo: null,
+        receiptDate: new Date(),
+        isSendingMail: false
       };
 
       calculateTaxRate();
@@ -1312,7 +1384,7 @@
     };
 
     function pushPayment() {
-      if ($scope.mPaymentHistory.amountPaid && $scope.mPaymentHistory.paymentMode && $scope.mPaymentHistory.paidDate && ($scope.mPaymentHistory.paymentMode === $scope.model.paymentModes[2] || ($scope.mPaymentHistory.details != '' && $scope.mPaymentHistory.drawnOn != ''))) {
+      if ($scope.mPaymentHistory.amountPaid && $scope.mPaymentHistory.paymentMode && $scope.mPaymentHistory.paidDate && ($scope.mPaymentHistory.paymentMode === $scope.model.paymentModes[2] || ($scope.mPaymentHistory.details != '' && $scope.mPaymentHistory.drawnOn != '')) && ($scope.ui.isPastReceiptEffectiveDate || $scope.mPaymentHistory.receiptNo)) {
 
         $scope.mixins.mPaymentHistories.unshift($scope.mPaymentHistory);
       }
@@ -1400,7 +1472,7 @@
       $scope.mixins.mPendingCGST = Number(Number($scope.mixins.mPendingSubTotal) * cgstPercent).toFixed(2);
       $scope.mixins.mPendingSGST = Number(Number($scope.mixins.mPendingSubTotal) * sgstPercent).toFixed(2);
       $scope.mixins.mPendingGrandTotal = Number(Math.round(Number($scope.mixins.mPendingSubTotal) + Number($scope.mixins.mPendingCGST) + Number($scope.mixins.mPendingSGST))).toFixed(2);
-      
+
       if (Number($scope.mixins.mPendingSubTotal) === 0 && Number($scope.mixins.mPendingGrandTotal) === 0) { // 0/0 returns undefined
         pendingSubTotalPercentage = 0;
         pendingCGSTPercentage = 0;

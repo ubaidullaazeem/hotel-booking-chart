@@ -11,6 +11,9 @@
     $rootScope.isUserLoggedIn = true;
     $rootScope.isPastInvoiceReceiptEffectiveDate = true;
 
+    var isPastReceiptEffectiveDate = false;
+    var isPastInvoiceEffectiveDate = false;
+
     $scope.model = {
       events: [],
       newBookings: bookedHallsResolve,
@@ -74,9 +77,7 @@
       $rootScope.isPastInvoiceReceiptEffectiveDate = isPastReceiptInvoiceEffectiveDate();
     });
 
-    function isPastReceiptInvoiceEffectiveDate() {
-      var isPastReceiptEffectiveDate = false;
-      var isPastInvoiceEffectiveDate = false;
+    function isPastReceiptInvoiceEffectiveDate() {      
 
       var receiptCounters = _.filter($scope.model.counters, function(paramCounter) {
         return paramCounter.counterName === RECEIPT;
@@ -149,6 +150,12 @@
                     },
                     viewMode: function() {
                       return false;
+                    },
+                    isPastReceiptEffectiveDate: function() {
+                      return isPastReceiptEffectiveDate;
+                    },
+                    isPastInvoiceEffectiveDate: function() {
+                      return isPastInvoiceEffectiveDate;
                     }
                   },
                 })
@@ -210,6 +217,12 @@
               },
               viewMode: function() {
                 return true;
+              },
+              isPastReceiptEffectiveDate: function() {
+                return isPastReceiptEffectiveDate;
+              },
+              isPastInvoiceEffectiveDate: function() {
+                return isPastInvoiceEffectiveDate;
               }
             },
           })

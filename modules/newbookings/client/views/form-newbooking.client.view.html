@@ -259,7 +259,7 @@
         <md-card  layout="column" flex>        
           <md-card-content>
           <label style="font-size: 15px;">Payment Received</label>
-            <md-card  layout="row" ng-hide="ui.viewMode || (ui.isFullyPaid && mixins.mBalanceDue <= 0)" flex>
+            <md-card  layout="row" ng-hide="ui.viewMode || (ui.isFullyPaid && mixins.mBalanceDue <= 0 && !mPaymentHistory.amountPaid)" flex>
               <md-card-content layout="row" flex>
                 <div layout="column" flex>
                   <div layout="row">
@@ -313,9 +313,9 @@
                     </md-input-container>   
                   </div>   
                   <div layout="row">
-                    <md-input-container flex>
+                    <md-input-container flex ng-if="!ui.isPastReceiptEffectiveDate">
                         <label class="my-label">Receipt Number</label>                      
-                        <input name="receiptNo" ng-required="" ng-model="" />
+                        <input type="number" name="receiptNo" ng-required="mPaymentHistory.amountPaid" ng-model="mPaymentHistory.receiptNo" ng-pattern="ui.mNumberPattern" min="1"/>
                         <div ng-messages="bookingForm.receiptNo.$error">
                           <div ng-message="required">Receipt number is required.</div>
                         </div>
@@ -336,7 +336,7 @@
                 </div>
                 <div layoout="column">                  
                   <div ng-if="!ui.createMode && !(mixins.mBalanceDue <= 0)">
-                      <md-button class="md-raised md-primary nonecase" style="min-width: 50px" ng-click="addPayment()" ng-disabled="mPaymentHistory.amountPaid == null || mPaymentHistory.paidDate == null || mPaymentHistory.paymentMode == null || (mPaymentHistory.paymentMode != model.paymentModes[2] && (mPaymentHistory.details == null || mPaymentHistory.drawnOn == null))" type="submit"><span class="glyphicon glyphicon-plus"></span></md-button>
+                      <md-button class="md-raised md-primary nonecase" style="min-width: 50px" ng-click="addPayment()" ng-disabled="mPaymentHistory.amountPaid == null || mPaymentHistory.paidDate == null || mPaymentHistory.paymentMode == null || (mPaymentHistory.paymentMode != model.paymentModes[2] && (mPaymentHistory.details == null || mPaymentHistory.drawnOn == null)) || (!ui.isPastReceiptEffectiveDate && mPaymentHistory.receiptNo == null)" type="submit"><span class="glyphicon glyphicon-plus"></span></md-button>
                   </div> 
                 </div>
               </md-card-content>
@@ -394,14 +394,17 @@
                   </div>  
                 </div>
                 <div layoout="column">
-                  <div >
-                    <md-button class="md-raised md-warn" style="min-width: 50px" ng-disabled="ui.viewMode" ng-click="removePayment($index)" type="submit"><span class="glyphicon glyphicon-remove"></span></md-button>
+                  <div>
+                    <md-button class="md-raised md-warn" style="min-width: 50px" ng-disabled="ui.viewMode" ng-click="removePayment($index)" type="submit" title="Delete payment"><span class="glyphicon glyphicon-remove"></span></md-button>
                   </div>
-                  <div >
-                    <md-button class="md-raised md-accent" style="min-width: 50px" ng-disabled="!mPaymentHistory._id" ng-click="printReceipt($index)" type="submit"><span class="glyphicon glyphicon-print"></span></md-button>
+                  <div>
+                    <md-button class="md-raised md-accent" style="min-width: 50px" ng-disabled="!mPaymentHistory._id" ng-click="printBooking(bookingForm, model.BILL_TYPES[1], $index)" type="submit" title="{{!mPaymentHistory._id ? 'Please update the booking to print this receipt' : 'Print receipt'}}"><span class="glyphicon glyphicon-print"></span></md-button>
+                  </div>                  
+                  <div>
+                    <md-button class="md-raised md-primary" style="min-width: 50px;" ng-disabled="!mPaymentHistory._id || mixins.mEmail==null" ng-hide="mPaymentHistory.isSendingMail" ng-click="sendMail(bookingForm, model.BILL_TYPES[1], $index)" type="submit" title="{{!mPaymentHistory._id ? 'Please update the booking to email this receipt' : (mixins.mEmail==null ? 'Please enter the customer email' : 'Email receipt')}}"><span class="glyphicon glyphicon-envelope"></span></md-button>
                   </div>
-                  <div >
-                    <md-button class="md-raised md-primary" style="min-width: 50px" ng-disabled="!mPaymentHistory._id" ng-click="emailReceipt($index)" type="submit"><span class="glyphicon glyphicon-inbox"></span></md-button>
+                  <div>
+                    <md-button class="md-raised md-primary" style="min-width: 50px" ng-show="mPaymentHistory.isSendingMail" type="submit"><i class="fa fa-spinner fa-spin"></i></md-button>
                   </div>
                 </div>
               </md-card-content>
@@ -505,10 +508,10 @@
           </md-input-container>  
         </div>
 
-        <div layout="column" flex>
+        <div layout="column" flex ng-if="mixins.mBalanceDue <= 0 && !ui.isPastInvoiceEffectiveDate && !mixins.invoiceDate">
           <md-input-container flex>
-              <label class="my-label">Invoice Number</label>                      
-              <input name="invoiceNo" ng-required="" ng-model="" />
+              <label class="my-label">Invoice Number</label>                 
+              <input type="number" name="invoiceNo" required ng-model="mixins.invoiceNo" ng-pattern="ui.mNumberPattern" min="1"/>
               <div ng-messages="bookingForm.invoiceNo.$error">
                 <div ng-message="required">Invoice number is required.</div>
               </div>
@@ -568,10 +571,10 @@
       <md-button flex class="btn btn-next btn-fill btn-info btn-wd" ng-hide="ui.createMode || !ui.isActualChargesView" ng-click="shiftChargesView(false)">Booking Charges</md-button>
       <md-button flex class="btn btn-next btn-fill btn-info btn-wd" ng-hide="ui.createMode || ui.viewMode || !ui.isActualChargesView" ng-click="saveActualCharges(bookingForm)" ng-disabled="bookingForm.$invalid" type="submit">Save</md-button>      
      <md-button class="btn btn-next btn-fill btn-danger btn-wd" ng-show="ui.viewMode && !ui.isActualChargesView" flex ng-click="deleteBooking()" type="submit">Delete</md-button>
-      <md-button class="btn btn-next btn-fill btn-rose btn-wd" flex ng-disabled="bookingForm.$invalid" ng-click="printBooking(bookingForm, false)" type="submit" ng-hide="ui.createMode || ui.isActualChargesView">Print Receipt</md-button>
-      <md-button class="btn btn-next btn-fill btn-rose btn-wd" flex ng-disabled="bookingForm.$invalid" ng-click="printBooking(bookingForm, true)" type="submit" ng-show="(ui.isFullyPaid && mixins.mBalanceDue <= 0 && !ui.isActualChargesView)">Print Invoice</md-button>
-      <md-button class="btn btn-next btn-fill btn-primary btn-wd" ng-disabled="mixins.mEmail==null || mixins.mEmail=='' || !bookingForm.$valid" flex ng-click="sendMail(bookingForm, false)" ng-hide="ui.mailsending || ui.createMode || ui.isActualChargesView" type="submit">Email Receipt</md-button>
-      <md-button class="btn btn-next btn-fill btn-primary btn-wd" ng-disabled="mixins.mEmail==null || mixins.mEmail=='' || !bookingForm.$valid" flex ng-click="sendMail(bookingForm, true)" ng-hide="ui.mailsending || ui.isActualChargesView || !(ui.isFullyPaid && mixins.mBalanceDue <= 0)" type="submit">Email Invoice</md-button>
+      <!-- <md-button class="btn btn-next btn-fill btn-rose btn-wd" flex ng-disabled="bookingForm.$invalid" ng-click="printBooking(bookingForm, false)" type="submit" ng-hide="ui.createMode || ui.isActualChargesView">Print Receipt</md-button> -->
+      <md-button class="btn btn-next btn-fill btn-rose btn-wd" flex ng-disabled="bookingForm.$invalid" ng-click="printBooking(bookingForm, model.BILL_TYPES[2], null)" type="submit" ng-show="(ui.isFullyPaid && mixins.mBalanceDue <= 0 && !ui.isActualChargesView)">Print Invoice</md-button>
+      <!-- <md-button class="btn btn-next btn-fill btn-primary btn-wd" ng-disabled="mixins.mEmail==null || mixins.mEmail=='' || !bookingForm.$valid" flex ng-click="sendMail(bookingForm, false)" ng-hide="ui.mailsending || ui.createMode || ui.isActualChargesView" type="submit">Email Receipt</md-button> -->
+      <md-button class="btn btn-next btn-fill btn-primary btn-wd" ng-disabled="mixins.mEmail==null || !bookingForm.$valid" flex ng-click="sendMail(bookingForm, model.BILL_TYPES[2], null)" ng-hide="ui.mailsending || ui.isActualChargesView || !(ui.isFullyPaid && mixins.mBalanceDue <= 0)" type="submit">Email Invoice</md-button>
       <md-button class="btn btn-next btn-fill btn-primary btn-wd" ng-disabled="true" flex ng-show="ui.mailsending" type="submit"><i class="fa fa-spinner fa-spin"></i> Sending...</md-button>
       <md-button class="btn btn-next btn-fill btn-info btn-wd" ng-hide="ui.viewMode || ui.isBookingInProgress || ui.isActualChargesView" flex ng-click="save(bookingForm)" type="submit">{{mixins._id ? 'Update Booking' : 'Confirm Booking'}}</md-button>
       <md-button class="btn btn-next btn-fill btn-primary btn-wd" ng-disabled="true" flex ng-show="ui.isBookingInProgress" type="submit"><i class="fa fa-spinner fa-spin"></i> Booking...</md-button>

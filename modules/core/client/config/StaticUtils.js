@@ -16,6 +16,7 @@
 		.constant('CLEANING_HOURS', 3)
 		.constant('PAYMENT_STATUS', ['Advance Paid', 'Fully Paid'])
 		.constant('TAX_TYPES', ['CGST', 'SGST'])
+		.constant('BILL_TYPES', ['booking_form', 'receipt', 'invoice'])
 		.constant('GOOGLE_CALENDAR_COLOR_IDS', {
 			'GREEN': 10,
 			"RED": 11
