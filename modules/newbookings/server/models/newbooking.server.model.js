@@ -203,6 +203,11 @@ var NewbookingSchema = new Schema({
   },
   invoiceDate:{
     type: Date
+  },
+  bookingFormData:{
+    type: Object,
+    required: 'Booking form data is missing',
+    trim: true
   }
 },
 {
