@@ -1503,6 +1503,8 @@
     };
 
     $scope.onUnConfirmedAmountChanged = function() {
+      $scope.mPaymentHistory.amountPaid = ($scope.mPaymentHistory.amountPaid == undefined) ? null : $scope.mPaymentHistory.amountPaid;
+
       $scope.calculateBalanceDue();
       proRateAmountPaid();
     };
