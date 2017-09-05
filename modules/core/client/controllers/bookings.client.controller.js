@@ -310,6 +310,7 @@
 
     function eventsPush(booking) {
       var colorCode;
+      var bookingTitle;
       if ($scope.model.mColorFilter === 1 || $scope.model.mColorFilter === '1') {
         //colorCode = booking.mSelectedPaymentStatus.colour.code;        
         for (var i = 0; i < $scope.model.paymentStatuses.length; i++) {
@@ -319,16 +320,23 @@
           }
         }
 
+        var selectedEventTypes = _.filter($scope.model.eventTypes, function(obj) {
+          return obj._id === booking.mSelectedEventType._id;
+        });
+        bookingTitle = selectedEventTypes.length > 0 ? selectedEventTypes[0].displayName : booking.mSelectedEventType.displayName;
+
       } else {
         //colorCode = booking.mSelectedEventType.colour.code;
         for (var i = 0; i < $scope.model.eventTypes.length; i++) {
           if ($scope.model.eventTypes[i]._id === booking.mSelectedEventType._id) {
             colorCode = $scope.model.eventTypes[i].colour.code;
+            bookingTitle = $scope.model.eventTypes[i].displayName;
             break;
           }
         }
       }
-      var bookingTitle = booking.mSelectedEventType.displayName;
+      
+      //var bookingTitle = booking.mSelectedEventType.displayName;
       if (booking.mSelectedEventType.name.toLowerCase().trim() === HARDCODE_VALUES[0]) {
         bookingTitle = booking.mOtherEvent;
       }
