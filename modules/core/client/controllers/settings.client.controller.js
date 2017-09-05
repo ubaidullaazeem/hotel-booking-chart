@@ -237,7 +237,7 @@
         colours = _.pullAllBy(colors, paymentColors, 'name');
       } else {
         colours = _.pullAllBy(colors, savedColors, 'name');
-        paymentTypes = _.pullAll(PAYMENT_STATUS, savedPaymentTypes);
+        paymentTypes = _.pullAll(angular.copy(PAYMENT_STATUS), savedPaymentTypes);
       }
 
       $mdDialog.show({

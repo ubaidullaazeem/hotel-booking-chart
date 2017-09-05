@@ -1592,9 +1592,10 @@
     $scope.calculateBalanceDue = function() {
 
       var previouslyPaidSubTotal = selectedEvent ? CommonService.sumOfArray(_.map($scope.getUnDeletedPaymentHistories(), 'paidSubTotal')) : 0;
+      var discount = ($scope.mixins.mDiscount === undefined) ? 0 : $scope.mixins.mDiscount; 
 
       //  without payment history subtotal
-      $scope.mixins.mPendingSubTotal = Number(Number($scope.taxableChargesBeforeDiscount) - Number($scope.mixins.mDiscount) - Number(previouslyPaidSubTotal)).toFixed(2);
+      $scope.mixins.mPendingSubTotal = Number(Number($scope.taxableChargesBeforeDiscount) - Number(discount) - Number(previouslyPaidSubTotal)).toFixed(2);
       $scope.mixins.mPendingCGST = Number(Number($scope.mixins.mPendingSubTotal) * cgstPercent).toFixed(2);
       $scope.mixins.mPendingSGST = Number(Number($scope.mixins.mPendingSubTotal) * sgstPercent).toFixed(2);
       $scope.mixins.mPendingGrandTotal = Number(Math.round(Number($scope.mixins.mPendingSubTotal) + Number($scope.mixins.mPendingCGST) + Number($scope.mixins.mPendingSGST))).toFixed(2);
@@ -1614,7 +1615,7 @@
       var paymentHistorySGST = ($scope.mPaymentHistory.amountPaid * pendingSGSTPercentage) / 100;
 
       //  with payment history subtotal
-      $scope.mixins.mPendingSubTotal = Number(Number($scope.taxableChargesBeforeDiscount) - Number($scope.mixins.mDiscount) - Number(previouslyPaidSubTotal) - Number(paymentHistorySubTotal)).toFixed(2);
+      $scope.mixins.mPendingSubTotal = Number(Number($scope.taxableChargesBeforeDiscount) - Number(discount) - Number(previouslyPaidSubTotal) - Number(paymentHistorySubTotal)).toFixed(2);
       $scope.mixins.mPendingCGST = Number(Number($scope.mixins.mPendingSubTotal) * cgstPercent).toFixed(2);
       $scope.mixins.mPendingSGST = Number(Number($scope.mixins.mPendingSubTotal) * sgstPercent).toFixed(2);
       $scope.mixins.mPendingGrandTotal = Number(Math.round(Number($scope.mixins.mPendingSubTotal) + Number($scope.mixins.mPendingCGST) + Number($scope.mixins.mPendingSGST))).toFixed(2);
@@ -1634,13 +1635,16 @@
     };
 
     function calculateProrateCharges() {
+
+      var discount = ($scope.mixins.mDiscount === undefined) ? 0 : $scope.mixins.mDiscount; 
+
       for (var i = 0; i < $scope.mixins.mSelectedHalls.length; i++) {
 
         //  individual discounts
         $scope.mixins.mSelectedHalls[i].Discount = {
-          mRateDiscount: ($scope.mixins.mSelectedHalls[i].mBasicCost / totalCostToDiscountProrate) * $scope.mixins.mDiscount,
-          mElectricityDiscount: ($scope.mixins.mSelectedHalls[i].mElectricityCharges / totalCostToDiscountProrate) * $scope.mixins.mDiscount,
-          mCleaningDiscount: ($scope.mixins.mSelectedHalls[i].mCleaningCharges / totalCostToDiscountProrate) * $scope.mixins.mDiscount
+          mRateDiscount: ($scope.mixins.mSelectedHalls[i].mBasicCost / totalCostToDiscountProrate) * discount,
+          mElectricityDiscount: ($scope.mixins.mSelectedHalls[i].mElectricityCharges / totalCostToDiscountProrate) * discount,
+          mCleaningDiscount: ($scope.mixins.mSelectedHalls[i].mCleaningCharges / totalCostToDiscountProrate) * discount
         };
 
         //  Total discount

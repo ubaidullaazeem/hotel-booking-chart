@@ -363,7 +363,7 @@
 
       if ($scope.model.eventTypes.length == 0) {
         Notification.error({
-          message: "Please add event types in settings.",
+          message: "Please add event names in settings.",
           title: '<i class="glyphicon glyphicon-remove"></i> Event Error'
         });
         $scope.ui.validateSettings = true;
@@ -371,7 +371,7 @@
 
       if ($scope.model.paymentStatuses.length < 2) {
         Notification.error({
-          message: "Please add payment statuses in settings.",
+          message: "Please add payment colors in settings.",
           title: '<i class="glyphicon glyphicon-remove"></i> Payment status Error'
         });
         $scope.ui.validateSettings = true;
