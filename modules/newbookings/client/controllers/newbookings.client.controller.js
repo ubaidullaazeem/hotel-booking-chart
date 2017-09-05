@@ -411,7 +411,7 @@
         '<tr style="border-bottom: 1px solid black;"><td>'+
           '<table width="100%" style="border-collapse: collapse; table-layout: fixed;">'+
             '<tr style="border-bottom: 1px solid black;">'+
-              '<td width="85%" colspan="2" style="border-right: 1px solid black;"><b>Total </b>('+RupeeWords.getRupeesToWords(Number(paymentHistory.amountPaid)).trim()+')</td>'+
+              '<td width="85%" colspan="2" style="border-right: 1px solid black;"><b>Total </b>(Rupees '+RupeeWords.getRupeesToWords(Number(paymentHistory.amountPaid))+' only)</td>'+
               '<td width="15%">'+Number(paymentHistory.amountPaid).toFixed(2)+'</td>'+
             '</tr>'+
             '<tr style="border-bottom: 1px solid black;">'+
@@ -495,7 +495,7 @@
         '<tr height="20px"><td style="border-right: 1px solid black;"/><td style="border-right: 1px solid black;"></td><td style="border-right: 1px solid black;"/><td style="border-right: 1px solid black;"/><td style="border-right: 1px solid black;"/><td></td>' +
         '<tr><td style="border-right: 1px solid black;"/><td style="border-right: 1px solid black;">Total</td><td style="border-right: 1px solid black;"/><td style="border-right: 1px solid black;"/><td style="border-right: 1px solid black;"/><td style="text-align:right;"><b>' + Number($scope.mixins.mGrandTotal).toFixed(2) + '</b></td>' +
         '<tr height="20px"><td style="border-right: 1px solid black;"/><td style="border-right: 1px solid black;"></td><td style="border-right: 1px solid black;"/><td style="border-right: 1px solid black;"/><td style="border-right: 1px solid black;"/><td></td>' +
-        '<tr><td style="border-right: 1px solid black;"/><td style="border-right: 1px solid black;"> (Rupees ' + RupeeWords.getRupeesToWords(Number($scope.mixins.mGrandTotal)) + ')</td><td style="border-right: 1px solid black;"/><td style="border-right: 1px solid black;"/><td style="border-right: 1px solid black;"/><td/>' +
+        '<tr><td style="border-right: 1px solid black;"/><td style="border-right: 1px solid black;"> (Rupees ' + RupeeWords.getRupeesToWords(Number($scope.mixins.mGrandTotal)) + ' only)</td><td style="border-right: 1px solid black;"/><td style="border-right: 1px solid black;"/><td style="border-right: 1px solid black;"/><td/>' +
         '</table>' +
         '</td></tr>' +
         '</tbody></table>' +
