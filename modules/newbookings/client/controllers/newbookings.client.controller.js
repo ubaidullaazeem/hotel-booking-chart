@@ -264,6 +264,11 @@
       if ($scope.mPaymentHistory.paymentMode !== $scope.model.paymentModes[0] && $scope.mPaymentHistory.paidDate > new Date()) {
         $scope.mPaymentHistory.paidDate = new Date();
       }
+
+      if ($scope.mPaymentHistory.paymentMode === $scope.model.paymentModes[2]) {
+        $scope.mPaymentHistory.details = '';
+        $scope.mPaymentHistory.drawnOn = '';
+      }
     };
 
     $scope.showPaidDatePicker = function(ev) {
@@ -320,6 +325,12 @@
       return eventName;
     }
 
+    function getConfirmedEventName() {
+      var eventName = (selectedEvent.mSelectedEventType.name.toLowerCase().trim() === HARDCODE_VALUES[0]) ? selectedEvent.mOtherEvent : selectedEvent.mSelectedEventType.displayName;
+
+      return eventName;
+    }
+
     $scope.printBooking = function(form, billType, index) {
       if (form.$valid) {
 
@@ -365,7 +376,7 @@
 
     function getBookingFormData() {
       var baseUrl = $location.$$absUrl.replace($location.$$url, '');
-      var halls = _.map($scope.mixins.mSelectedHalls, 'displayName');
+      var halls = _.map(selectedEvent.mSelectedHalls, 'displayName');
 
       return '<html><head><link rel="stylesheet" type="text/css" href="style.css" /></head>' +
         '<body onload="window.print()"><html><head> <title>Mirth</title></head>' +
@@ -375,41 +386,41 @@
         '<tr style="border-bottom: 1px solid black; text-align:center;"><td width="100%"><img style="width: 200px;" src="' + baseUrl + '/modules/core/client/img/logo-bw.png"/></td></tr>'+
         '<tr style="border-bottom: 1px solid black;"><td>'+
           '<table width="100%" style="border-collapse: collapse; table-layout: fixed;">'+
-            '<tr><td width="60%" rowspan="2" style="border-right: 1px solid black;">Dev&apos;s Ark, Second Floor, AD-79&80, 5th Avenue<br/> Anna Nagar, Chennai - 600 040<br/> Phone Nos : 044-45552479 / 044-26222479</td><td width="15%" style="border-right: 1px solid black; border-bottom: 1px solid black;"><b>Date</b></td><td width="25%" style="border-bottom: 1px solid black;">'+ moment($scope.mixins.bookingFormData.bookedDate).format('DD/MM/YYYY')+'</td></tr>'+
+            '<tr><td width="60%" rowspan="2" style="border-right: 1px solid black;">Dev&apos;s Ark, Second Floor, AD-79&80, 5th Avenue<br/> Anna Nagar, Chennai - 600 040<br/> Phone Nos : 044-45552479 / 044-26222479</td><td width="15%" style="border-right: 1px solid black; border-bottom: 1px solid black;"><b>Date</b></td><td width="25%" style="border-bottom: 1px solid black;">'+ moment(selectedEvent.bookingFormData.bookedDate).format('DD/MM/YYYY')+'</td></tr>'+
             '<tr><td width="15%" style="border-right: 1px solid black;"><b>GSTIN No.</b></td><td width="25%">33AAFPJ8706K1ZM</td></tr>'+
           '</table></td></tr>'+
         '<tr style="border-bottom: 1px solid black; text-align:center;"><td width="100%"><b>BOOKING DETAILS</b></td></tr>'+
         '<tr style="border-bottom: 1px solid black;"><td>'+
           '<table width="100%" style="border-collapse: collapse; table-layout: fixed;">'+
-            '<tr style="vertical-align:top;"><td width="50%"><b>Name</b></td><td width="50%">'+$scope.mixins.mName+'</td></tr>'+
-            '<tr style="vertical-align:top;"><td width="50%"><b>Address</b></td><td width="50%">'+$scope.mixins.mAddress+'</td></tr>'+
-            '<tr style="vertical-align:top;"><td width="50%"><b>GSTIN #</b></td><td width="50%">'+getValidValue($scope.mixins.mGSTINNumber)+'</td></tr>'+
-            '<tr style="vertical-align:top;"><td width="50%"><b>Contact #</b></td><td width="50%">'+$scope.mixins.mPhone+'</td></tr>'+
-            '<tr style="vertical-align:top;"><td width="50%"><b>Email I.D</b></td><td width="50%">'+getValidValue($scope.mixins.mEmail)+'</td></tr>'+
-            '<tr style="vertical-align:top;"><td width="50%"><b>Purpose for which auditorium required</b></td><td width="50%">'+getEventName()+'</td></tr>'+
-            '<tr style="vertical-align:top;"><td width="50%"><b>Function’s date & time</b></td><td width="50%">'+moment(new Date($scope.eventTime.mStartToServer)).format('MMMM DD, YYYY hh:mm:a')+' to '+moment(new Date($scope.eventTime.mEndToServer)).format('hh:mm:a')+'</td></tr>'+
-            '<tr style="vertical-align:top;"><td width="50%"><b>Payment Mode (Cheque/DD/Cash/NEFT)</b></td><td width="50%">'+$scope.mixins.bookingFormData.paymentHistory.paymentMode+' '+$scope.mixins.bookingFormData.paymentHistory.details+', '+moment($scope.mixins.bookingFormData.paymentHistory.paidDate).format('DD/MM/YYYY')+'</td></tr>'+
+            '<tr style="vertical-align:top;"><td width="50%"><b>Name</b></td><td width="50%">'+selectedEvent.mName+'</td></tr>'+
+            '<tr style="vertical-align:top;"><td width="50%"><b>Address</b></td><td width="50%">'+selectedEvent.mAddress+'</td></tr>'+
+            '<tr style="vertical-align:top;"><td width="50%"><b>GSTIN #</b></td><td width="50%">'+getValidValue(selectedEvent.mGSTINNumber)+'</td></tr>'+
+            '<tr style="vertical-align:top;"><td width="50%"><b>Contact #</b></td><td width="50%">'+selectedEvent.mPhone+'</td></tr>'+
+            '<tr style="vertical-align:top;"><td width="50%"><b>Email I.D</b></td><td width="50%">'+getValidValue(selectedEvent.mEmail)+'</td></tr>'+
+            '<tr style="vertical-align:top;"><td width="50%"><b>Purpose for which auditorium required</b></td><td width="50%">'+getConfirmedEventName()+'</td></tr>'+
+            '<tr style="vertical-align:top;"><td width="50%"><b>Function’s date & time</b></td><td width="50%">'+moment(new Date(selectedEvent.mStartDateTime)).format('MMMM DD, YYYY hh:mm:a')+' to '+moment(new Date(selectedEvent.mEndDateTime)).format('hh:mm:a')+'</td></tr>'+
+            '<tr style="vertical-align:top;"><td width="50%"><b>Payment Mode (Cheque/DD/Cash/NEFT)</b></td><td width="50%">'+selectedEvent.bookingFormData.paymentHistory.paymentMode+' '+selectedEvent.bookingFormData.paymentHistory.details+', '+moment(selectedEvent.bookingFormData.paymentHistory.paidDate).format('DD/MM/YYYY')+'</td></tr>'+
             '<tr style="vertical-align:top;"><td width="50%"><b>Halls</b></td><td width="50%">'+halls+'</td></tr>'+
-            '<tr style="vertical-align:top;"><td width="50%"><b>Description</b></td><td width="50%">'+getValidValue($scope.mixins.mDescription)+'</td></tr>'+
+            '<tr style="vertical-align:top;"><td width="50%"><b>Description</b></td><td width="50%">'+getValidValue(selectedEvent.mDescription)+'</td></tr>'+
           '</table></td></tr>'+
         '<tr style="border-bottom: 1px solid black; text-align:center;"><td width="100%"><b>DETAILS OF CHARGES</b></td></tr>'+
         '<tr style="border-bottom: 1px solid black;"><td>'+
           '<table width="100%" style="border-collapse: collapse; table-layout: fixed;">'+
             '<tr style="border-bottom: 1px solid black;">'+
               '<td width="17%" style="border-right: 1px solid black;"><b>Rent & other charges</b></td>'+
-              '<td width="16%" style="border-right: 1px solid black;"><b>CGST ('+$scope.mixins.bookingFormData.paymentHistory.CGSTPercent+'%)</b></td>'+
-              '<td width="16%" style="border-right: 1px solid black;"><b>SGST('+$scope.mixins.bookingFormData.paymentHistory.SGSTPercent+'%)</b></td>'+
+              '<td width="16%" style="border-right: 1px solid black;"><b>CGST ('+selectedEvent.bookingFormData.paymentHistory.CGSTPercent+'%)</b></td>'+
+              '<td width="16%" style="border-right: 1px solid black;"><b>SGST('+selectedEvent.bookingFormData.paymentHistory.SGSTPercent+'%)</b></td>'+
               '<td width="17%" style="border-right: 1px solid black;"><b>Grand Total</b></td>'+
               '<td width="17%" style="border-right: 1px solid black;"><b>Advance Received</b></td>'+
               '<td width="17%"><b>Balance Due</b></td>'+
             '</tr>'+
             '<tr>'+
-              '<td width="17%" style="border-right: 1px solid black;">'+$scope.mixins.bookingFormData.subTotal+'</td>'+
-              '<td width="16%" style="border-right: 1px solid black;">'+$scope.mixins.bookingFormData.cgst+'</td>'+
-              '<td width="16%" style="border-right: 1px solid black;">'+$scope.mixins.bookingFormData.sgst+'</td>'+
-              '<td width="17%" style="border-right: 1px solid black;">'+$scope.mixins.bookingFormData.grandTotal+'</td>'+
-              '<td width="17%" style="border-right: 1px solid black;">'+Number($scope.mixins.bookingFormData.paymentHistory.amountPaid).toFixed(2)+'</td>'+
-              '<td width="17%">'+$scope.mixins.bookingFormData.balanceDue+'</td>'+
+              '<td width="17%" style="border-right: 1px solid black;">'+selectedEvent.bookingFormData.subTotal+'</td>'+
+              '<td width="16%" style="border-right: 1px solid black;">'+selectedEvent.bookingFormData.cgst+'</td>'+
+              '<td width="16%" style="border-right: 1px solid black;">'+selectedEvent.bookingFormData.sgst+'</td>'+
+              '<td width="17%" style="border-right: 1px solid black;">'+selectedEvent.bookingFormData.grandTotal+'</td>'+
+              '<td width="17%" style="border-right: 1px solid black;">'+Number(selectedEvent.bookingFormData.paymentHistory.amountPaid).toFixed(2)+'</td>'+
+              '<td width="17%">'+selectedEvent.bookingFormData.balanceDue+'</td>'+
             '</tr>'+
           '</table></td></tr>'+
         '<tr height="20px"><td> </td></tr>'+
@@ -426,10 +437,10 @@
 
     function getReceiptData(index) {
       var baseUrl = $location.$$absUrl.replace($location.$$url, '');
-      var halls = _.map($scope.mixins.mSelectedHalls, 'displayName');
+      var halls = _.map(selectedEvent.mSelectedHalls, 'displayName');
       
       var paymentHistory = $scope.mixins.mPaymentHistories[index];
-      var isFinalPayment = $scope.ui.isFullyPaid && ($scope.mPaymentHistory.amountPaid <= 0) && ($scope.mixins.mBalanceDue == 0) && (paymentHistory.receiptNo === getLastInsertedPayment().receiptNo) ? true : false;
+      var isFinalPayment = $scope.ui.isFullyPaid && (paymentHistory.receiptNo === getLastInsertedPayment().receiptNo) ? true : false;
       
       return '<html><head><link rel="stylesheet" type="text/css" href="style.css" /></head>' +
         '<body onload="window.print()"><html><head> <title>Mirth</title></head>' +
@@ -444,12 +455,12 @@
           '</table></td></tr>'+
         '<tr style="border-bottom: 1px solid black;"><td>'+
           '<table width="100%" style="border-collapse: collapse; table-layout: fixed;">'+
-            '<tr style="vertical-align:top;"><td width="60%" rowspan="6" style="border-right: 1px solid black;"><b>Customer Name : </b>'+$scope.mixins.mName+'<br/><b>Customer Address : </b>'+$scope.mixins.mAddress+'<br/><b>Customer GSTIN # : </b>'+$scope.mixins.mGSTINNumber+'</td><td width="15%" style="border-right: 1px solid black; border-bottom: 1px solid black;"><b>Receipt #</b></td><td width="25%" style="border-bottom: 1px solid black;">'+paymentHistory.receiptNo+'</td></tr>'+
+            '<tr style="vertical-align:top;"><td width="60%" rowspan="6" style="border-right: 1px solid black;"><b>Customer Name : </b>'+selectedEvent.mName+'<br/><b>Customer Address : </b>'+selectedEvent.mAddress+'<br/><b>Customer GSTIN # : </b>'+selectedEvent.mGSTINNumber+'</td><td width="15%" style="border-right: 1px solid black; border-bottom: 1px solid black;"><b>Receipt #</b></td><td width="25%" style="border-bottom: 1px solid black;">'+paymentHistory.receiptNo+'</td></tr>'+
             '<tr><td width="15%" style="border-right: 1px solid black; border-bottom: 1px solid black;"><b>Hall Name</b></td><td width="25%" style="border-bottom: 1px solid black;">'+halls+'</td></tr>'+
-            '<tr><td width="15%" style="border-right: 1px solid black; border-bottom: 1px solid black;"><b>Purpose</b></td><td width="25%" style="border-bottom: 1px solid black;">'+getEventName()+'</td></tr>'+
-            '<tr><td width="15%" style="border-right: 1px solid black; border-bottom: 1px solid black;"><b>Event Date</b></td><td width="25%" style="border-bottom: 1px solid black;">'+moment(new Date($scope.eventTime.mStartToServer)).format('DD/MM/YYYY')+'</td></tr>'+
-            '<tr><td width="15%" style="border-right: 1px solid black; border-bottom: 1px solid black;"><b>Start Time</b></td><td width="25%" style="border-bottom: 1px solid black;">'+$scope.eventTime.mStartToDisplay+'</td></tr>'+
-            '<tr><td width="15%" style="border-right: 1px solid black;"><b>End Time</b></td><td width="25%">'+$scope.eventTime.mEndToDisplay+'</td></tr>'+
+            '<tr><td width="15%" style="border-right: 1px solid black; border-bottom: 1px solid black;"><b>Purpose</b></td><td width="25%" style="border-bottom: 1px solid black;">'+getConfirmedEventName()+'</td></tr>'+
+            '<tr><td width="15%" style="border-right: 1px solid black; border-bottom: 1px solid black;"><b>Event Date</b></td><td width="25%" style="border-bottom: 1px solid black;">'+moment(new Date(selectedEvent.mStartDateTime)).format('DD/MM/YYYY')+'</td></tr>'+
+            '<tr><td width="15%" style="border-right: 1px solid black; border-bottom: 1px solid black;"><b>Start Time</b></td><td width="25%" style="border-bottom: 1px solid black;">'+moment(new Date(selectedEvent.mStartDateTime)).format('hh:mm:a')+'</td></tr>'+
+            '<tr><td width="15%" style="border-right: 1px solid black;"><b>End Time</b></td><td width="25%">'+moment(new Date(selectedEvent.mEndDateTime)).format('hh:mm:a')+'</td></tr>'+
           '</table></td></tr>'+
         '<tr style="border-bottom: 1px solid black; text-align:center;"><td width="100%"><b>RECEIPT DETAILS</b></td></tr>'+
         '<tr style="border-bottom: 1px solid black;"><td>'+
@@ -502,7 +513,7 @@
 
     function getInvoiceData() {
       var baseUrl = $location.$$absUrl.replace($location.$$url, '');
-      var halls = _.map($scope.mixins.mSelectedHalls, 'displayName');
+      var halls = _.map(selectedEvent.mSelectedHalls, 'displayName');
 
       return '<html><head><link rel="stylesheet" type="text/css" href="style.css" /></head>' +
         '<body onload="window.print()"><html><head> <title>Mirth</title></head>' +
@@ -512,17 +523,17 @@
         '<tr style="border-bottom: 1px solid black; text-align:center;"><td width="100%"><img style="width: 200px;" src="' + baseUrl + '/modules/core/client/img/logo-bw.png"/></td></tr>'+
         '<tr style="border-bottom: 1px solid black;"><td>'+
           '<table width="100%" style="border-collapse: collapse; table-layout: fixed;">'+
-            '<tr><td width="60%" rowspan="2" style="border-right: 1px solid black;">Dev&apos;s Ark, Second Floor, AD-79&80, 5th Avenue<br/> Anna Nagar, Chennai - 600 040<br/> Phone Nos : 044-45552479 / 044-26222479</td><td width="15%" style="border-right: 1px solid black; border-bottom: 1px solid black;"><b>Date</b></td><td width="25%" style="border-bottom: 1px solid black;">'+ moment(new Date($scope.mixins.invoiceDate)).format('DD/MM/YYYY')+'</td></tr>'+
+            '<tr><td width="60%" rowspan="2" style="border-right: 1px solid black;">Dev&apos;s Ark, Second Floor, AD-79&80, 5th Avenue<br/> Anna Nagar, Chennai - 600 040<br/> Phone Nos : 044-45552479 / 044-26222479</td><td width="15%" style="border-right: 1px solid black; border-bottom: 1px solid black;"><b>Date</b></td><td width="25%" style="border-bottom: 1px solid black;">'+ moment(new Date(selectedEvent.invoiceDate)).format('DD/MM/YYYY')+'</td></tr>'+
             '<tr><td width="15%" style="border-right: 1px solid black;"><b>GSTIN No.</b></td><td width="25%">33AAFPJ8706K1ZM</td></tr>'+
           '</table></td></tr>'+
         '<tr style="border-bottom: 1px solid black;"><td>'+
           '<table width="100%" style="border-collapse: collapse; table-layout: fixed;">'+
-            '<tr style="vertical-align:top;"><td width="60%" rowspan="6" style="border-right: 1px solid black;"><b>Customer Name : </b>'+$scope.mixins.mName+'<br/><b>Customer Address : </b>'+$scope.mixins.mAddress+'<br/><b>Customer GSTIN # : </b>'+$scope.mixins.mGSTINNumber+'</td><td width="15%" style="border-right: 1px solid black; border-bottom: 1px solid black;"><b>Invoice #</b></td><td width="25%" style="border-bottom: 1px solid black;">'+$scope.mixins.invoiceNo+'</td></tr>'+
+            '<tr style="vertical-align:top;"><td width="60%" rowspan="6" style="border-right: 1px solid black;"><b>Customer Name : </b>'+selectedEvent.mName+'<br/><b>Customer Address : </b>'+selectedEvent.mAddress+'<br/><b>Customer GSTIN # : </b>'+selectedEvent.mGSTINNumber+'</td><td width="15%" style="border-right: 1px solid black; border-bottom: 1px solid black;"><b>Invoice #</b></td><td width="25%" style="border-bottom: 1px solid black;">'+selectedEvent.invoiceNo+'</td></tr>'+
             '<tr><td width="15%" style="border-right: 1px solid black; border-bottom: 1px solid black;"><b>Hall Name</b></td><td width="25%" style="border-bottom: 1px solid black;">'+halls+'</td></tr>'+
-            '<tr><td width="15%" style="border-right: 1px solid black; border-bottom: 1px solid black;"><b>Purpose</b></td><td width="25%" style="border-bottom: 1px solid black;">'+getEventName()+'</td></tr>'+
-            '<tr><td width="15%" style="border-right: 1px solid black; border-bottom: 1px solid black;"><b>Event Date</b></td><td width="25%" style="border-bottom: 1px solid black;">'+moment(new Date($scope.eventTime.mStartToServer)).format('DD/MM/YYYY')+'</td></tr>'+
-            '<tr><td width="15%" style="border-right: 1px solid black; border-bottom: 1px solid black;"><b>Start Time</b></td><td width="25%" style="border-bottom: 1px solid black;">'+$scope.eventTime.mStartToDisplay+'</td></tr>'+
-            '<tr><td width="15%" style="border-right: 1px solid black;"><b>End Time</b></td><td width="25%">'+$scope.eventTime.mEndToDisplay+'</td></tr>'+
+            '<tr><td width="15%" style="border-right: 1px solid black; border-bottom: 1px solid black;"><b>Purpose</b></td><td width="25%" style="border-bottom: 1px solid black;">'+getConfirmedEventName()+'</td></tr>'+
+            '<tr><td width="15%" style="border-right: 1px solid black; border-bottom: 1px solid black;"><b>Event Date</b></td><td width="25%" style="border-bottom: 1px solid black;">'+moment(new Date(selectedEvent.mStartDateTime)).format('DD/MM/YYYY')+'</td></tr>'+
+            '<tr><td width="15%" style="border-right: 1px solid black; border-bottom: 1px solid black;"><b>Start Time</b></td><td width="25%" style="border-bottom: 1px solid black;">'+moment(new Date(selectedEvent.mStartDateTime)).format('hh:mm:a')+'</td></tr>'+
+            '<tr><td width="15%" style="border-right: 1px solid black;"><b>End Time</b></td><td width="25%">'+moment(new Date(selectedEvent.mEndDateTime)).format('hh:mm:a')+'</td></tr>'+
           '</table></td></tr>'+
         '<tr style="border-bottom: 1px solid black; text-align:center;"><td width="100%"><b>INVOICE DETAILS</b></td></tr>'+
         '<tr><td>'+
@@ -547,8 +558,8 @@
         '<tr><td>'+
           '<table width="100%" style="border-collapse: collapse; table-layout: fixed;">'+
             '<tr style="border-bottom: 1px solid black;">'+
-              '<td width="82%" style="border-right: 1px solid black;"><b>Total </b>(Rupees '+RupeeWords.getRupeesToWords(Number($scope.mixins.mGrandTotal))+' only)</td>'+
-              '<td width="18%" style="text-align:right;">'+Number($scope.mixins.mGrandTotal).toFixed(2)+'</td>'+
+              '<td width="82%" style="border-right: 1px solid black;"><b>Total </b>(Rupees '+RupeeWords.getRupeesToWords(Number(selectedEvent.mGrandTotal))+' only)</td>'+
+              '<td width="18%" style="text-align:right;">'+Number(selectedEvent.mGrandTotal).toFixed(2)+'</td>'+
             '</tr>'+
           '</table></td></tr>'+
         '<tr style="border-bottom: 1px solid black; text-align:center;"><td width="100%"><b>PAYMENT SUMMARY</b></td></tr>'+
@@ -563,12 +574,12 @@
               '<td width="17%"><b>Balance Due</b></td>'+
             '</tr>'+
             '<tr>'+
-              '<td width="17%" style="border-right: 1px solid black;">'+Number($scope.mixins.mSubTotal).toFixed(2)+'</td>'+
-              '<td width="16%" style="border-right: 1px solid black;">'+Number($scope.mixins.mCGST).toFixed(2)+'</td>'+
-              '<td width="16%" style="border-right: 1px solid black;">'+Number($scope.mixins.mSGST).toFixed(2)+'</td>'+
-              '<td width="17%" style="border-right: 1px solid black;">'+Number($scope.mixins.mGrandTotal).toFixed(2)+'</td>'+
-              '<td width="17%" style="border-right: 1px solid black;">'+Number($scope.mixins.mReceivedGrandTotal).toFixed(2)+'</td>'+
-              '<td width="17%">'+Number($scope.mixins.mBalanceDue).toFixed(2)+'</td>'+
+              '<td width="17%" style="border-right: 1px solid black;">'+Number(selectedEvent.mSubTotal).toFixed(2)+'</td>'+
+              '<td width="16%" style="border-right: 1px solid black;">'+Number(selectedEvent.mCGST).toFixed(2)+'</td>'+
+              '<td width="16%" style="border-right: 1px solid black;">'+Number(selectedEvent.mSGST).toFixed(2)+'</td>'+
+              '<td width="17%" style="border-right: 1px solid black;">'+Number(selectedEvent.mGrandTotal).toFixed(2)+'</td>'+
+              '<td width="17%" style="border-right: 1px solid black;">'+Number(selectedEvent.mReceivedGrandTotal).toFixed(2)+'</td>'+
+              '<td width="17%">'+Number(selectedEvent.mBalanceDue).toFixed(2)+'</td>'+
             '</tr>'+
           '</table></td></tr>'+
         '<tr height="20px"><td> </td></tr>'+
