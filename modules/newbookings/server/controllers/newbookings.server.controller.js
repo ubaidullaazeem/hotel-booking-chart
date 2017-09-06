@@ -12,6 +12,7 @@ var path = require('path'),
   smtpTransport = nodemailer.createTransport(config.mailer.options),
   async = require('async'),
   _ = require('lodash'),
+  moment = require('moment'),
   pdf = require('html-pdf'),
   multer = require('multer'),
   config = require(path.resolve('./config/config')),
@@ -85,7 +86,7 @@ function assignReceiptNumberAndSave(newbooking, res) {
             return callback(err);
           } else {
             newbooking.mPaymentHistories[index].receiptNo = result.seq;
-            newbooking.mPaymentHistories[index].receiptDate = new Date();
+            newbooking.mPaymentHistories[index].receiptDate = moment(new Date()).utcOffset("+05:30");
 
             callback();
           }
