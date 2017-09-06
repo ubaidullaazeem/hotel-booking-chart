@@ -19,8 +19,8 @@
            <input style="text-transform: capitalize; cursor: pointer" ng-click="showMdselect()" name="selectedHalls" ng-model="disabledSelectedHalls" ng-disabled="ui.viewMode" readonly></input>
           </md-input-container>  -->
           <md-input-container flex>
-            <label class="my-label">Halls</label>           
-            <md-select  multiple 
+            <label class="my-label">Halls</label>
+            <md-select  multiple
                         required
                         name="halls"
                         ng-model="mixins.mSelectedHalls"
@@ -150,9 +150,9 @@
         
         <div layout="column" flex>
           <md-input-container flex>
-            <label style="font-size: 15px;">Photo ID of the Person</label>        
-            <div class="form-group text-center" ng-hide="!ui.fileSelected && !mixins.mPhotoIdPath">
-              <img  ngf-src="ui.fileSelected ? ui.photoIdFile : '/' + mixins.mPhotoIdPath" class="img-thumbnail user-profile-picture" ngf-drop>
+            <label style="font-size: 17px;">Photo ID of the Person</label>
+            <div class="form-group text-center" ng-hide="!ui.fileSelected && !mixins.mPhotoIdPath" ng-click="showLargeImage($event)">
+              <img ngf-src="ui.fileSelected ? ui.photoIdFile : '/' + mixins.mPhotoIdPath" class="img-thumbnail user-profile-picture" ngf-drop>
             </div>
             <!-- <div ng-show="vm.loading" class="form-group text-center">
               <img ng-src="/modules/core/client/img/loaders/loader.gif" height="50" width="50" alt="Loading image...">
@@ -258,7 +258,7 @@
         
         <md-card  layout="column" flex>        
           <md-card-content>
-          <label style="font-size: 15px;">Payment Received</label>
+          <label style="font-size: 17px;">Payment Received</label>
             <md-card  layout="row" ng-hide="ui.viewMode || (ui.isFullyPaid && mixins.mBalanceDue <= 0 && !mPaymentHistory.amountPaid)" flex>
               <md-card-content layout="row" flex>
                 <div layout="column" flex>

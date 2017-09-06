@@ -1,0 +1,17 @@
+<md-dialog flex="80">
+    <div class="card">
+      <div class="card-header" data-background-color="{{DATA_BACKGROUND_COLOR}}">
+        <div class="md-toolbar-tools">        
+          <span flex><h2>Photo ID</h2> </span>
+          <md-button class="md-icon-button" ng-click="cancel()">
+             <i class="material-icons">close</i>
+          </md-button>
+        </div>
+        </div>
+    </div>
+    <md-dialog-content>
+      <div style="text-align:center; margin:25px">
+        <img  ngf-src="filePath" ngf-drop>
+      </div>
+    </md-dialog-content>
+</md-dialog>

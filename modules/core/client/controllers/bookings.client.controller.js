@@ -262,7 +262,7 @@
     // Receiving broadcast from newbookings.client.controller
     $scope.$on('editBooking', function(event, updatedItem) {
 
-      var index = findIndexByID($scope.model.events, event._id);
+      var index = findIndexByID($scope.model.events, updatedItem._id);
       var bookingIndex = findIndexByID($scope.model.newBookings, updatedItem._id);
       $scope.model.events.splice(index, 1);
       if (updatedItem.isDelete) {

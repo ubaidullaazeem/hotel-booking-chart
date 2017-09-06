@@ -756,7 +756,7 @@
       if (files.length > 0) {
         $scope.ui.photoIdFile = files[0];
         var fileExtension = $scope.ui.photoIdFile.name.split('.').pop();
-        if (fileExtension === 'png' || fileExtension === 'jpg' || fileExtension === 'jpeg') {
+        if (fileExtension === 'png' || fileExtension === 'jpg' || fileExtension === 'jpeg' || fileExtension === 'gif') {
           $scope.ui.fileSelected = true;
         } else {
           $scope.ui.fileSelected = false;
@@ -768,6 +768,28 @@
           });
         }
       }
+    };
+
+    $scope.showLargeImage = function(ev) {
+      $mdDialog.show({
+          controller: 'LargeImageController',
+          templateUrl: 'modules/newbookings/client/views/view.largeimage.client.view.html',
+          parent: angular.element(document.body),
+          targetEvent: ev,
+          clickOutsideToClose: true,
+          fullscreen: true,
+          multiple: true,
+          resolve: {
+            filePath: function() {
+              return $scope.ui.fileSelected ? $scope.ui.photoIdFile : $scope.mixins.mPhotoIdPath;
+            }
+          },
+        })
+        .then(function(updatedItem) {
+
+        }, function() {
+          console.log('You cancelled the large image dialog.');
+        });
     };
 
     $scope.cancelFile = function() {
