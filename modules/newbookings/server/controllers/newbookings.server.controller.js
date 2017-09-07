@@ -86,7 +86,7 @@ function assignReceiptNumberAndSave(newbooking, res) {
             return callback(err);
           } else {
             newbooking.mPaymentHistories[index].receiptNo = result.seq;
-            newbooking.mPaymentHistories[index].receiptDate = moment(new Date()).utcOffset("+05:30");
+            newbooking.mPaymentHistories[index].receiptDate = new Date();
 
             callback();
           }
@@ -404,14 +404,14 @@ exports.searchReports = function(req, res) {
         mEndDateTime: {
           $lte: req.body.endDate
         }
-      }],
+      }]/*,
       mSelectedHalls: {
         $elemMatch: {
           _id: {
             $in: mapSelectedHallsByName
           }
         }
-      }
+      }*/
     }, function(err, searchResults) {
       if (err) {
         return res.status(400).send({

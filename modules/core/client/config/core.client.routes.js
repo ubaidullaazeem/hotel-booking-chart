@@ -52,6 +52,18 @@
       })
       .state('reports', {
         url: '/reports',
+        templateUrl: '/modules/core/client/views/reports.new.client.view.html',
+        controller: 'ReportsControllerNew',
+        controllerAs: 'vm',
+        data: {
+          pageTitle: 'Reports'
+        },
+        resolve: {
+          hallsResolve: hallsData
+        }
+      })
+      .state('graphreports', {
+        url: '/graphreports',
         templateUrl: '/modules/core/client/views/reports.client.view.html',
         controller: 'ReportsController',
         controllerAs: 'vm',

@@ -1,0 +1,69 @@
+<div class="col-md-12">
+	<div class="column">		
+		<div class="card">
+			<form name="reports" id="reportSearch" action="" method="" novalidate="novalidate">
+				<div class="card-header card-header-icon" data-background-color="{{DATA_BACKGROUND_COLOR}}">
+					<i class="material-icons">search</i>
+				</div>				
+				<div class="card-content">
+					<h4 class="card-title">Search</h4>					
+					<div layout="row">						
+						<md-input-container flex>
+							<label class="my-label">Start Date</label>
+							<div ng-click="showStartDatePicker($event)">
+								<input class="form-control datepicker" required name="start" id="reportStartDatePicker" ng-model="model.startDate" onfocus="this.blur()"></input>
+							</div>
+						</md-input-container>
+						<md-input-container flex>
+							<label class="my-label">End Date</label>
+							<div ng-click="showEndDatePicker($event)">
+								<input class="form-control datepicker" required name="start" id="reportEndDatePicker"  ng-model="model.endDate" onfocus="this.blur()"></input>
+							</div>
+						</md-input-container>
+						<md-input-container flex=11  style="margin-top: 0px">
+							<md-button class="btn btn-info btn-sm"  ng-disabled="reports.$invalid" ng-hide="ui.isSearching" ng-click="searchReports()"><span class="glyphicon glyphicon-search"></span>Search</md-button>
+							<md-button class="btn btn-info btn-sm" ng-disabled="true" ng-show="ui.isSearching"><i class="fa fa-spinner fa-spin"></i> Searching</md-button>
+						</md-input-container>
+						<md-input-container flex=11  style="margin-top: 0px">							
+							<md-button ng-disabled="bookingList.length == 0" class="btn btn-info btn-sm css-class" ng-json-export-excel data="bookingList" report-fields="{'serialNumber': 'S.No', 'bookedDate': 'Date Of Booking', 'name': 'Name', 'grandTotal':'Gross Value', 'eventDate':'Event Date', 'advanceReceived':'Advance Received', 'finalPaymentReceived':'Final Payment Received', 'balanceDue':'Balance Due'}" filename =" 'Booking_List' " separator=",">Export</md-button>
+						</md-input-container>
+					</div>
+				</div>
+			</form>	
+		</div>
+
+		<md-content layout="column" layout-padding>
+			<h4 ng-if="newbookings.length === 0">Bookings not found.</h4>
+			<md-list>			
+		      <md-list-item>
+			    <div class="md-list-item-text" layout="row" flex style="text-align: center;">
+			      <span flex="5"><b>S.No</b></span>
+			      <span flex="15"><b>Date Of Booking</b></span>
+			      <span flex="15"><b>Name</b></span>
+			      <span flex="10"><b>Gross Value</b></span>
+			      <span flex="10"><b>Event Date</b></span>
+			      <span flex="15"><b>Advance Received</b></span>
+			      <span flex="15"><b>Final Payment Received</b></span>
+			      <span flex="15"><b>Balance Due</b></span>
+			    </div>
+			  </md-list-item>
+			  <md-list-item ng-repeat="item in items">
+			    <div class="md-list-item-text" layout="row" flex style="text-align: center;">
+			      <span flex="5">{{item.serialNumber}}</span>
+			      <span flex="15">{{item.bookedDate}}</span>
+			      <span flex="15">{{item.name}}</span>
+			      <span flex="10">{{item.grandTotal}}</span>
+			      <span flex="10">{{item.eventDate}}</span>
+			      <span flex="15">{{item.advanceReceived}}</span>
+			      <span flex="15">{{item.finalPaymentReceived}}</span>
+			      <span flex="15">{{item.balanceDue}}</span>
+			    </div>
+			  </md-list-item>
+		    </md-list>
+		    <md-collection-pagination collection="bookingList" paginated-collection="items" per-page="10" navigation-length="10"></md-collection-pagination>
+		</md-content>
+
+	</div>
+</div>
+
+

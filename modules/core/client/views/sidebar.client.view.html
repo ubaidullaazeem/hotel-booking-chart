@@ -25,10 +25,22 @@
             </a>
         </li>
         <li ui-sref-active="active">
-            <a ui-sref="reports">
+            <a data-toggle="collapse" href="#reportpagesExamples">
                 <i class="material-icons">dashboard</i>
-                <p>Reports</p>
+                <p>Reports
+                <b class="caret"></b>
+                </p>
             </a>
+            <div class="collapse" id="reportpagesExamples">
+                <ul class="nav">
+                    <li ui-sref-active="active">
+                        <a ui-sref="reports">Booking List</a>
+                    </li>
+                    <li ui-sref-active="active">
+                        <a ui-sref="graphreports">Graphs</a>
+                    </li>
+                </ul>
+            </div>
         </li>
         <li ui-sref-active="active">
             <a data-toggle="collapse" href="#pagesExamples">
