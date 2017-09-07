@@ -2,7 +2,8 @@
 	'use strict';
 	angular
 		.module('core.constant', [])
-		.constant('GOOGLE_CLIENT_ID', '228725713486-eng36vttlj0c1pt3nor8nti4j5i2laqu.apps.googleusercontent.com')
+		//.constant('GOOGLE_CLIENT_ID', '228725713486-eng36vttlj0c1pt3nor8nti4j5i2laqu.apps.googleusercontent.com') //development
+		.constant('GOOGLE_CLIENT_ID', '483617748399-qg8u4g1ohm0kt9idj1kbnb7d8o35kh0m.apps.googleusercontent.com') // live
 		.constant('GOOGLE_SCOPES', 'https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/calendar.readonly')
 		.constant('GOOGLE_DISCOVERY_DOCS', ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"])
 		.constant('AUTHORISED_EMAIL', 'kumar@riverstonetech.com')
