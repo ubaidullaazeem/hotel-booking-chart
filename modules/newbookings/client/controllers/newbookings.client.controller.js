@@ -602,15 +602,15 @@
         var item = paymentHistories[i];
         serialNumber++;
 
-        paymentList = paymentList + '<tr style="border-bottom: 1px solid black;">' +
-          '<td width="10%" rowspan="3" style="border-right: 1px solid black;">'+serialNumber+'</td>' +
+        paymentList = paymentList + '<tr>' +
+          '<td width="10%" rowspan="3" style="border-right: 1px solid black; border-bottom: 1px solid black;">'+serialNumber+'</td>' +
           '<td width="48%" style="border-right: 1px solid black;">Rent Received for '+halls+' on '+moment(new Date(item.receiptDate)).format('DD/MM/YYYY')+'. Receipt # '+item.receiptNo+'</td>' +
           '<td width="8%" style="border-right: 1px solid black;">LS</td>' +
           '<td width="8%" style="border-right: 1px solid black;"></td>' +
           '<td width="8%" style="border-right: 1px solid black;"></td>' +
           '<td width="18%" style="text-align:right;">'+Number(item.paidSubTotal).toFixed(2)+'</td>' +
           '</tr>' +
-          '<tr style="border-bottom: 1px solid black;">' +
+          '<tr>' +
           '<td width="48%" style="border-right: 1px solid black;">Add: CGST @'+item.CGSTPercent+'%</td>' +
           '<td width="8%" style="border-right: 1px solid black;"></td>' +
           '<td width="8%" style="border-right: 1px solid black;"></td>' +
