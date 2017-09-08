@@ -16,7 +16,9 @@
     var currentPage = page ? page : 'login';
     if (loggedIn) {
       var routePage = currentPage === 'login' ? 'bookings' : currentPage;
-      $state.go(routePage);
+      
+      var allStates = _.map($state.get(), 'name');
+      $state.go(_.includes(allStates, routePage) ? routePage : 'bookings');
       $rootScope.isUserLoggedIn = true;
     } else {
       $rootScope.isUserLoggedIn = false;
