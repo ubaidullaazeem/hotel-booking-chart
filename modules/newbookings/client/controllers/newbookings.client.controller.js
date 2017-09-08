@@ -26,7 +26,7 @@
       paymentStatuses: PaymentstatusesService.query(),
       taxes: TaxesService.query(),
       paymentModes: PAY_MODES,
-      selectedEventSelectedHalls: selectedEvent ? selectedEvent.mSelectedHalls : [],
+      selectedEventSelectedHalls: selectedEvent ? angular.copy(selectedEvent.mSelectedHalls) : [],
       BILL_TYPES: BILL_TYPES
     };
 
@@ -64,7 +64,7 @@
         isPastInvoiceEffectiveDate: isPastInvoiceEffectiveDate
       };
 
-      $scope.model.selectedEventSelectedHalls = selectedEvent ? selectedEvent.mSelectedHalls : [];
+      $scope.model.selectedEventSelectedHalls = selectedEvent ? angular.copy(selectedEvent.mSelectedHalls) : [];
 
       $scope.mPaymentHistory = {
         amountPaid: null,
@@ -1368,16 +1368,29 @@
         return;
       }
 
-      var confirm = $mdDialog.confirm().title(isShowActualChargesView ? 'Do you want to move to actual charges view?' : 'Do you want to move to booking charges view?')
-        .textContent('Updated data will not be saved.').ok('Yes').cancel('No').multiple(true);
-      $mdDialog.show(confirm).then(function() {
+      if ($scope.bookingForm.$dirty || ($scope.ui.isActualChargesView ? false : $scope.ui.isDataChanged)) {
+        var confirm = $mdDialog.confirm().title(isShowActualChargesView ? 'Do you want to move to actual charges view?' : 'Do you want to move to booking charges view?')
+          .textContent('Updated data will not be saved.').ok('Yes').cancel('No').multiple(true);
+        $mdDialog.show(confirm).then(function() {
 
-          $scope.ui.isActualChargesView = isShowActualChargesView;
-        },
-        function() {
-          console.log('no');
-        });
+            changeView(isShowActualChargesView);
+          },
+          function() {
+            console.log('no');
+          });
+      } else {
+        changeView(isShowActualChargesView);
+      }
     };
+
+    function changeView(isShowActualChargesView) {
+      
+      viewMode = false;
+      $scope.mixins.mSelectedHalls = null;
+      setInitialScopeData(false);
+      $scope.ui.isActualChargesView = isShowActualChargesView;
+      doInitialProcessing();
+    }
 
     $scope.saveActualCharges = function(actualChargesForm) {
       if (actualChargesForm.$invalid)
@@ -1395,7 +1408,13 @@
           message: 'Actual charges updated successfully',
           title: '<i class="glyphicon glyphicon-remove"></i> Success'
         });
-        $mdDialog.cancel();
+
+        selectedEvent = res;
+        viewMode = true;
+        $scope.mixins.mSelectedHalls = null;
+        setInitialScopeData(false);
+        $scope.ui.isActualChargesView = true;
+        doInitialProcessing();
       }
 
       function updateActuralChargesErrorCallback(res) {
