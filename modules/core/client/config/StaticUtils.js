@@ -34,7 +34,7 @@
 			'PRIMARY_EMAIL_ERROR': 'Primary email not found.',
 			'ERROR_OCCURED': 'Error occured, please try again later.',
 			'NO_BOOKINGS': 'No bookings.',
-			'PAST_DATE': 'The selected date is past, please select future date to create new booking.',
+			'PAST_DATE': 'Please select the current or future dates for the new bookings.',
 			'CHECK_ADVANCE_RCVD': 'Please check your payment status and advance received',
 			'EVENT_TIME_OVERLAPS_WITH': 'Selected Time overlaps with existing bookings in ',
 			'EVENT_TITLE_EDITED': 'Event title is edited outside of the application for some of the existing bookings on the selected date.',

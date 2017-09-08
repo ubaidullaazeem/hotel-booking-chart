@@ -383,7 +383,7 @@
         '<body><html><head> <title>Mirth</title></head>' +
         '<body><div><div>' +
         '<table width="100%" style="border-collapse: collapse; border: 1px solid black; table-layout: fixed;" cellspacing="0" cellpadding="0"> <tbody>' +
-        '<tr style="border-bottom: 1px solid black; text-align:center;"><td width="100%"><img style="width: 200px;" src="' + baseUrl + '/modules/core/client/img/logo-bw.png"/></td></tr>'+
+        '<tr style="border-bottom: 1px solid black; text-align:center;"><td width="100%"><img style="width: 150px;" src="' + baseUrl + '/modules/core/client/img/logo-bw.png"/></td></tr>'+
         '<tr style="border-bottom: 1px solid black;"><td>'+
           '<table width="100%" style="border-collapse: collapse; table-layout: fixed;">'+
             '<tr><td width="60%" rowspan="2" style="border-right: 1px solid black;">Dev&apos;s Ark, Second Floor, AD-79&80, 5th Avenue<br/> Anna Nagar, Chennai - 600 040<br/> Phone Nos : 044-45552479 / 044-26222479</td><td width="15%" style="border-right: 1px solid black; border-bottom: 1px solid black;"><b>Date</b></td><td width="25%" style="border-bottom: 1px solid black;">'+ moment(selectedEvent.bookingFormData.bookedDate).format('DD/MM/YYYY')+'</td></tr>'+
@@ -423,7 +423,7 @@
               '<td width="17%">'+selectedEvent.bookingFormData.balanceDue+'</td>'+
             '</tr>'+
           '</table></td></tr>'+
-        '<tr height="20px"><td> </td></tr>'+
+        '<tr height="5px"><td> </td></tr>'+
         '<tr><td>For Mirth</td></tr>'+
         '<tr height="25px"><td> </td></tr>'+
         '<tr><td>'+
@@ -431,7 +431,7 @@
             '<tr><td width="50%">Authorized Signatory</td><td width="50%" style="text-align:right;">Signature of the Guest</td></tr>'+
           '</table></td></tr>'+
         '</tbody></table>' +
-        '</div><br/><br/><br/>' + $scope.termsAndConditions + '</div>' +
+        '</div>' + $scope.termsAndConditions + '</div>' +
         '</body></html></body></html></body></html>';
     }
 
@@ -447,7 +447,7 @@
         '<body><html><head> <title>Mirth</title></head>' +
         '<body>' +
         '<table width="100%" style="border-collapse: collapse; border: 1px solid black; table-layout: fixed;" cellspacing="0" cellpadding="0"> <tbody>' +
-        '<tr style="border-bottom: 1px solid black; text-align:center;"><td width="100%"><img style="width: 200px;" src="' + baseUrl + '/modules/core/client/img/logo-bw.png"/></td></tr>'+
+        '<tr style="border-bottom: 1px solid black; text-align:center;"><td width="100%"><img style="width: 150px;" src="' + baseUrl + '/modules/core/client/img/logo-bw.png"/></td></tr>'+
         '<tr style="border-bottom: 1px solid black;"><td>'+
           '<table width="100%" style="border-collapse: collapse; table-layout: fixed;">'+
             '<tr><td width="60%" rowspan="2" style="border-right: 1px solid black;">Dev&apos;s Ark, Second Floor, AD-79&80, 5th Avenue<br/> Anna Nagar, Chennai - 600 040<br/> Phone Nos : 044-45552479 / 044-26222479</td><td width="15%" style="border-right: 1px solid black; border-bottom: 1px solid black;"><b>Date</b></td><td width="25%" style="border-bottom: 1px solid black;">'+ moment(new Date(paymentHistory.receiptDate)).format('DD/MM/YYYY')+'</td></tr>'+
@@ -455,7 +455,7 @@
           '</table></td></tr>'+
         '<tr style="border-bottom: 1px solid black;"><td>'+
           '<table width="100%" style="border-collapse: collapse; table-layout: fixed;">'+
-            '<tr style="vertical-align:top;"><td width="60%" rowspan="6" style="border-right: 1px solid black;"><b>Customer Name : </b>'+selectedEvent.mName+'<br/><b>Customer Address : </b>'+selectedEvent.mAddress+'<br/><b>Customer GSTIN # : </b>'+selectedEvent.mGSTINNumber+'</td><td width="15%" style="border-right: 1px solid black; border-bottom: 1px solid black;"><b>Receipt #</b></td><td width="25%" style="border-bottom: 1px solid black;">'+paymentHistory.receiptNo+'</td></tr>'+
+            '<tr style="vertical-align:top;"><td width="60%" rowspan="6" style="border-right: 1px solid black;"><b>Customer Name : </b>'+selectedEvent.mName+'<br/><b>Customer Address : </b>'+selectedEvent.mAddress+'<br/><b>Customer GSTIN # : </b>'+getValidValue(selectedEvent.mGSTINNumber)+'</td><td width="15%" style="border-right: 1px solid black; border-bottom: 1px solid black;"><b>Receipt #</b></td><td width="25%" style="border-bottom: 1px solid black;">'+paymentHistory.receiptNo+'</td></tr>'+
             '<tr><td width="15%" style="border-right: 1px solid black; border-bottom: 1px solid black;"><b>Hall Name</b></td><td width="25%" style="border-bottom: 1px solid black;">'+halls+'</td></tr>'+
             '<tr><td width="15%" style="border-right: 1px solid black; border-bottom: 1px solid black;"><b>Purpose</b></td><td width="25%" style="border-bottom: 1px solid black;">'+getConfirmedEventName()+'</td></tr>'+
             '<tr><td width="15%" style="border-right: 1px solid black; border-bottom: 1px solid black;"><b>Event Date</b></td><td width="25%" style="border-bottom: 1px solid black;">'+moment(new Date(selectedEvent.mStartDateTime)).format('DD/MM/YYYY')+'</td></tr>'+
@@ -493,17 +493,17 @@
             '</tr>'+
             '<tr>'+
               '<td width="43%" style="border-right: 1px solid black;">'+paymentHistory.paymentMode+' '+paymentHistory.details+' dt '+moment(new Date(paymentHistory.paidDate)).format('DD/MM/YYYY')+'</td>'+
-              '<td width="42%" style="border-right: 1px solid black;">'+paymentHistory.drawnOn+'</td>'+
+              '<td width="42%" style="border-right: 1px solid black;">'+(paymentHistory.drawnOn != '' ? paymentHistory.drawnOn : 'N/A')+'</td>'+
               '<td width="15%">'+Number(paymentHistory.amountPaid).toFixed(2)+'</td>'+
             '</tr>'+
           '</table></td></tr>'+
-        '<tr><td><b>Narration <input type="radio" value="Advance" '+(!isFinalPayment ? 'checked' : 'unchecked')+'> Advance <input type="radio" value="Final" '+(isFinalPayment ? 'checked' : 'unchecked')+'> Final Payment</b></td></tr>'+
+        '<tr><td><b>Narration </b><input type="radio" value="Advance" '+(!isFinalPayment ? 'checked' : 'unchecked')+'> '+(isFinalPayment ? 'Advance' : '<b>Advance</b>' )+'<input type="radio" value="Final" '+(isFinalPayment ? 'checked' : 'unchecked')+'> '+(isFinalPayment ? '<b>Final Payment</b>' : 'Final Payment' )+'</td></tr>'+
         '<tr style="border-bottom: 1px solid black;"><td>Being '+paymentHistory.paymentMode+' received towards '+(isFinalPayment ? 'final payment' : 'advance')+' for the above hall and event</td></tr>'+
         '<tr style="border-bottom: 1px solid black;"><td><b>Note :</b> Booking will be confirmed only on the receipt of full and final payment</td></tr>'+
         '<tr><td>'+
           '<table width="100%" style="border-collapse: collapse; table-layout: fixed;">'+
             '<tr><td width="75%"></td><td width="25%"><b>For Mirth</b></td></tr>'+
-            '<tr height="25px"><td></td><td></td></tr>'+
+            '<tr height="22px"><td></td><td></td></tr>'+
             '<tr><td width="75%"></td><td width="25%"><b>Authorized Signatory</b></td></tr>'+
           '</table></td></tr>'+
         '</tbody></table>' +        
@@ -520,7 +520,7 @@
         '<body><html><head> <title>Mirth</title></head>' +
         '<body>' +
         '<table width="100%" style="border-collapse: collapse; border: 1px solid black; table-layout: fixed;" cellspacing="0" cellpadding="0"> <tbody>' +
-        '<tr style="border-bottom: 1px solid black; text-align:center;"><td width="100%"><img style="width: 200px;" src="' + baseUrl + '/modules/core/client/img/logo-bw.png"/></td></tr>'+
+        '<tr style="border-bottom: 1px solid black; text-align:center;"><td width="100%"><img style="width: 150px;" src="' + baseUrl + '/modules/core/client/img/logo-bw.png"/></td></tr>'+
         '<tr style="border-bottom: 1px solid black;"><td>'+
           '<table width="100%" style="border-collapse: collapse; table-layout: fixed;">'+
             '<tr><td width="60%" rowspan="2" style="border-right: 1px solid black;">Dev&apos;s Ark, Second Floor, AD-79&80, 5th Avenue<br/> Anna Nagar, Chennai - 600 040<br/> Phone Nos : 044-45552479 / 044-26222479</td><td width="15%" style="border-right: 1px solid black; border-bottom: 1px solid black;"><b>Date</b></td><td width="25%" style="border-bottom: 1px solid black;">'+ moment(new Date(selectedEvent.invoiceDate)).format('DD/MM/YYYY')+'</td></tr>'+
@@ -528,7 +528,7 @@
           '</table></td></tr>'+
         '<tr style="border-bottom: 1px solid black;"><td>'+
           '<table width="100%" style="border-collapse: collapse; table-layout: fixed;">'+
-            '<tr style="vertical-align:top;"><td width="60%" rowspan="6" style="border-right: 1px solid black;"><b>Customer Name : </b>'+selectedEvent.mName+'<br/><b>Customer Address : </b>'+selectedEvent.mAddress+'<br/><b>Customer GSTIN # : </b>'+selectedEvent.mGSTINNumber+'</td><td width="15%" style="border-right: 1px solid black; border-bottom: 1px solid black;"><b>Invoice #</b></td><td width="25%" style="border-bottom: 1px solid black;">'+selectedEvent.invoiceNo+'</td></tr>'+
+            '<tr style="vertical-align:top;"><td width="60%" rowspan="6" style="border-right: 1px solid black;"><b>Customer Name : </b>'+selectedEvent.mName+'<br/><b>Customer Address : </b>'+selectedEvent.mAddress+'<br/><b>Customer GSTIN # : </b>'+getValidValue(selectedEvent.mGSTINNumber)+'</td><td width="15%" style="border-right: 1px solid black; border-bottom: 1px solid black;"><b>Invoice #</b></td><td width="25%" style="border-bottom: 1px solid black;">'+selectedEvent.invoiceNo+'</td></tr>'+
             '<tr><td width="15%" style="border-right: 1px solid black; border-bottom: 1px solid black;"><b>Hall Name</b></td><td width="25%" style="border-bottom: 1px solid black;">'+halls+'</td></tr>'+
             '<tr><td width="15%" style="border-right: 1px solid black; border-bottom: 1px solid black;"><b>Purpose</b></td><td width="25%" style="border-bottom: 1px solid black;">'+getConfirmedEventName()+'</td></tr>'+
             '<tr><td width="15%" style="border-right: 1px solid black; border-bottom: 1px solid black;"><b>Event Date</b></td><td width="25%" style="border-bottom: 1px solid black;">'+moment(new Date(selectedEvent.mStartDateTime)).format('DD/MM/YYYY')+'</td></tr>'+
@@ -582,7 +582,7 @@
               '<td width="17%">'+Number(selectedEvent.mBalanceDue).toFixed(2)+'</td>'+
             '</tr>'+
           '</table></td></tr>'+
-        '<tr height="20px"><td> </td></tr>'+
+        '<tr height="5px"><td> </td></tr>'+
         '<tr><td>For Mirth</td></tr>'+
         '<tr height="25px"><td> </td></tr>'+
         '<tr><td>'+
@@ -603,9 +603,9 @@
         serialNumber++;
 
         paymentList = paymentList + '<tr>' +
-          '<td width="10%" rowspan="3" style="border-right: 1px solid black; border-bottom: 1px solid black;">'+serialNumber+'</td>' +
+          '<td width="10%" rowspan="3" style="border-right: 1px solid black; border-bottom: 1px solid black; text-align: center;">'+serialNumber+'</td>' +
           '<td width="48%" style="border-right: 1px solid black;">Rent Received for '+halls+' on '+moment(new Date(item.receiptDate)).format('DD/MM/YYYY')+'. Receipt # '+item.receiptNo+'</td>' +
-          '<td width="8%" style="border-right: 1px solid black;">LS</td>' +
+          '<td width="8%" style="border-right: 1px solid black; text-align: center;">LS</td>' +
           '<td width="8%" style="border-right: 1px solid black;"></td>' +
           '<td width="8%" style="border-right: 1px solid black;"></td>' +
           '<td width="18%" style="text-align:right;">'+Number(item.paidSubTotal).toFixed(2)+'</td>' +
@@ -655,12 +655,12 @@
             break;
           case BILL_TYPES[1]:
             documentContent = getReceiptData(index);
-            mailSubject = 'Mirth Hall Booking Receipt';
+            mailSubject = 'Mirth Hall Receipt Details';
             attachmentName = 'Receipt.pdf';
             break;
           case BILL_TYPES[2]:
             documentContent = getInvoiceData();
-            mailSubject = 'Mirth Hall Booking Invoice';
+            mailSubject = 'Mirth Hall Invoice Details';
             attachmentName = 'Invoice.pdf';
             break;
 
