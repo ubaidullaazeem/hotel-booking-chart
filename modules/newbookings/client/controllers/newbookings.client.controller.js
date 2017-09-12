@@ -450,60 +450,60 @@
         '<body onload="window.print()"><html><head> <title>Mirth</title></head>' +
         '<body><html><head><style type="text/css">td { font-size: 12px; }</style> <title>Mirth</title></head>' +
         '<body>' +
-        '<table width="100%" style="border-collapse: collapse; border: 0.5px solid black; table-layout: fixed;" cellspacing="0" cellpadding="0"> <tbody>' +
-        '<tr style="border-bottom: 0.5px solid black; text-align:center;"><td width="100%"><img style="width: 110px;" src="' + baseUrl + '/modules/core/client/img/logo-bw.png"/></td></tr>'+
-        '<tr style="border-bottom: 0.5px solid black;"><td>'+
+        '<table width="100%" style="border-collapse: collapse; border: 1px solid black; table-layout: fixed;" cellspacing="0" cellpadding="0"> <tbody>' +
+        '<tr style="border-bottom: 1px solid black; text-align:center;"><td width="100%"><img style="width: 110px;" src="' + baseUrl + '/modules/core/client/img/logo-bw.png"/></td></tr>'+
+        '<tr style="border-bottom: 1px solid black;"><td>'+
           '<table width="100%" style="border-collapse: collapse; table-layout: fixed;">'+
-            '<tr><td width="60%" rowspan="2" style="border-right: 0.5px solid black;">Dev&apos;s Ark, Second Floor, AD-79&80, 5th Avenue<br/> Anna Nagar, Chennai - 600 040<br/> Phone Nos : 044-45552479 / 044-26222479</td><td width="15%" style="border-right: 0.5px solid black; border-bottom: 0.5px solid black;"><b>Date</b></td><td width="25%" style="border-bottom: 0.5px solid black;">'+ moment(new Date(paymentHistory.receiptDate)).format('DD/MM/YYYY')+'</td></tr>'+
-            '<tr><td width="15%" style="border-right: 0.5px solid black;"><b>GSTIN No.</b></td><td width="25%">33AAFPJ8706K1ZM</td></tr>'+
+            '<tr><td width="60%" rowspan="2" style="border-right: 1px solid black;">Dev&apos;s Ark, Second Floor, AD-79&80, 5th Avenue<br/> Anna Nagar, Chennai - 600 040<br/> Phone Nos : 044-45552479 / 044-26222479</td><td width="15%" style="border-right: 1px solid black; border-bottom: 1px solid black;"><b>Date</b></td><td width="25%" style="border-bottom: 1px solid black;">'+ moment(new Date(paymentHistory.receiptDate)).format('DD/MM/YYYY')+'</td></tr>'+
+            '<tr><td width="15%" style="border-right: 1px solid black;"><b>GSTIN No.</b></td><td width="25%">33AAFPJ8706K1ZM</td></tr>'+
           '</table></td></tr>'+
-        '<tr style="border-bottom: 0.5px solid black;"><td>'+
+        '<tr style="border-bottom: 1px solid black;"><td>'+
           '<table width="100%" style="border-collapse: collapse; table-layout: fixed;">'+
-            '<tr style="vertical-align:top;"><td width="60%" rowspan="6" style="border-right: 0.5px solid black;"><b>Customer Name : </b>'+selectedEvent.mName+'<br/><b>Customer Address : </b>'+selectedEvent.mAddress+'<br/><b>Customer GSTIN # : </b>'+getValidValue(selectedEvent.mGSTINNumber)+'</td><td width="15%" style="border-right: 0.5px solid black; border-bottom: 0.5px solid black;"><b>Receipt #</b></td><td width="25%" style="border-bottom: 0.5px solid black;">'+paymentHistory.receiptNo+'</td></tr>'+
-            '<tr><td width="15%" style="border-right: 0.5px solid black; border-bottom: 0.5px solid black;"><b>Hall Name</b></td><td width="25%" style="border-bottom: 0.5px solid black;">'+halls+'</td></tr>'+
-            '<tr><td width="15%" style="border-right: 0.5px solid black; border-bottom: 0.5px solid black;"><b>Purpose</b></td><td width="25%" style="border-bottom: 0.5px solid black;">'+getConfirmedEventName()+'</td></tr>'+
-            '<tr><td width="15%" style="border-right: 0.5px solid black; border-bottom: 0.5px solid black;"><b>Event Date</b></td><td width="25%" style="border-bottom: 0.5px solid black;">'+moment(new Date(selectedEvent.mStartDateTime)).format('DD/MM/YYYY')+'</td></tr>'+
-            '<tr><td width="15%" style="border-right: 0.5px solid black; border-bottom: 0.5px solid black;"><b>Start Time</b></td><td width="25%" style="border-bottom: 0.5px solid black;">'+moment(new Date(selectedEvent.mStartDateTime)).format('hh:mm:a')+'</td></tr>'+
-            '<tr><td width="15%" style="border-right: 0.5px solid black;"><b>End Time</b></td><td width="25%">'+moment(new Date(selectedEvent.mEndDateTime)).format('hh:mm:a')+'</td></tr>'+
+            '<tr style="vertical-align:top;"><td width="60%" rowspan="6" style="border-right: 1px solid black;"><b>Customer Name : </b>'+selectedEvent.mName+'<br/><b>Customer Address : </b>'+selectedEvent.mAddress+'<br/><b>Customer GSTIN # : </b>'+getValidValue(selectedEvent.mGSTINNumber)+'</td><td width="15%" style="border-right: 1px solid black; border-bottom: 1px solid black;"><b>Receipt #</b></td><td width="25%" style="border-bottom: 1px solid black;">'+paymentHistory.receiptNo+'</td></tr>'+
+            '<tr><td width="15%" style="border-right: 1px solid black; border-bottom: 1px solid black;"><b>Hall Name</b></td><td width="25%" style="border-bottom: 1px solid black;">'+halls+'</td></tr>'+
+            '<tr><td width="15%" style="border-right: 1px solid black; border-bottom: 1px solid black;"><b>Purpose</b></td><td width="25%" style="border-bottom: 1px solid black;">'+getConfirmedEventName()+'</td></tr>'+
+            '<tr><td width="15%" style="border-right: 1px solid black; border-bottom: 1px solid black;"><b>Event Date</b></td><td width="25%" style="border-bottom: 1px solid black;">'+moment(new Date(selectedEvent.mStartDateTime)).format('DD/MM/YYYY')+'</td></tr>'+
+            '<tr><td width="15%" style="border-right: 1px solid black; border-bottom: 1px solid black;"><b>Start Time</b></td><td width="25%" style="border-bottom: 1px solid black;">'+moment(new Date(selectedEvent.mStartDateTime)).format('hh:mm:a')+'</td></tr>'+
+            '<tr><td width="15%" style="border-right: 1px solid black;"><b>End Time</b></td><td width="25%">'+moment(new Date(selectedEvent.mEndDateTime)).format('hh:mm:a')+'</td></tr>'+
           '</table></td></tr>'+
-        '<tr style="border-bottom: 0.5px solid black; text-align:center;"><td width="100%"><b>RECEIPT DETAILS</b></td></tr>'+
-        '<tr style="border-bottom: 0.5px solid black;"><td>'+
+        '<tr style="border-bottom: 1px solid black; text-align:center;"><td width="100%"><b>RECEIPT DETAILS</b></td></tr>'+
+        '<tr style="border-bottom: 1px solid black;"><td>'+
           '<table width="100%" style="border-collapse: collapse; table-layout: fixed;">'+
-            '<tr style="border-bottom: 0.5px solid black;">'+
-              '<td width="10%" style="border-right: 0.5px solid black;"><b>Sl.No.</b></td>'+
-              '<td width="45%" style="border-right: 0.5px solid black;"><b>Particulars</b></td>'+
-              '<td width="15%" style="border-right: 0.5px solid black;"><b>Amount</b></td>'+
-              '<td width="15%" style="border-right: 0.5px solid black;"><b>CGST @'+paymentHistory.CGSTPercent+'%</b></td>'+
+            '<tr style="border-bottom: 1px solid black;">'+
+              '<td width="10%" style="border-right: 1px solid black;"><b>Sl.No.</b></td>'+
+              '<td width="45%" style="border-right: 1px solid black;"><b>Particulars</b></td>'+
+              '<td width="15%" style="border-right: 1px solid black;"><b>Amount</b></td>'+
+              '<td width="15%" style="border-right: 1px solid black;"><b>CGST @'+paymentHistory.CGSTPercent+'%</b></td>'+
               '<td width="15%"><b>SGST @'+paymentHistory.SGSTPercent+'%</b></td>'+
             '</tr>'+
             '<tr>'+
-              '<td width="10%" style="border-right: 0.5px solid black;">1</td>'+
-              '<td width="45%" style="border-right: 0.5px solid black;">Rent Received for '+halls+'</td>'+
-              '<td width="15%" style="border-right: 0.5px solid black;">'+paymentHistory.paidSubTotal+'</td>'+
-              '<td width="15%" style="border-right: 0.5px solid black;">'+paymentHistory.paidCGST+'</td>'+
+              '<td width="10%" style="border-right: 1px solid black;">1</td>'+
+              '<td width="45%" style="border-right: 1px solid black;">Rent Received for '+halls+'</td>'+
+              '<td width="15%" style="border-right: 1px solid black;">'+paymentHistory.paidSubTotal+'</td>'+
+              '<td width="15%" style="border-right: 1px solid black;">'+paymentHistory.paidCGST+'</td>'+
               '<td width="15%">'+paymentHistory.paidSGST+'</td>'+
             '</tr>'+
           '</table></td></tr>'+
-        '<tr style="border-bottom: 0.5px solid black;"><td>'+
+        '<tr style="border-bottom: 1px solid black;"><td>'+
           '<table width="100%" style="border-collapse: collapse; table-layout: fixed;">'+
-            '<tr style="border-bottom: 0.5px solid black;">'+
-              '<td width="85%" colspan="2" style="border-right: 0.5px solid black;"><b>Total </b>(Rupees '+RupeeWords.getRupeesToWords(Number(paymentHistory.amountPaid))+' only)</td>'+
+            '<tr style="border-bottom: 1px solid black;">'+
+              '<td width="85%" colspan="2" style="border-right: 1px solid black;"><b>Total </b>(Rupees '+RupeeWords.getRupeesToWords(Number(paymentHistory.amountPaid))+' only)</td>'+
               '<td width="15%">'+Number(paymentHistory.amountPaid).toFixed(2)+'</td>'+
             '</tr>'+
-            '<tr style="border-bottom: 0.5px solid black;">'+
-              '<td width="43%" style="border-right: 0.5px solid black;"><b>Cash/Cheque/Draft No. & Date</b></td>'+
-              '<td width="42%" style="border-right: 0.5px solid black;"><b>Drawn on</b></td>'+
+            '<tr style="border-bottom: 1px solid black;">'+
+              '<td width="43%" style="border-right: 1px solid black;"><b>Cash/Cheque/Draft No. & Date</b></td>'+
+              '<td width="42%" style="border-right: 1px solid black;"><b>Drawn on</b></td>'+
               '<td width="15%"><b>Amount</b></td>'+
             '</tr>'+
             '<tr>'+
-              '<td width="43%" style="border-right: 0.5px solid black;">'+paymentHistory.paymentMode+' '+paymentHistory.details+' dt '+moment(new Date(paymentHistory.paidDate)).format('DD/MM/YYYY')+'</td>'+
-              '<td width="42%" style="border-right: 0.5px solid black;">'+(paymentHistory.drawnOn != '' ? paymentHistory.drawnOn : 'N/A')+'</td>'+
+              '<td width="43%" style="border-right: 1px solid black;">'+paymentHistory.paymentMode+' '+paymentHistory.details+' dt '+moment(new Date(paymentHistory.paidDate)).format('DD/MM/YYYY')+'</td>'+
+              '<td width="42%" style="border-right: 1px solid black;">'+(paymentHistory.drawnOn != '' ? paymentHistory.drawnOn : 'N/A')+'</td>'+
               '<td width="15%">'+Number(paymentHistory.amountPaid).toFixed(2)+'</td>'+
             '</tr>'+
           '</table></td></tr>'+
         '<tr><td><b>Narration </b><input type="radio" value="Advance" '+(!isFinalPayment ? 'checked' : 'unchecked')+'> '+(isFinalPayment ? 'Advance' : '<b>Advance</b>' )+'<input type="radio" value="Final" '+(isFinalPayment ? 'checked' : 'unchecked')+'> '+(isFinalPayment ? '<b>Final Payment</b>' : 'Final Payment' )+'</td></tr>'+
-        '<tr style="border-bottom: 0.5px solid black;"><td>Being '+paymentHistory.paymentMode+' received towards '+(isFinalPayment ? 'final payment' : 'advance')+' for the above hall and event</td></tr>'+
-        '<tr style="border-bottom: 0.5px solid black;"><td><b>Note :</b> Booking will be confirmed only on the receipt of full and final payment</td></tr>'+
+        '<tr style="border-bottom: 1px solid black;"><td>Being '+paymentHistory.paymentMode+' received towards '+(isFinalPayment ? 'final payment' : 'advance')+' for the above hall and event</td></tr>'+
+        '<tr style="border-bottom: 1px solid black;"><td><b>Note :</b> Booking will be confirmed only on the receipt of full and final payment</td></tr>'+
         '<tr><td>'+
           '<table width="100%" style="border-collapse: collapse; table-layout: fixed;">'+
             '<tr><td width="75%"></td><td width="25%"><b>For Mirth</b></td></tr>'+
