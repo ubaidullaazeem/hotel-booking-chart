@@ -448,7 +448,7 @@
       
       return '<html><head><link rel="stylesheet" type="text/css" href="style.css" /></head>' +
         '<body onload="window.print()"><html><head> <title>Mirth</title></head>' +
-        '<body><html><head> <title>Mirth</title></head>' +
+        '<body><html><head><style type="text/css">td { font-size: 12px; }</style> <title>Mirth</title></head>' +
         '<body>' +
         '<table width="100%" style="border-collapse: collapse; border: 1px solid black; table-layout: fixed;" cellspacing="0" cellpadding="0"> <tbody>' +
         '<tr style="border-bottom: 1px solid black; text-align:center;"><td width="100%"><img style="width: 150px;" src="' + baseUrl + '/modules/core/client/img/logo-bw.png"/></td></tr>'+
