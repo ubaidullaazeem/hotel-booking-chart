@@ -341,13 +341,13 @@
         var documentContent;
         switch (billType) {
           case BILL_TYPES[0]:
-            documentContent = getBookingFormData();
+            documentContent = getBookingFormData(true);
             break;
           case BILL_TYPES[1]:
-            documentContent = getReceiptData(index);
+            documentContent = getReceiptData(index, true);
             break;
           case BILL_TYPES[2]:
-            documentContent = getInvoiceData();
+            documentContent = getInvoiceData(true);
             break;
 
           default:
@@ -378,13 +378,14 @@
       $printSection.appendChild(domClone);
     }
 
-    function getBookingFormData() {
+    function getBookingFormData(isPrint) {
       var baseUrl = $location.$$absUrl.replace($location.$$url, '');
       var halls = _.map(selectedEvent.mSelectedHalls, 'displayName');
+      var fontSize = isPrint ? '16px' : '12px';
 
       return '<html><head><link rel="stylesheet" type="text/css" href="style.css" /></head>' +
         '<body onload="window.print()"><html><head> <title>Mirth</title></head>' +
-        '<body><html><head> <title>Mirth</title></head>' +
+        '<body><html><head><style type="text/css">td { font-size: '+fontSize+'; }</style> <title>Mirth</title></head>' +
         '<body><div><div>' +
         '<table width="100%" style="border-collapse: collapse; border: 1px solid black; table-layout: fixed;" cellspacing="0" cellpadding="0"> <tbody>' +
         '<tr style="border-bottom: 1px solid black; text-align:center;"><td width="100%"><img style="width: 150px;" src="' + baseUrl + '/modules/core/client/img/logo-bw.png"/></td></tr>'+
@@ -439,16 +440,17 @@
         '</body></html></body></html></body></html>';
     }
 
-    function getReceiptData(index) {
+    function getReceiptData(index, isPrint) {
       var baseUrl = $location.$$absUrl.replace($location.$$url, '');
       var halls = _.map(selectedEvent.mSelectedHalls, 'displayName');
       
       var paymentHistory = $scope.mixins.mPaymentHistories[index];
       var isFinalPayment = $scope.ui.isFullyPaid && (paymentHistory.receiptNo === getLastInsertedPayment().receiptNo) ? true : false;
+      var fontSize = isPrint ? '16px' : '12px';
       
       return '<html><head><link rel="stylesheet" type="text/css" href="style.css" /></head>' +
         '<body onload="window.print()"><html><head> <title>Mirth</title></head>' +
-        '<body><html><head><style type="text/css">td { font-size: 12px; }</style> <title>Mirth</title></head>' +
+        '<body><html><head><style type="text/css">td { font-size: '+fontSize+'; }</style> <title>Mirth</title></head>' +
         '<body>' +
         '<table width="100%" style="border-collapse: collapse; border: 1px solid black; table-layout: fixed;" cellspacing="0" cellpadding="0"> <tbody>' +
         '<tr style="border-bottom: 1px solid black; text-align:center;"><td width="100%"><img style="width: 110px;" src="' + baseUrl + '/modules/core/client/img/logo-bw.png"/></td></tr>'+
@@ -515,13 +517,14 @@
             
     }
 
-    function getInvoiceData() {
+    function getInvoiceData(isPrint) {
       var baseUrl = $location.$$absUrl.replace($location.$$url, '');
       var halls = _.map(selectedEvent.mSelectedHalls, 'displayName');
+      var fontSize = isPrint ? '16px' : '12px';
 
       return '<html><head><link rel="stylesheet" type="text/css" href="style.css" /></head>' +
         '<body onload="window.print()"><html><head> <title>Mirth</title></head>' +
-        '<body><html><head> <title>Mirth</title></head>' +
+        '<body><html><head><style type="text/css">td { font-size: '+fontSize+'; }</style> <title>Mirth</title></head>' +
         '<body>' +
         '<table width="100%" style="border-collapse: collapse; border: 1px solid black; table-layout: fixed;" cellspacing="0" cellpadding="0"> <tbody>' +
         '<tr style="border-bottom: 1px solid black; text-align:center;"><td width="100%"><img style="width: 150px;" src="' + baseUrl + '/modules/core/client/img/logo-bw.png"/></td></tr>'+
@@ -653,17 +656,17 @@
         var attachmentName;
         switch (billType) {
           case BILL_TYPES[0]:
-            documentContent = getBookingFormData();
+            documentContent = getBookingFormData(false);
             mailSubject = 'Mirth Hall Booking Details';
             attachmentName = 'Booking_Form.pdf';
             break;
           case BILL_TYPES[1]:
-            documentContent = getReceiptData(index);
+            documentContent = getReceiptData(index, false);
             mailSubject = 'Mirth Hall Receipt Details';
             attachmentName = 'Receipt.pdf';
             break;
           case BILL_TYPES[2]:
-            documentContent = getInvoiceData();
+            documentContent = getInvoiceData(false);
             mailSubject = 'Mirth Hall Invoice Details';
             attachmentName = 'Invoice.pdf';
             break;
