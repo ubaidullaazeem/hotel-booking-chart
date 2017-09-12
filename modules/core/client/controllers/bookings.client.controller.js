@@ -88,11 +88,15 @@
       });
 
       if (receiptCounters.length > 0 && invoiceCounters.length > 0) {
-        isPastReceiptEffectiveDate = (moment(receiptCounters[0].effectiveDate) <= moment(new Date().setHours(0, 0, 0, 0))) ? true : false;
-        isPastInvoiceEffectiveDate = (moment(invoiceCounters[0].effectiveDate) <= moment(new Date().setHours(0, 0, 0, 0))) ? true : false;
+        isPastReceiptEffectiveDate = (moment(dateConvertion(receiptCounters[0].effectiveDate)) <= moment(new Date().setHours(0, 0, 0, 0))) ? true : false;
+        isPastInvoiceEffectiveDate = (moment(dateConvertion(invoiceCounters[0].effectiveDate)) <= moment(new Date().setHours(0, 0, 0, 0))) ? true : false;
       }
 
       return isPastReceiptEffectiveDate && isPastInvoiceEffectiveDate;
+    }
+
+    function dateConvertion(date) {
+      return moment(date).format('DD, MMM YYYY');
     }
 
     $scope.selectedHallsChanged = function() {
