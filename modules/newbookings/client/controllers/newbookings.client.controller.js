@@ -451,7 +451,7 @@
         '<body><html><head><style type="text/css">td { font-size: 12px; }</style> <title>Mirth</title></head>' +
         '<body>' +
         '<table width="100%" style="border-collapse: collapse; border: 0.5px solid black; table-layout: fixed;" cellspacing="0" cellpadding="0"> <tbody>' +
-        '<tr style="border-bottom: 0.5px solid black; text-align:center;"><td width="100%"><img style="width: 150px;" src="' + baseUrl + '/modules/core/client/img/logo-bw.png"/></td></tr>'+
+        '<tr style="border-bottom: 0.5px solid black; text-align:center;"><td width="100%"><img style="width: 110px;" src="' + baseUrl + '/modules/core/client/img/logo-bw.png"/></td></tr>'+
         '<tr style="border-bottom: 0.5px solid black;"><td>'+
           '<table width="100%" style="border-collapse: collapse; table-layout: fixed;">'+
             '<tr><td width="60%" rowspan="2" style="border-right: 0.5px solid black;">Dev&apos;s Ark, Second Floor, AD-79&80, 5th Avenue<br/> Anna Nagar, Chennai - 600 040<br/> Phone Nos : 044-45552479 / 044-26222479</td><td width="15%" style="border-right: 0.5px solid black; border-bottom: 0.5px solid black;"><b>Date</b></td><td width="25%" style="border-bottom: 0.5px solid black;">'+ moment(new Date(paymentHistory.receiptDate)).format('DD/MM/YYYY')+'</td></tr>'+
