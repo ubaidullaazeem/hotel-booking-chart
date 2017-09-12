@@ -1037,6 +1037,8 @@
         }
 
         function errorCallback(res) {
+          $scope.ui.isBookingInProgress = false;
+          
           Notification.error({
             message: res.data.message,
             title: '<i class="glyphicon glyphicon-remove"></i> Create Booking Error'
