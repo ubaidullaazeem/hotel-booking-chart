@@ -142,7 +142,7 @@ exports.update = function(req, res) {
 
   newbooking = _.extend(newbooking, req.body);
 
-  console.log("UPDATE");
+  console.log("UPDATE "+new Date());
 
   if (newbooking.mSelectedPaymentStatus.name === 'Fully Paid' && !newbooking.invoiceNo) {
     assignInvoiceNumber(newbooking, res);
