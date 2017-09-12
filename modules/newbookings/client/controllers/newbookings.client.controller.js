@@ -22,6 +22,7 @@
 
     $scope.model = {
       halls: HallsService.query(),
+      filteredHalls: [],
       eventTypes: EventtypesService.query(),
       paymentStatuses: PaymentstatusesService.query(),
       taxes: TaxesService.query(),
@@ -314,6 +315,9 @@
         $scope.eventTime.mStartToServer = dtGMTStart;
         $scope.eventTime.mEndToServer = dtGMTEnd;
         $scope.ui.mSelectedDateToDisplay = moment(date).format('DD-MMMM-YYYY');
+
+        getCommonHalls();
+
         calculateTaxRate();
         $scope.selectedHallsChanged();
       });
@@ -971,7 +975,7 @@
               $scope.ui.isBookingInProgress = true;
             }
 
-            if (!$scope.ui.isPastInvoiceEffectiveDate && $scope.mixins.mSelectedPaymentStatus.name === PAYMENT_STATUS[1] && $scope.mixins.invoiceNo != undefined && $scope.mixins.invoiceDate === undefined) {
+            if (!$scope.ui.isPastInvoiceEffectiveDate && $scope.mixins.mSelectedPaymentStatus && $scope.mixins.mSelectedPaymentStatus.name === PAYMENT_STATUS[1] && $scope.mixins.invoiceNo != undefined && $scope.mixins.invoiceDate === undefined) {
               $scope.mixins.invoiceDate = new Date();
             }
 
@@ -1126,7 +1130,7 @@
             deleteProcessedHalls++;
             if (response && response.hasOwnProperty('error')) { // error
               Notification.warning({
-                message: "Unable to remove the event from " + hall.displayName + " hall in Google Calendar",
+                message: 'Unable to remove the event from ' + hall.displayName + ' hall in Google Calendar',
                 title: '<i class="glyphicon glyphicon-remove"></i> Google Calendar Error'
               });
             } else // success
@@ -1150,7 +1154,7 @@
       calendarListReq.execute(function(respCalList) {
         if (respCalList && respCalList.hasOwnProperty('error')) { // error
           Notification.error({
-            message: "Unable to fetch the halls from Google Calendar",
+            message: 'Unable to fetch the halls from Google Calendar',
             title: '<i class="glyphicon glyphicon-remove"></i> Google Calendar Error'
           });
         } else // success
@@ -1158,9 +1162,20 @@
           var withOutFutureRateHalls = [];
           angular.forEach($scope.model.halls, function(hall) {
             var effectiveSummaries = CommonService.findRateSummariesByDateOfFutureHalls(hall.rateSummaries, new Date($scope.eventTime.mStartToServer));
-            console.log(hall.displayName + ' ' + effectiveSummaries.length);
             if (effectiveSummaries.length > 0) {
               withOutFutureRateHalls.push(hall);
+            } else {
+              // To remove the future halls from already selected halls if the event date is changed.
+              var selectedHallIds = _.map($scope.mixins.mSelectedHalls, '_id');
+              if (_.includes(selectedHallIds, hall._id)) {
+                var index = _.indexOf(selectedHallIds, hall._id);
+                $scope.mixins.mSelectedHalls.splice(index, 1);
+
+                Notification.warning({
+                  message: 'Effective date is not found for the '+hall.displayName+' hall',
+                  title: '<i class="glyphicon glyphicon-remove"></i> Effective Date Not Found'
+                });
+              }
             }
           });
 
@@ -1169,13 +1184,14 @@
           });
 
           var commonHalls = [];
+          hallsNotInGoogleCalendar = '';
           angular.forEach(withOutFutureRateHalls, function(hall) {
             if (_.includes(googleCalendarHallNames, hall.name.toLowerCase().trim())) {
               commonHalls.push(hall);
             } else if (selectedEvent && _.includes(_.map(selectedEvent.mSelectedHalls, '_id'), hall._id)) {
               commonHalls.push(hall);
             } else {
-              if (hallsNotInGoogleCalendar == "") {
+              if (hallsNotInGoogleCalendar == '') {
                 hallsNotInGoogleCalendar = hall.displayName;
               } else {
                 hallsNotInGoogleCalendar = hallsNotInGoogleCalendar.trim() + ', ' + hall.displayName;
@@ -1183,8 +1199,30 @@
             }
           });
 
-          $scope.model.halls.length = 0;
-          $scope.model.halls = commonHalls;
+          // selected  halls is not updating immediately so i setting empty array and then copying the halls.
+          var sSelectedHalls = angular.copy($scope.mixins.mSelectedHalls);
+          $scope.mixins.mSelectedHalls = [];
+          $scope.mixins.mSelectedHalls = angular.copy(sSelectedHalls);
+
+          $scope.model.filteredHalls.length = 0;
+          $scope.model.filteredHalls = commonHalls;
+
+          // If the hall name is changed to keep old name of the hall for already booked halls
+          if (selectedEvent) {
+            for (var i = 0; i < $scope.model.halls.length; i++) {
+              for (var j = 0; j < selectedEvent.mSelectedHalls.length; j++) {
+                if (selectedEvent.mSelectedHalls[j]._id === $scope.model.halls[i]._id) {
+                  $scope.model.halls[i].name = selectedEvent.mSelectedHalls[j].name;
+                  $scope.model.halls[i].displayName = selectedEvent.mSelectedHalls[j].displayName;
+
+                  break;
+                }
+              }
+            }
+          }
+
+          // Some times selected halls is not updating immediately, so I am applying the scope.
+          $scope.$apply();
 
           if (!$scope.ui.viewMode)
             shownHallsNotInGoogleCalendarMessage();
@@ -1340,10 +1378,10 @@
         $mdDialog.cancel();
     };
 
-    $scope.selectHallsByDefault = function(hall) {
+    /*$scope.selectHallsByDefault = function(hall) {
       var pluckHalls = _.map($scope.mixins.mSelectedHalls, '_id');
       return _.includes(pluckHalls, hall._id);
-    };
+    };*/
 
     $scope.showMdselect = function() {
       var confirm = $mdDialog.confirm().title('Do you want to change the hall?').textContent('If you change the hall, new rate will be applied.').ok('Yes').cancel('No').multiple(true);

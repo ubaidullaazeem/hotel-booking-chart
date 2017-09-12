@@ -28,7 +28,7 @@
                         ng-model-options= "{trackBy: '$value._id'}"
                         ng-disabled="ui.viewMode">
               <md-optgroup label="Halls">
-                <md-option style="color: #000066; font-weight: bold;" ng-value="hall" ng-selected="{{ selectHallsByDefault(hall) }}" ng-repeat="hall in model.halls">{{hall.displayName}}</md-option>
+                <md-option style="color: #000066; font-weight: bold;" ng-value="hall" ng-repeat="hall in model.filteredHalls">{{hall.displayName}}</md-option>
               </md-optgroup>
             </md-select>
             <div ng-messages="bookingForm.halls.$error" ng-show="bookingForm.halls.$invalid">
