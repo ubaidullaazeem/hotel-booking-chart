@@ -382,13 +382,14 @@
       var baseUrl = $location.$$absUrl.replace($location.$$url, '');
       var halls = _.map(selectedEvent.mSelectedHalls, 'displayName');
       var fontSize = isPrint ? '16px' : '12px';
+      var imageWidth = isPrint ? '150px' : '110px';
 
       return '<html><head><link rel="stylesheet" type="text/css" href="style.css" /></head>' +
         '<body onload="window.print()"><html><head> <title>Mirth</title></head>' +
-        '<body><html><head><style type="text/css">td { font-size: '+fontSize+'; }</style> <title>Mirth</title></head>' +
+        '<body><html><head><style type="text/css">td { font-size: '+fontSize+'; } li { font-size: '+fontSize+'; } p { font-size: '+fontSize+'; }</style> <title>Mirth</title></head>' +
         '<body><div><div>' +
         '<table width="100%" style="border-collapse: collapse; border: 1px solid black; table-layout: fixed;" cellspacing="0" cellpadding="0"> <tbody>' +
-        '<tr style="border-bottom: 1px solid black; text-align:center;"><td width="100%"><img style="width: 150px;" src="' + baseUrl + '/modules/core/client/img/logo-bw.png"/></td></tr>'+
+        '<tr style="border-bottom: 1px solid black; text-align:center;"><td width="100%"><img style="width: '+imageWidth+';" src="' + baseUrl + '/modules/core/client/img/logo-bw.png"/></td></tr>'+
         '<tr style="border-bottom: 1px solid black;"><td>'+
           '<table width="100%" style="border-collapse: collapse; table-layout: fixed;">'+
             '<tr><td width="60%" rowspan="2" style="border-right: 1px solid black;">Dev&apos;s Ark, Second Floor, AD-79&80, 5th Avenue<br/> Anna Nagar, Chennai - 600 040<br/> Phone Nos : 044-45552479 / 044-26222479</td><td width="15%" style="border-right: 1px solid black; border-bottom: 1px solid black;"><b>Date</b></td><td width="25%" style="border-bottom: 1px solid black;">'+ moment(selectedEvent.bookingFormData.bookedDate).format('DD/MM/YYYY')+'</td></tr>'+
@@ -447,13 +448,14 @@
       var paymentHistory = $scope.mixins.mPaymentHistories[index];
       var isFinalPayment = $scope.ui.isFullyPaid && (paymentHistory.receiptNo === getLastInsertedPayment().receiptNo) ? true : false;
       var fontSize = isPrint ? '16px' : '12px';
+      var imageWidth = isPrint ? '150px' : '110px';
       
       return '<html><head><link rel="stylesheet" type="text/css" href="style.css" /></head>' +
         '<body onload="window.print()"><html><head> <title>Mirth</title></head>' +
         '<body><html><head><style type="text/css">td { font-size: '+fontSize+'; }</style> <title>Mirth</title></head>' +
         '<body>' +
         '<table width="100%" style="border-collapse: collapse; border: 1px solid black; table-layout: fixed;" cellspacing="0" cellpadding="0"> <tbody>' +
-        '<tr style="border-bottom: 1px solid black; text-align:center;"><td width="100%"><img style="width: 110px;" src="' + baseUrl + '/modules/core/client/img/logo-bw.png"/></td></tr>'+
+        '<tr style="border-bottom: 1px solid black; text-align:center;"><td width="100%"><img style="width: '+imageWidth+';" src="' + baseUrl + '/modules/core/client/img/logo-bw.png"/></td></tr>'+
         '<tr style="border-bottom: 1px solid black;"><td>'+
           '<table width="100%" style="border-collapse: collapse; table-layout: fixed;">'+
             '<tr><td width="60%" rowspan="2" style="border-right: 1px solid black;">Dev&apos;s Ark, Second Floor, AD-79&80, 5th Avenue<br/> Anna Nagar, Chennai - 600 040<br/> Phone Nos : 044-45552479 / 044-26222479</td><td width="15%" style="border-right: 1px solid black; border-bottom: 1px solid black;"><b>Date</b></td><td width="25%" style="border-bottom: 1px solid black;">'+ moment(new Date(paymentHistory.receiptDate)).format('DD/MM/YYYY')+'</td></tr>'+
@@ -521,13 +523,14 @@
       var baseUrl = $location.$$absUrl.replace($location.$$url, '');
       var halls = _.map(selectedEvent.mSelectedHalls, 'displayName');
       var fontSize = isPrint ? '16px' : '12px';
+      var imageWidth = isPrint ? '150px' : '110px';
 
       return '<html><head><link rel="stylesheet" type="text/css" href="style.css" /></head>' +
         '<body onload="window.print()"><html><head> <title>Mirth</title></head>' +
         '<body><html><head><style type="text/css">td { font-size: '+fontSize+'; }</style> <title>Mirth</title></head>' +
         '<body>' +
         '<table width="100%" style="border-collapse: collapse; border: 1px solid black; table-layout: fixed;" cellspacing="0" cellpadding="0"> <tbody>' +
-        '<tr style="border-bottom: 1px solid black; text-align:center;"><td width="100%"><img style="width: 150px;" src="' + baseUrl + '/modules/core/client/img/logo-bw.png"/></td></tr>'+
+        '<tr style="border-bottom: 1px solid black; text-align:center;"><td width="100%"><img style="width: '+imageWidth+';" src="' + baseUrl + '/modules/core/client/img/logo-bw.png"/></td></tr>'+
         '<tr style="border-bottom: 1px solid black;"><td>'+
           '<table width="100%" style="border-collapse: collapse; table-layout: fixed;">'+
             '<tr><td width="60%" rowspan="2" style="border-right: 1px solid black;">Dev&apos;s Ark, Second Floor, AD-79&80, 5th Avenue<br/> Anna Nagar, Chennai - 600 040<br/> Phone Nos : 044-45552479 / 044-26222479</td><td width="15%" style="border-right: 1px solid black; border-bottom: 1px solid black;"><b>Date</b></td><td width="25%" style="border-bottom: 1px solid black;">'+ moment(new Date(selectedEvent.invoiceDate)).format('DD/MM/YYYY')+'</td></tr>'+
