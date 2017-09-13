@@ -228,9 +228,9 @@ exports.sendEmail = function(req, res, next) {
       }
 
       var baseUrl = req.app.get('domain') || httpTransport + req.headers.host;
-      var templateURL = 'modules/newbookings/server/templates/customer-booking-email';
+      //var templateURL = 'modules/newbookings/server/templates/customer-booking-email';
 
-      res.render(path.resolve(templateURL), {
+      res.render(path.resolve(req.body.emailBodyTemplateUrl), {
         mirthLogo: baseUrl + '/modules/core/client/img/logo-bw.png',
         newBooking: newBooking,
         mAddress: newBooking.mAddress !== null ? newBooking.mAddress : '--',
@@ -241,7 +241,8 @@ exports.sendEmail = function(req, res, next) {
         appName: config.app.title,
         paymentMode: req.body.paymentMode !== null ? req.body.paymentMode : '--',
         eventDateTime: req.body.eventDateTime !== null ? req.body.eventDateTime : '-',
-        currentTime: new Date()
+        currentTime: new Date(),
+        todayDate: moment(new Date()).format('MMMM DD, YYYY')
       }, function(err, emailHTML) {
         done(err, emailHTML, req);
       });

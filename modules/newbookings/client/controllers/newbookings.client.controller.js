@@ -657,21 +657,25 @@
         var documentContent;
         var mailSubject;
         var attachmentName;
+        var emailBodyTemplateUrl;
         switch (billType) {
           case BILL_TYPES[0]:
             documentContent = getBookingFormData(false);
             mailSubject = 'Mirth Hall Booking Details';
             attachmentName = 'Booking_Form.pdf';
+            emailBodyTemplateUrl = 'modules/newbookings/server/templates/bookingform-body';
             break;
           case BILL_TYPES[1]:
             documentContent = getReceiptData(index, false);
             mailSubject = 'Mirth Hall Receipt Details';
             attachmentName = 'Receipt.pdf';
+            emailBodyTemplateUrl = 'modules/newbookings/server/templates/receipt-body';
             break;
           case BILL_TYPES[2]:
             documentContent = getInvoiceData(false);
             mailSubject = 'Mirth Hall Invoice Details';
             attachmentName = 'Invoice.pdf';
+            emailBodyTemplateUrl = 'modules/newbookings/server/templates/invoice-body';
             break;
 
           default:
@@ -682,11 +686,12 @@
           content: documentContent,
           newBooking: $scope.mixins,
           totalCharges: Number($scope.mixins.mSubTotal),
-          halls: _.map($scope.mixins.mSelectedHalls, 'displayName'),
+          halls: _.map(selectedEvent.mSelectedHalls, 'displayName'),
           paymentMode: $scope.mPaymentHistory.paymentMode,
           eventDateTime: getEventDateTime(),
           eventName: getEventName(),
           subject: mailSubject,
+          emailBodyTemplateUrl: emailBodyTemplateUrl,
           attachmentName: attachmentName
         };
 
