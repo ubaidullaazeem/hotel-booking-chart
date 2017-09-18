@@ -933,10 +933,6 @@
           return;
         }
 
-        /* DeletePhotoIdServices.deletePhotoIdPicture({
-           mPhotoIdPath: $scope.mixins.mPhotoIdPath
-         }).then(function(res) {});*/
-
         $scope.mixins.mStartDateTime = $scope.eventTime.mStartToServer;
         $scope.mixins.mEndDateTime = $scope.eventTime.mEndToServer;
         $scope.mixins.date = new Date($scope.eventTime.mStartToServer).getDate();
