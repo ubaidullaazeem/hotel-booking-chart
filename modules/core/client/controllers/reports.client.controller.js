@@ -5,9 +5,9 @@
 		.module('core')
 		.controller('ReportsController', ReportsController);
 
-	ReportsController.$inject = ['CommonService', 'NewbookingsService', 'EmailBookingServices', 'DATA_BACKGROUND_COLOR', 'hallsResolve', '$filter', '$scope', 'Notification', '$rootScope', '$mdpDatePicker', 'SearchBookingServices', '$mdDialog'];
+	ReportsController.$inject = ['CommonService', 'NewbookingsService', 'EmailBookingServices', 'DATA_BACKGROUND_COLOR', 'hallsResolve', '$filter', '$scope', 'Notification', '$rootScope', '$mdpDatePicker', 'SearchBookingServices', '$mdDialog', 'MESSAGES'];
 
-	function ReportsController(CommonService, NewbookingsService, EmailBookingServices, DATA_BACKGROUND_COLOR, hallsResolve, $filter, $scope, Notification, $rootScope, $mdpDatePicker, SearchBookingServices, $mdDialog) {
+	function ReportsController(CommonService, NewbookingsService, EmailBookingServices, DATA_BACKGROUND_COLOR, hallsResolve, $filter, $scope, Notification, $rootScope, $mdpDatePicker, SearchBookingServices, $mdDialog, MESSAGES) {
 
 		$scope.DATA_BACKGROUND_COLOR = DATA_BACKGROUND_COLOR;
 
@@ -299,7 +299,7 @@
 		function onRequestEmailReportSuccess(response) {
 			Notification.success({
 				message: response.message,
-				title: '<i class="glyphicon glyphicon-remove"></i> Email drop successfully'
+				title: '<i class="glyphicon glyphicon-remove"></i> '+MESSAGES.SUCCESS_TITLE_EMAIL_SENT
 			});
 			$scope.ui.email = false;
 		}
@@ -307,7 +307,7 @@
 		function onRequestEmailReportError(response) {
 			Notification.error({
 				message: response.message,
-				title: '<i class="glyphicon glyphicon-remove"></i> Email failed to send'
+				title: '<i class="glyphicon glyphicon-remove"></i> '+MESSAGES.ERR_TITLE_EMAIL_SEND
 			});
 			$scope.ui.email = false;
 		}

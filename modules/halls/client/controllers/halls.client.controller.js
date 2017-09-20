@@ -6,9 +6,9 @@
     .module('halls')
     .controller('HallsController', HallsController);
 
-  HallsController.$inject = ['CGST', 'SGST', 'DATA_BACKGROUND_COLOR', 'CommonService', '$scope', '$state', '$rootScope', '$mdDialog', 'Notification', 'hallResolve', 'otherHallsResolve', 'HallsService', '$mdpDatePicker', 'TaxesService'];
+  HallsController.$inject = ['CGST', 'SGST', 'DATA_BACKGROUND_COLOR', 'CommonService', '$scope', '$state', '$rootScope', '$mdDialog', 'Notification', 'hallResolve', 'otherHallsResolve', 'HallsService', '$mdpDatePicker', 'TaxesService', 'MESSAGES'];
 
-  function HallsController(CGST, SGST, DATA_BACKGROUND_COLOR, CommonService, $scope, $state, $rootScope, $mdDialog, Notification, hall, otherHallsResolve, HallsService, $mdpDatePicker, TaxesService) {
+  function HallsController(CGST, SGST, DATA_BACKGROUND_COLOR, CommonService, $scope, $state, $rootScope, $mdDialog, Notification, hall, otherHallsResolve, HallsService, $mdpDatePicker, TaxesService, MESSAGES) {
     $scope.model = {
       hall: {
         name: hall ? hall.name : undefined,
@@ -55,7 +55,7 @@
       var hasContainsTaxName = CommonService.hasContainsTaxName($scope.model.taxes);
       if (!hasContainsTaxName) {
         Notification.error({
-          message: 'Please add both CGST and SGST tax rate.',
+          message: MESSAGES.ERR_MSG_NO_TAXES,
           title: '<i class="glyphicon glyphicon-remove"></i> Tax Missing Error'
         });
         $mdDialog.cancel();
@@ -78,7 +78,7 @@
 
         if (_.includes(otherHallsResolve, $scope.model.hall.name.toLowerCase().trim())) {
           Notification.error({
-            message: 'Name already exists',
+            message: MESSAGES.ERR_MSG_DUPLICATE_HALL_NAME,
             title: '<i class="glyphicon glyphicon-remove"></i> Create Hall Error'
           });
 

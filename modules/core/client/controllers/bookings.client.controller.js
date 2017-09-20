@@ -126,7 +126,7 @@
       validateSettings();
       if (!$scope.ui.validateSettings) {
         if (moment(date) < moment(new Date().setHours(0, 0, 0, 0))) {
-          $mdDialog.show($mdDialog.alert().clickOutsideToClose(true).title(MESSAGES.PAST_DATE).ok('OK'));
+          $mdDialog.show($mdDialog.alert().clickOutsideToClose(true).title(MESSAGES.ERR_MSG_PAST_DATE).ok('OK'));
         } else {
           var confirm = $mdDialog.confirm().title('Do you want to create new booking?').ok('Yes').cancel('No');
 
@@ -359,32 +359,32 @@
 
       if ($scope.halls.mAllHalls.length == 0) {
         Notification.error({
-          message: "Please add halls in settings.",
-          title: '<i class="glyphicon glyphicon-remove"></i> Halls Error'
+          message: MESSAGES.ERR_MSG_NO_HALLS,
+          title: '<i class="glyphicon glyphicon-remove"></i> '+MESSAGES.ERR_TITLE_NO_HALLS
         });
         $scope.ui.validateSettings = true;
       }
 
       if ($scope.model.eventTypes.length == 0) {
         Notification.error({
-          message: "Please add event names in settings.",
-          title: '<i class="glyphicon glyphicon-remove"></i> Event Error'
+          message: MESSAGES.ERR_MSG_NO_EVENT_TYPE,
+          title: '<i class="glyphicon glyphicon-remove"></i> '+MESSAGES.ERR_TITLE_NO_EVENT_TYPE
         });
         $scope.ui.validateSettings = true;
       }
 
       if ($scope.model.paymentStatuses.length < 2) {
         Notification.error({
-          message: "Please add payment colors in settings.",
-          title: '<i class="glyphicon glyphicon-remove"></i> Payment status Error'
+          message: MESSAGES.ERR_MSG_NO_PAYMENT_STATUS,
+          title: '<i class="glyphicon glyphicon-remove"></i> '+MESSAGES.ERR_TITLE_NO_PAYMENT_STATUS
         });
         $scope.ui.validateSettings = true;
       }
       
       if (!CommonService.hasContainsReceiptNumber($scope.model.counters) || !CommonService.hasContainsInvoiceNumber($scope.model.counters)) {
         Notification.error({
-          message: "Please add Receipt/Invoice start number in settings.",
-          title: '<i class="glyphicon glyphicon-remove"></i> Receipt/Invoice Start Number Error'
+          message: MESSAGES.ERR_MSG_NO_REC_INV_NO,
+          title: '<i class="glyphicon glyphicon-remove"></i> '+MESSAGES.ERR_TITLE_NO_REC_INV_NO
         });
         $scope.ui.validateSettings = true;
       }      

@@ -5,9 +5,9 @@
     .module('core')
     .controller('SettingsController', SettingsController);
 
-  SettingsController.$inject = ['COLOURS', 'CommonService', 'DATA_BACKGROUND_COLOR', '$scope', '$state', '$rootScope', '$mdDialog', 'HallsService', 'Notification', 'EventtypesService', 'TaxesService', 'PaymentstatusesService', 'CountersService', 'PAYMENT_STATUS', 'TAX_TYPES', 'INVOICE'];
+  SettingsController.$inject = ['COLOURS', 'CommonService', 'DATA_BACKGROUND_COLOR', '$scope', '$state', '$rootScope', '$mdDialog', 'HallsService', 'Notification', 'EventtypesService', 'TaxesService', 'PaymentstatusesService', 'CountersService', 'PAYMENT_STATUS', 'TAX_TYPES', 'INVOICE', 'MESSAGES'];
 
-  function SettingsController(COLOURS, CommonService, DATA_BACKGROUND_COLOR, $scope, $state, $rootScope, $mdDialog, HallsService, Notification, EventtypesService, TaxesService, PaymentstatusesService, CountersService, PAYMENT_STATUS, TAX_TYPES, INVOICE) {
+  function SettingsController(COLOURS, CommonService, DATA_BACKGROUND_COLOR, $scope, $state, $rootScope, $mdDialog, HallsService, Notification, EventtypesService, TaxesService, PaymentstatusesService, CountersService, PAYMENT_STATUS, TAX_TYPES, INVOICE, ERR_TITLE_DELETE_HALL, MESSAGES) {
 
     $scope.DATA_BACKGROUND_COLOR = DATA_BACKGROUND_COLOR;
 
@@ -83,7 +83,7 @@
           function errorCallback(res) {
             Notification.error({
               message: res.data.message,
-              title: '<i class="glyphicon glyphicon-remove"></i> Delete Hall Error'
+              title: '<i class="glyphicon glyphicon-remove"></i> '+MESSAGES.ERR_TITLE_DELETE_HALL
             });
           }
         },
@@ -210,7 +210,7 @@
           function errorCallback(res) {
             Notification.error({
               message: res.data.message,
-              title: '<i class="glyphicon glyphicon-remove"></i> Delete Event Error'
+              title: '<i class="glyphicon glyphicon-remove"></i> '+MESSAGES.ERR_TITLE_DELETE_EVENT
             });
           }
         },

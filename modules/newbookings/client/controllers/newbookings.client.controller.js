@@ -6,9 +6,9 @@
     .module('newbookings')
     .controller('NewbookingsController', NewbookingsController);
 
-  NewbookingsController.$inject = ['AuthenticationService', 'CGST', 'SGST', 'DATA_BACKGROUND_COLOR', 'EmailBookingServices', 'HARDCODE_VALUES', 'PAYMENT_STATUS', '$filter', '$scope', '$state', 'selectedEvent', '$location', '$mdDialog', '$templateRequest', '$sce', 'NewbookingsService', 'selectedDate', 'HallsService', 'EventtypesService', 'TaxesService', 'PaymentstatusesService', 'Notification', '$mdpTimePicker', '$mdpDatePicker', 'PAY_MODES', 'CommonService', 'ValidateOverlapBookingServices', 'viewMode', 'GOOGLE_CALENDAR_COLOR_IDS', 'Upload', '$timeout', 'RupeeWords', '$rootScope', 'isPastReceiptEffectiveDate', 'isPastInvoiceEffectiveDate', 'BILL_TYPES'];
+  NewbookingsController.$inject = ['AuthenticationService', 'CGST', 'SGST', 'DATA_BACKGROUND_COLOR', 'EmailBookingServices', 'HARDCODE_VALUES', 'PAYMENT_STATUS', '$filter', '$scope', '$state', 'selectedEvent', '$location', '$mdDialog', '$templateRequest', '$sce', 'NewbookingsService', 'selectedDate', 'HallsService', 'EventtypesService', 'TaxesService', 'PaymentstatusesService', 'Notification', '$mdpTimePicker', '$mdpDatePicker', 'PAY_MODES', 'CommonService', 'ValidateOverlapBookingServices', 'viewMode', 'GOOGLE_CALENDAR_COLOR_IDS', 'Upload', '$timeout', 'RupeeWords', '$rootScope', 'isPastReceiptEffectiveDate', 'isPastInvoiceEffectiveDate', 'BILL_TYPES', 'MESSAGES'];
 
-  function NewbookingsController(AuthenticationService, CGST, SGST, DATA_BACKGROUND_COLOR, EmailBookingServices, HARDCODE_VALUES, PAYMENT_STATUS, $filter, $scope, $state, selectedEvent, $location, $mdDialog, $templateRequest, $sce, NewbookingsService, selectedDate, HallsService, EventtypesService, TaxesService, PaymentstatusesService, Notification, $mdpTimePicker, $mdpDatePicker, PAY_MODES, CommonService, ValidateOverlapBookingServices, viewMode, GOOGLE_CALENDAR_COLOR_IDS, Upload, $timeout, RupeeWords, $rootScope, isPastReceiptEffectiveDate, isPastInvoiceEffectiveDate, BILL_TYPES) {
+  function NewbookingsController(AuthenticationService, CGST, SGST, DATA_BACKGROUND_COLOR, EmailBookingServices, HARDCODE_VALUES, PAYMENT_STATUS, $filter, $scope, $state, selectedEvent, $location, $mdDialog, $templateRequest, $sce, NewbookingsService, selectedDate, HallsService, EventtypesService, TaxesService, PaymentstatusesService, Notification, $mdpTimePicker, $mdpDatePicker, PAY_MODES, CommonService, ValidateOverlapBookingServices, viewMode, GOOGLE_CALENDAR_COLOR_IDS, Upload, $timeout, RupeeWords, $rootScope, isPastReceiptEffectiveDate, isPastInvoiceEffectiveDate, BILL_TYPES, MESSAGES) {
     $scope.DATA_BACKGROUND_COLOR = DATA_BACKGROUND_COLOR;
 
     var cgstPercent = 0;
@@ -189,7 +189,7 @@
           }
         } else {
           Notification.error({
-            message: 'Effective date is not found for ' + hall.displayName,
+            message: MESSAGES.ERR_MSG_NO_EFFECTIVE_DATE_HALL + hall.displayName,
             title: '<i class="glyphicon glyphicon-remove"></i> Effective date Error'
           });
           $mdDialog.cancel();
@@ -709,8 +709,8 @@
 
         if ($scope.mixins.mEmail === null) {
           Notification.error({
-            message: 'Email Id Missing Error',
-            title: '<i class="glyphicon glyphicon-remove"></i> Email id not found'
+            message: MESSAGES.ERR_MSG_NO_EMAIL_ID,
+            title: '<i class="glyphicon glyphicon-remove"></i> Email Id Missing Error'
           });
         } else {
           setSendingEmail(billType, index, true);
@@ -790,7 +790,7 @@
           $scope.ui.photoIdFile = '';
 
           Notification.error({
-            message: 'Unsupported file.',
+            message: MESSAGES.ERR_MSG_UNSUPPORTED_FILE,
             title: '<i class="glyphicon glyphicon-remove"></i> Image Error'
           });
         }
@@ -849,7 +849,7 @@
 
       if (!isCGSTRatePresentforToday) {
         Notification.error({
-          message: 'CGST tax rate is not found for today.',
+          message: MESSAGES.ERR_MSG_NO_CGST_FOR_TODAY,
           title: '<i class="glyphicon glyphicon-remove"></i> Tax Missing Error'
         });
         $mdDialog.cancel();
@@ -858,7 +858,7 @@
 
       if (!isSGSTRatePresentforToday) {
         Notification.error({
-          message: 'SGST tax rate is not found for today.',
+          message: MESSAGES.ERR_MSG_NO_SGST_FOR_TODAY,
           title: '<i class="glyphicon glyphicon-remove"></i> Tax Missing Error'
         });
         $mdDialog.cancel();
@@ -867,7 +867,7 @@
 
       if (!hasContainsTaxName) {
         Notification.error({
-          message: 'Please add both CGST and SGST tax rate.',
+          message: MESSAGES.ERR_MSG_NO_TAXES,
           title: '<i class="glyphicon glyphicon-remove"></i> Tax Missing Error'
         });
         $mdDialog.cancel();
@@ -926,7 +926,7 @@
 
         if (Number($scope.mixins.mBalanceDue) < 0) {
           Notification.error({
-            message: 'Please enter valid data.',
+            message: MESSAGES.ERR_MSG_INVALID_BOOKING_DATA,
             title: '<i class="glyphicon glyphicon-remove"></i> Error'
           });
 
@@ -1067,7 +1067,7 @@
         if (respCalList && respCalList.hasOwnProperty('error')) // error
         {
           Notification.error({
-            message: "Unable to fetch the halls from Google Calendar",
+            message: MESSAGES.ERR_MSG_GET_GOOGLE_CAL_HALLS,
             title: '<i class="glyphicon glyphicon-remove"></i> Google Calendar Error'
           });
 
@@ -1105,7 +1105,7 @@
 
                 if (insertEventRes && insertEventRes.hasOwnProperty('error')) { // error
                   Notification.error({
-                    message: "Unable to add the event in " + matchedCalendar.summary,
+                    message: MESSAGES.ERR_MSG_ADD_EVENT_TO_GOOGLE_CAL + matchedCalendar.summary,
                     title: '<i class="glyphicon glyphicon-remove"></i> Google Calendar Error'
                   });
                 } else // success
@@ -1175,7 +1175,7 @@
       calendarListReq.execute(function(respCalList) {
         if (respCalList && respCalList.hasOwnProperty('error')) { // error
           Notification.error({
-            message: 'Unable to fetch the halls from Google Calendar',
+            message: MESSAGES.ERR_MSG_GET_GOOGLE_CAL_HALLS,
             title: '<i class="glyphicon glyphicon-remove"></i> Google Calendar Error'
           });
         } else // success
@@ -1256,7 +1256,7 @@
       calendarListReq.execute(function(respCalList) {
         if (respCalList && respCalList.hasOwnProperty('error')) { // error
           Notification.error({
-            message: 'Unable to fetch the halls from Google Calendar',
+            message: MESSAGES.ERR_MSG_GET_GOOGLE_CAL_HALLS,
             title: '<i class="glyphicon glyphicon-remove"></i> Google Calendar Error'
           });
 
@@ -1291,7 +1291,7 @@
                 if (updateEventRes && updateEventRes.hasOwnProperty('error')) // error
                 {
                   Notification.error({
-                    message: "Unable to update the event in " + hall.displayName,
+                    message: MESSAGES.ERR_MSG_UPDATE_EVENT_IN_GOOGLE_CAL + hall.displayName,
                     title: '<i class="glyphicon glyphicon-remove"></i> Google Calendar Error'
                   });
                 } else // success
@@ -1335,7 +1335,7 @@
                   if (insertEventRes && insertEventRes.hasOwnProperty('error')) // error
                   {
                     Notification.error({
-                      message: "Unable to add the event in " + matchedCalendar.summary,
+                      message: MESSAGES.ERR_MSG_ADD_EVENT_TO_GOOGLE_CAL + matchedCalendar.summary,
                       title: '<i class="glyphicon glyphicon-remove"></i> Google Calendar Error'
                     });
                   } else // success
@@ -1378,7 +1378,7 @@
 
       function updateErrorCallback(res) {
         Notification.error({
-          message: 'Unable to update the Google calendar event details in database',
+          message: MESSAGES.ERR_MSG_UPDATE_GOOGLE_CAL_DETAILS,
           title: '<i class="glyphicon glyphicon-remove"></i> Error'
         });
 
@@ -1464,7 +1464,7 @@
 
       function updateActuralChargesSuccessCallback(res) {
         Notification.success({
-          message: 'Actual charges updated successfully',
+          message: MESSAGES.SUCCESS_MSG_ACT_CHARGES_UPDAED,
           title: '<i class="glyphicon glyphicon-remove"></i> Success'
         });
 
@@ -1538,7 +1538,7 @@
      */
     function showBookingCompleteMessage(res) {
       Notification.success({
-        message: $scope.ui.createMode ? 'Booked successfully' : 'Updated successfully',
+        message: $scope.ui.createMode ? MESSAGES.SUCCESS_MSG_BOOKING_CREATED : MESSAGES.SUCCESS_MSG_BOOKING_UPDATED,
         title: '<i class="glyphicon glyphicon-remove"></i> Success'
       });
 

@@ -6,9 +6,9 @@
     .module('eventtypes')
     .controller('EventtypesController', EventtypesController);
 
-  EventtypesController.$inject = ['DATA_BACKGROUND_COLOR', '$scope', '$state', '$rootScope', '$window', '$mdDialog', 'Notification', 'eventtypeResolve', 'otherEventTypesResolve', 'EventtypesService', 'COLOURS', 'colorsResolve', 'HARDCODE_VALUES'];
+  EventtypesController.$inject = ['DATA_BACKGROUND_COLOR', '$scope', '$state', '$rootScope', '$window', '$mdDialog', 'Notification', 'eventtypeResolve', 'otherEventTypesResolve', 'EventtypesService', 'COLOURS', 'colorsResolve', 'HARDCODE_VALUES', 'MESSAGES'];
 
-  function EventtypesController(DATA_BACKGROUND_COLOR, $scope, $state, $rootScope, $window, $mdDialog, Notification, eventtype, otherEventTypesResolve, EventtypesService, COLOURS, colorsResolve, HARDCODE_VALUES) {
+  function EventtypesController(DATA_BACKGROUND_COLOR, $scope, $state, $rootScope, $window, $mdDialog, Notification, eventtype, otherEventTypesResolve, EventtypesService, COLOURS, colorsResolve, HARDCODE_VALUES, MESSAGES) {
     $scope.colours = colorsResolve;
     $scope.model = {
       eventType: {
@@ -41,7 +41,7 @@
       if (eventtypeForm.$valid) {
         if (_.includes(otherEventTypesResolve, $scope.model.eventType.name.toLowerCase().trim())) {
           Notification.error({
-            message: 'Name already exists',
+            message: MESSAGES.ERR_MSG_DUPLICATE_EVENT_TYPE,
             title: '<i class="glyphicon glyphicon-remove"></i> Create Event Error'
           });
 

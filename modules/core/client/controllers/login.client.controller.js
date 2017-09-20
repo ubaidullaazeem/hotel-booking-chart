@@ -64,7 +64,7 @@
             if (userResult && userResult.hasOwnProperty('error')) // error
             {
               Notification.error({
-                message: MESSAGES.ERROR_OCCURED
+                message: MESSAGES.ERR_MSG_GET_USER_INFO
               });
             } else // success
             {
@@ -80,14 +80,14 @@
                   AuthenticationService.SetCredentials("", primaryEmail, userResult.id, userResult.displayName, userResult.image.url);
 
                   Notification.success({
-                    message: "Authorized successfully",
-                    title: '<i class="glyphicon glyphicon-remove"></i> Success'
+                    message: MESSAGES.SUCCESS_MSG_AUTH,
+                    title: '<i class="glyphicon glyphicon-remove"></i> '+MESSAGES.SUCCESS_TITLE_AUTH
                   });
 
                   $rootScope.isUserLoggedIn = true;
                   $rootScope.$broadcast('userLoggedIn'); //sending broadcast to update the header name and image                    
                 } else {
-                  $mdDialog.show($mdDialog.alert().clickOutsideToClose(true).title(MESSAGES.UNAUTHORISED_USER).ok('OK'));
+                  $mdDialog.show($mdDialog.alert().clickOutsideToClose(true).title(MESSAGES.ERR_MSG_UNAUTHORISED_USER).ok('OK'));
                   setTimeout(function() {
                     gapi.auth2.getAuthInstance().disconnect();
                   }, 1000);
@@ -95,7 +95,7 @@
                 }
               } else {
                 console.log("null");
-                $mdDialog.show($mdDialog.alert().clickOutsideToClose(true).title(MESSAGES.PRIMARY_EMAIL_ERROR).ok('OK'));
+                $mdDialog.show($mdDialog.alert().clickOutsideToClose(true).title(MESSAGES.ERR_MSG_PRIMARY_EMAIL).ok('OK'));
               }
             }
           });

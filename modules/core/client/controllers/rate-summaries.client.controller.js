@@ -6,9 +6,9 @@
     .module('core')
     .controller('RateSummariesController', RateSummariesController);
 
-  RateSummariesController.$inject = ['DATA_BACKGROUND_COLOR', 'CommonService', '$scope', '$state', '$rootScope', '$mdDialog', 'Notification', 'summariesResolve', 'isHallRate', 'HallsService', '$mdpDatePicker', 'TaxesService'];
+  RateSummariesController.$inject = ['DATA_BACKGROUND_COLOR', 'CommonService', '$scope', '$state', '$rootScope', '$mdDialog', 'Notification', 'summariesResolve', 'isHallRate', 'HallsService', '$mdpDatePicker', 'TaxesService', 'MESSAGES'];
 
-  function RateSummariesController(DATA_BACKGROUND_COLOR, CommonService, $scope, $state, $rootScope, $mdDialog, Notification, summariesResolve, isHallRate, HallsService, $mdpDatePicker, TaxesService) {
+  function RateSummariesController(DATA_BACKGROUND_COLOR, CommonService, $scope, $state, $rootScope, $mdDialog, Notification, summariesResolve, isHallRate, HallsService, $mdpDatePicker, TaxesService, MESSAGES) {
     $scope.model = {
       rate: summariesResolve
     };
@@ -137,7 +137,7 @@
       function errorCallback(res) {
         Notification.error({
           message: res.data.message,
-          title: '<i class="glyphicon glyphicon-remove"></i> Update Rate Summary Error'
+          title: '<i class="glyphicon glyphicon-remove"></i> '+MESSAGES.ERR_TITLE_UPDATE_RATE_SUMMARY
         });
       }
     };
