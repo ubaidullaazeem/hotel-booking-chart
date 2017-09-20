@@ -516,8 +516,7 @@
         '</tbody></table>';
 
       //For Printed receipt we need 3 copies.
-      //var copiesCount = isPrint ? 3 : 1;
-      var copiesCount = 1;
+      var copiesCount = isPrint ? 3 : 1;
       var bodyContent = '';
       for(var i=0; i<copiesCount; i++) {
         bodyContent = bodyContent + (bodyContent === '' ? '' : '<div style="display: block; page-break-before: always;"/>') +  receiptContent;
