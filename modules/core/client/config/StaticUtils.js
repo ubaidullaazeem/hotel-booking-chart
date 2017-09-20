@@ -22,11 +22,6 @@
 			'GREEN': 10,
 			"RED": 11
 		})
-		.constant('API', {
-			'CALENDAR_LIST_URL': 'https://www.googleapis.com/calendar/v3/users/me/calendarList',
-			'CALENDAR_EVENT_LIST_URL': 'https://www.googleapis.com/calendar/v3/calendars/',
-			'CALENDAR_COLOR_LIST_URL': 'https://www.googleapis.com/calendar/v3/colors'
-		})
 		.constant('MESSAGES', {
 			'ERR_MSG_UNAUTHORISED_USER': 'You are not authorized to use this application.',
 			'ERR_MSG_PRIMARY_EMAIL': 'Primary email not found.',
