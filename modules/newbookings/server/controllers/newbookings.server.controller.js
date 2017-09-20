@@ -158,7 +158,8 @@ exports.delete = function(req, res) {
   var newbooking = req.newbooking;
 
   // For deleting the old image.
-  fs.unlink(newbooking.mPhotoIdPath);
+  if (newbooking.mPhotoIdPath) 
+    fs.unlink(newbooking.mPhotoIdPath);
 
   newbooking.remove(function(err) {
     if (err) {
