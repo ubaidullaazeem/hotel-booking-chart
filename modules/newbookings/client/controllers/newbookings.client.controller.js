@@ -81,7 +81,8 @@
         isDeletedPayment: false,
         receiptNo: null,
         receiptDate: new Date(),
-        isSendingMail: false
+        isSendingMail: false,
+        isEditNEFTdetails: false
       };
 
       $scope.PAYMENT_STATUS = PAYMENT_STATUS;
@@ -998,7 +999,7 @@
             }
 
             if ($scope.ui.createMode) {
-              $scope.mixins.mPaymentHistories.push($scope.mPaymentHistory);
+               pushPayment();
 
               $scope.mixins.bookingFormData = getBookingData();
             } else {
@@ -1573,7 +1574,8 @@
         isDeletedPayment: false,
         receiptNo: null,
         receiptDate: new Date(),
-        isSendingMail: false
+        isSendingMail: false,
+        isEditNEFTdetails: false
       };
 
       calculateTaxRate();
@@ -1601,6 +1603,10 @@
         });
     };
 
+    $scope.editNEFTdetails = function(index) {      
+      $scope.mixins.mPaymentHistories[index].isEditNEFTdetails = true;
+    };
+
     $scope.onUnConfirmedAmountChanged = function() {
       $scope.mPaymentHistory.amountPaid = ($scope.mPaymentHistory.amountPaid == undefined) ? null : $scope.mPaymentHistory.amountPaid;
 
@@ -1611,6 +1617,8 @@
     function pushPayment() {
       if ($scope.mPaymentHistory.amountPaid && $scope.mPaymentHistory.paymentMode && $scope.mPaymentHistory.paidDate && ($scope.mPaymentHistory.paymentMode === $scope.model.paymentModes[2] || $scope.mPaymentHistory.paymentMode === $scope.model.paymentModes[3] || ($scope.mPaymentHistory.details != '' && $scope.mPaymentHistory.drawnOn != '')) && ($scope.ui.isPastReceiptEffectiveDate || $scope.mPaymentHistory.receiptNo)) {
 
+        console.log("details "+ $scope.mPaymentHistory.details);
+        console.log('details2 '+ ($scope.mPaymentHistory.details === ''));
         if ($scope.mPaymentHistory.paymentMode === $scope.model.paymentModes[3] && $scope.mPaymentHistory.details === '') {
           $scope.mPaymentHistory.details = '0';
         }

@@ -363,12 +363,12 @@
 
                     <md-input-container flex ng-if="mPaymentHistory.paymentMode !== model.paymentModes[2]">
                         <label class="my-label"><b>Details</b></label>                      
-                        <input style="color: #000066; font-weight: bold;" ng-model="mPaymentHistory.details" ng-disabled="true"/>
+                        <input style="color: #000066; font-weight: bold;" ng-model="mPaymentHistory.details" ng-disabled="!mPaymentHistory.isEditNEFTdetails"/>
                     </md-input-container>
 
                     <md-input-container flex ng-if="mPaymentHistory.paymentMode !== model.paymentModes[2]">
                         <label class="my-label"><b>Drawn On</b></label>                      
-                        <input style="color: #000066; font-weight: bold;" ng-model="mPaymentHistory.drawnOn" ng-disabled="true"/>
+                        <input style="color: #000066; font-weight: bold;" ng-model="mPaymentHistory.drawnOn" ng-disabled="!mPaymentHistory.isEditNEFTdetails"/>
                     </md-input-container>
 
                     <md-input-container flex>
@@ -397,14 +397,17 @@
                   <div>
                     <md-button class="md-raised md-warn" style="min-width: 50px" ng-disabled="ui.viewMode" ng-click="removePayment($index)" type="submit" title="Delete payment"><span class="glyphicon glyphicon-remove"></span></md-button>
                   </div>
+                  <div ng-if="mPaymentHistory.paymentMode === model.paymentModes[3]">
+                    <md-button class="md-raised md-primary" style="min-width: 50px;" ng-disabled="ui.viewMode" ng-click="editNEFTdetails($index)" type="submit" title="Edit NEFT details"><span class="glyphicon glyphicon-pencil"></span></md-button>
+                  </div>
                   <div>
                     <md-button class="md-raised md-accent" style="min-width: 50px" ng-disabled="!mPaymentHistory._id" ng-click="printBooking(bookingForm, model.BILL_TYPES[1], $index)" type="submit" title="{{!mPaymentHistory._id ? 'Please update the booking to print this receipt' : 'Print receipt'}}"><span class="glyphicon glyphicon-print"></span></md-button>
                   </div>                  
                   <div>
-                    <md-button class="md-raised md-primary" style="min-width: 50px;" ng-disabled="!mPaymentHistory._id || mixins.mEmail==null || mixins.mEmail==''" ng-hide="mPaymentHistory.isSendingMail" ng-click="sendMail(bookingForm, model.BILL_TYPES[1], $index)" type="submit" title="{{!mPaymentHistory._id ? 'Please update the booking to email this receipt' : ((mixins.mEmail==null || mixins.mEmail=='') ? 'Please enter the customer email' : 'Email receipt')}}"><span class="glyphicon glyphicon-envelope"></span></md-button>
+                    <md-button style="min-width: 50px; background-color: #9c27b0; color: white" ng-disabled="!mPaymentHistory._id || mixins.mEmail==null || mixins.mEmail==''" ng-hide="mPaymentHistory.isSendingMail" ng-click="sendMail(bookingForm, model.BILL_TYPES[1], $index)" type="submit" title="{{!mPaymentHistory._id ? 'Please update the booking to email this receipt' : ((mixins.mEmail==null || mixins.mEmail=='') ? 'Please enter the customer email' : 'Email receipt')}}"><span class="glyphicon glyphicon-envelope"></span></md-button>
                   </div>
                   <div>
-                    <md-button class="md-raised md-primary" style="min-width: 50px" ng-show="mPaymentHistory.isSendingMail" type="submit"><i class="fa fa-spinner fa-spin"></i></md-button>
+                    <md-button style="min-width: 50px; background-color: #9c27b0; color: white" ng-show="mPaymentHistory.isSendingMail" type="submit"><i class="fa fa-spinner fa-spin"></i></md-button>
                   </div>
                 </div>
               </md-card-content>
