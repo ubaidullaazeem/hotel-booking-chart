@@ -288,7 +288,7 @@
 
                     <md-input-container flex ng-show="mPaymentHistory.paymentMode && mPaymentHistory.paymentMode !== model.paymentModes[2]">
                         <label class="my-label"><b>Details</b></label>                      
-                        <input style="color: #000066; font-weight: bold;" name="details" ng-required="mPaymentHistory.paymentMode && mPaymentHistory.paymentMode !== model.paymentModes[2]" ng-model="mPaymentHistory.details" />
+                        <input style="color: #000066; font-weight: bold;" name="details" ng-required="mPaymentHistory.paymentMode && mPaymentHistory.paymentMode !== model.paymentModes[2] && mPaymentHistory.paymentMode !== model.paymentModes[3]" ng-model="mPaymentHistory.details" />
                         <div ng-messages="bookingForm.details.$error">
                           <div ng-message="required">{{mPaymentHistory.paymentMode}} Details is required.</div>
                         </div>
@@ -296,7 +296,7 @@
 
                     <md-input-container flex ng-show="mPaymentHistory.paymentMode && mPaymentHistory.paymentMode !== model.paymentModes[2]">
                         <label class="my-label"><b>Drawn On</b></label>                      
-                        <input style="color: #000066; font-weight: bold;" name="drawnOn" ng-required="mPaymentHistory.paymentMode && mPaymentHistory.paymentMode !== model.paymentModes[2]" ng-model="mPaymentHistory.drawnOn" />
+                        <input style="color: #000066; font-weight: bold;" name="drawnOn" ng-required="mPaymentHistory.paymentMode && mPaymentHistory.paymentMode !== model.paymentModes[2] && mPaymentHistory.paymentMode !== model.paymentModes[3]" ng-model="mPaymentHistory.drawnOn" />
                         <div ng-messages="bookingForm.drawnOn.$error">
                           <div ng-message="required">{{mPaymentHistory.paymentMode}} Drawn On is required.</div>
                         </div>

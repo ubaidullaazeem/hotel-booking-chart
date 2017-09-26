@@ -1609,7 +1609,11 @@
     };
 
     function pushPayment() {
-      if ($scope.mPaymentHistory.amountPaid && $scope.mPaymentHistory.paymentMode && $scope.mPaymentHistory.paidDate && ($scope.mPaymentHistory.paymentMode === $scope.model.paymentModes[2] || ($scope.mPaymentHistory.details != '' && $scope.mPaymentHistory.drawnOn != '')) && ($scope.ui.isPastReceiptEffectiveDate || $scope.mPaymentHistory.receiptNo)) {
+      if ($scope.mPaymentHistory.amountPaid && $scope.mPaymentHistory.paymentMode && $scope.mPaymentHistory.paidDate && ($scope.mPaymentHistory.paymentMode === $scope.model.paymentModes[2] || $scope.mPaymentHistory.paymentMode === $scope.model.paymentModes[3] || ($scope.mPaymentHistory.details != '' && $scope.mPaymentHistory.drawnOn != '')) && ($scope.ui.isPastReceiptEffectiveDate || $scope.mPaymentHistory.receiptNo)) {
+
+        if ($scope.mPaymentHistory.paymentMode === $scope.model.paymentModes[3] && $scope.mPaymentHistory.details === '') {
+          $scope.mPaymentHistory.details = '0';
+        }
 
         $scope.mixins.mPaymentHistories.unshift($scope.mPaymentHistory);
       }
