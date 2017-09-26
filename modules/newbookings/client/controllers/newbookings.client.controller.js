@@ -121,7 +121,8 @@
         mReceivedGrandTotal: selectedEvent ? selectedEvent.mReceivedGrandTotal : 0,
         invoiceNo: selectedEvent ? selectedEvent.invoiceNo : undefined,
         invoiceDate: selectedEvent ? selectedEvent.invoiceDate : undefined,
-        bookingFormData: selectedEvent ? selectedEvent.bookingFormData : undefined
+        bookingFormData: selectedEvent ? selectedEvent.bookingFormData : undefined,
+        isTodayOrPastEvent: getTodayOrPastEvent()
       };
 
       $scope.googleCalendar = {
@@ -147,6 +148,27 @@
       calculateHallsRate();
       $scope.calculateBalanceDue();
     }, true);
+
+    $scope.$watch('eventTime.mStartToServer', function(newValue) {
+      $scope.mixins.isTodayOrPastEvent = getTodayOrPastEvent();
+    }, true);
+
+    function getTodayOrPastEvent() {
+      if ($scope.eventTime) {
+        var eventDate = moment(new Date($scope.eventTime.mStartToServer).setHours(0, 0, 0, 0));
+        var todayDate = moment(new Date().setHours(0, 0, 0, 0));
+
+        console.log('eventTime assigned');
+
+        if (todayDate >= eventDate) //today or past day
+          return true;
+        else //future day
+          return false;
+      } else {
+        console.log('eventTime not assigned');
+        return false;
+    }
+  }
 
     // Fetch the Terms and conditions
     var templateUrl = $sce.getTrustedResourceUrl('/modules/newbookings/client/views/templates/newbookings-terms-and-conditions.html');
@@ -1033,6 +1055,8 @@
           }
         });
 
+        console.log('create '+$scope.mixins.isTodayOrPastEvent);
+
         function saveOrUpdate() {
           if ($scope.mixins._id) {
             NewbookingsService.update($scope.mixins, successCallback, errorCallback);
@@ -1617,8 +1641,6 @@
     function pushPayment() {
       if ($scope.mPaymentHistory.amountPaid && $scope.mPaymentHistory.paymentMode && $scope.mPaymentHistory.paidDate && ($scope.mPaymentHistory.paymentMode === $scope.model.paymentModes[2] || $scope.mPaymentHistory.paymentMode === $scope.model.paymentModes[3] || ($scope.mPaymentHistory.details != '' && $scope.mPaymentHistory.drawnOn != '')) && ($scope.ui.isPastReceiptEffectiveDate || $scope.mPaymentHistory.receiptNo)) {
 
-        console.log("details "+ $scope.mPaymentHistory.details);
-        console.log('details2 '+ ($scope.mPaymentHistory.details === ''));
         if ($scope.mPaymentHistory.paymentMode === $scope.model.paymentModes[3] && $scope.mPaymentHistory.details === '') {
           $scope.mPaymentHistory.details = '0';
         }

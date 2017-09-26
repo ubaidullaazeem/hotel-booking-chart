@@ -28,9 +28,9 @@ exports.create = function(req, res) {
   var newbooking = new Newbooking(req.body);
   newbooking.user = req.user;
 
-  console.log("CREATE");
+  console.log("CREATE "+req.body.isTodayOrPastEvent);
 
-  if (newbooking.mSelectedPaymentStatus.name === 'Fully Paid' && !newbooking.invoiceNo) {
+  if (newbooking.mSelectedPaymentStatus.name === 'Fully Paid' && !newbooking.invoiceNo && req.body.isTodayOrPastEvent) {
     assignInvoiceNumber(newbooking, res);
   } else {
     assignReceiptNumberAndSave(newbooking, res);
@@ -142,9 +142,9 @@ exports.update = function(req, res) {
 
   newbooking = _.extend(newbooking, req.body);
 
-  console.log("UPDATE "+new Date());
+  console.log("UPDATE "+newbooking.isTodayOrPastEvent);
 
-  if (newbooking.mSelectedPaymentStatus.name === 'Fully Paid' && !newbooking.invoiceNo) {
+  if (newbooking.mSelectedPaymentStatus.name === 'Fully Paid' && !newbooking.invoiceNo && newbooking.isTodayOrPastEvent) {
     assignInvoiceNumber(newbooking, res);
   } else {
     assignReceiptNumberAndSave(newbooking, res);
