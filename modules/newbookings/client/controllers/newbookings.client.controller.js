@@ -1411,7 +1411,7 @@
     }
 
     $scope.cancel = function(bookingForm) {
-      if (bookingForm.$dirty || $scope.ui.isDataChanged) {
+      if (!$scope.ui.viewMode && (bookingForm.$dirty || $scope.ui.isDataChanged)) {
         var confirm = $mdDialog.confirm().title('Do you want to close?').textContent('If you close, data will not be saved.').ok('Yes').cancel('No').multiple(true);
         $mdDialog.show(confirm).then(function() {
             $mdDialog.cancel();
