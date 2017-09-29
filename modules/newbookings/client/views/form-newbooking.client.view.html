@@ -382,7 +382,7 @@
                     <md-button class="md-raised md-warn" style="min-width: 50px" ng-disabled="ui.viewMode" ng-click="removePayment($index)" type="submit" title="Delete payment"><span class="glyphicon glyphicon-remove"></span></md-button>
                   </div>
                   <div ng-if="mPaymentHistory.paymentMode === model.paymentModes[3]">
-                    <md-button class="md-raised md-primary" style="min-width: 50px;" ng-disabled="ui.viewMode || mPaymentHistory.isEditNEFTdetails" ng-click="editNEFTdetails($index)" type="submit" title="Edit NEFT details"><span class="glyphicon glyphicon-pencil"></span></md-button>
+                    <md-button class="md-raised md-primary" style="min-width: 50px;" ng-disabled="ui.viewMode || mPaymentHistory.isEditNEFTdetails" ng-click="editNEFTdetails($index)" type="submit" title="{{mPaymentHistory.isEditNEFTdetails ? 'To save NEFT details click Update Booking' : 'Edit NEFT details'}}"><span class="glyphicon glyphicon-pencil"></span></md-button>
                   </div>
                   <div>
                     <md-button class="md-raised md-accent" style="min-width: 50px" ng-disabled="!mPaymentHistory._id" ng-click="printBooking(bookingForm, model.BILL_TYPES[1], $index)" type="submit" title="{{!mPaymentHistory._id ? 'Please update the booking to print this receipt' : 'Print receipt'}}"><span class="glyphicon glyphicon-print"></span></md-button>
