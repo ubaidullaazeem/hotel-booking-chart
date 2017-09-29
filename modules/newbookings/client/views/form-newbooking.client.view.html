@@ -90,14 +90,7 @@
                 <div ng-message="greater">Event end time should be after the start time.</div>
               </div>
           </md-input-container>
-        </div>
-
-        <!-- <div layout="column" flex>
-          <md-input-container flex>
-            <label class="my-label">Description</label>
-            <textarea style="resize: none;" rows="3" ng-model="mixins.mDescription" ng-disabled="ui.viewMode"></textarea> 
-          </md-input-container>  
-        </div> -->
+        </div>        
 
         <div layout="column" flex>
           <md-input-container flex>
@@ -213,26 +206,17 @@
               <div layout="row" flex>    
                 <md-input-container flex>
                   <label class="my-label"><b>Generator Charges</b></label>
-                  <input style="color: #000066; font-weight: bold;" name="generator" ng-model="hallRateSummary.mGeneratorCharges" ng-disabled="ui.viewMode" type="number" min="0" ng-pattern="ui.mPricePattern" step="0.01"/>
-                  <!-- <div ng-messages="bookingForm.generator.$error">
-                    <div ng-message="required">Generator Charges is required.</div>
-                  </div> -->
+                  <input style="color: #000066; font-weight: bold;" name="generator" ng-model="hallRateSummary.mGeneratorCharges" ng-disabled="ui.viewMode" type="number" min="0" ng-pattern="ui.mPricePattern" step="0.01"/>                  
                 </md-input-container>
 
                 <md-input-container flex>
                   <label class="my-label"><b>Miscellaneous Charges</b></label>
-                  <input style="color: #000066; font-weight: bold;" name="miscellaneous" ng-model="hallRateSummary.mMiscellaneousCharges" ng-disabled="ui.viewMode" type="number" min="0" ng-pattern="ui.mPricePattern" step="0.01"/>
-                  <!-- <div ng-messages="bookingForm.miscellaneous.$error">
-                    <div ng-message="required">Miscellaneous Charges is required.</div>
-                  </div> -->
+                  <input style="color: #000066; font-weight: bold;" name="miscellaneous" ng-model="hallRateSummary.mMiscellaneousCharges" ng-disabled="ui.viewMode" type="number" min="0" ng-pattern="ui.mPricePattern" step="0.01"/>                  
                 </md-input-container>
 
                 <md-input-container flex>
                   <label class="my-label"><b>Damages</b></label>
-                  <input style="color: #000066; font-weight: bold;" name="damages" ng-model="hallRateSummary.mDamages" ng-disabled="ui.viewMode" type="number" min="0" ng-pattern="ui.mPricePattern" step="0.01"/>
-                  <!-- <div ng-messages="bookingForm.miscellaneous.$error">
-                    <div ng-message="required">Damages Charges is required.</div>
-                  </div> -->
+                  <input style="color: #000066; font-weight: bold;" name="damages" ng-model="hallRateSummary.mDamages" ng-disabled="ui.viewMode" type="number" min="0" ng-pattern="ui.mPricePattern" step="0.01"/>                  
                 </md-input-container>
               </div>              
             </div>
@@ -398,7 +382,7 @@
                     <md-button class="md-raised md-warn" style="min-width: 50px" ng-disabled="ui.viewMode" ng-click="removePayment($index)" type="submit" title="Delete payment"><span class="glyphicon glyphicon-remove"></span></md-button>
                   </div>
                   <div ng-if="mPaymentHistory.paymentMode === model.paymentModes[3]">
-                    <md-button class="md-raised md-primary" style="min-width: 50px;" ng-disabled="ui.viewMode" ng-click="editNEFTdetails($index)" type="submit" title="Edit NEFT details"><span class="glyphicon glyphicon-pencil"></span></md-button>
+                    <md-button class="md-raised md-primary" style="min-width: 50px;" ng-disabled="ui.viewMode || mPaymentHistory.isEditNEFTdetails" ng-click="editNEFTdetails($index)" type="submit" title="Edit NEFT details"><span class="glyphicon glyphicon-pencil"></span></md-button>
                   </div>
                   <div>
                     <md-button class="md-raised md-accent" style="min-width: 50px" ng-disabled="!mPaymentHistory._id" ng-click="printBooking(bookingForm, model.BILL_TYPES[1], $index)" type="submit" title="{{!mPaymentHistory._id ? 'Please update the booking to print this receipt' : 'Print receipt'}}"><span class="glyphicon glyphicon-print"></span></md-button>
@@ -511,7 +495,7 @@
           </md-input-container>  
         </div>
 
-        <div layout="column" flex ng-if="mixins.mBalanceDue <= 0 && !ui.isPastInvoiceEffectiveDate && !mixins.invoiceDate && mixins.isTodayOrPastEvent">
+        <div layout="column" flex ng-if="mixins.mBalanceDue <= 0 && !ui.isPastInvoiceEffectiveDate && !mixins.invoiceDate && mixins.isTodayOrPastEvent && !ui.viewMode">
           <md-input-container flex>
               <label class="my-label"><b>Invoice Number</b></label>                 
               <input style="color: #000066; font-weight: bold;" type="number" name="invoiceNo" required ng-model="mixins.invoiceNo" ng-pattern="ui.mNumberPattern" min="1"/>
