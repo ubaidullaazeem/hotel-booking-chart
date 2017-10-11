@@ -15,7 +15,7 @@
 		.constant('SGST', 'SGST')
 		.constant('INVOICE', 'invoice')
 		.constant('RECEIPT', 'receipt')
-		.constant('CLEANING_HOURS', 3)
+		.constant('CLEANING_HOURS', 2)
 		.constant('PAYMENT_STATUS', ['Advance Paid', 'Fully Paid'])
 		.constant('TAX_TYPES', ['CGST', 'SGST'])
 		.constant('BILL_TYPES', ['booking_form', 'receipt', 'invoice'])
