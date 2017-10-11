@@ -5,9 +5,9 @@
 		.module('core')
 		.controller('ReportsController', ReportsController);
 
-	ReportsController.$inject = ['CommonService', 'NewbookingsService', 'EmailBookingServices', 'DATA_BACKGROUND_COLOR', 'hallsResolve', '$filter', '$scope', 'Notification', '$rootScope', '$mdpDatePicker', 'SearchBookingServices', '$mdDialog', 'MESSAGES'];
+	ReportsController.$inject = ['CommonService', 'NewbookingsService', 'EmailBookingServices', 'DATA_BACKGROUND_COLOR', 'hallsResolve', '$filter', '$scope', 'Notification', '$rootScope', '$mdpDatePicker', 'SearchBookingServices', '$mdDialog', 'MESSAGES', '$location', '$anchorScroll'];
 
-	function ReportsController(CommonService, NewbookingsService, EmailBookingServices, DATA_BACKGROUND_COLOR, hallsResolve, $filter, $scope, Notification, $rootScope, $mdpDatePicker, SearchBookingServices, $mdDialog, MESSAGES) {
+	function ReportsController(CommonService, NewbookingsService, EmailBookingServices, DATA_BACKGROUND_COLOR, hallsResolve, $filter, $scope, Notification, $rootScope, $mdpDatePicker, SearchBookingServices, $mdDialog, MESSAGES, $location, $anchorScroll) {
 
 		$scope.DATA_BACKGROUND_COLOR = DATA_BACKGROUND_COLOR;
 
@@ -265,7 +265,10 @@
 		};
 
 		$scope.exportReport = function(isSummary) {
-			//$("div").scrollTop(1000);
+			$anchorScroll.yOffset = 80; //I want it top drop 80px from id. You can remove this.
+			$location.hash(isSummary ? 'summary' : 'electricity');
+			$anchorScroll();
+
 			html2canvas(document.getElementById(isSummary ? 'exportSummaryData' : 'actualChargesData'), {
 				onrendered: function(canvas) {
 					var canvasdata = canvas.toDataURL("image/png");
