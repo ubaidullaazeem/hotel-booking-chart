@@ -631,7 +631,7 @@
         '<tr height="25px"><td> </td></tr>'+
         '<tr><td>'+
           '<table width="100%" style="border-collapse: collapse; table-layout: fixed;">'+
-            '<tr><td width="50%">Authorized Signatory</td><td width="50%" style="text-align:right;">Signature of the Guest</td></tr>'+
+            '<tr><td width="100%">Authorized Signatory</td></tr>'+
           '</table></td></tr>'+
           '</tbody></table>' +        
         '</body></html></body></html></body></html>';      
