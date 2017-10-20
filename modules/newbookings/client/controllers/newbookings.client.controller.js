@@ -626,12 +626,11 @@
               '<td width="17%">'+Number(selectedEvent.mBalanceDue).toFixed(2)+'</td>'+
             '</tr>'+
           '</table></td></tr>'+
-        '<tr height="5px"><td> </td></tr>'+
-        '<tr><td>For Mirth</td></tr>'+
-        '<tr height="25px"><td> </td></tr>'+
         '<tr><td>'+
           '<table width="100%" style="border-collapse: collapse; table-layout: fixed;">'+
-            '<tr><td width="100%">Authorized Signatory</td></tr>'+
+            '<tr><td width="75%"></td><td width="25%">For Mirth</td></tr>'+
+            '<tr height="22px"><td></td><td></td></tr>'+
+            '<tr><td width="75%"></td><td width="25%">Authorized Signatory</td></tr>'+
           '</table></td></tr>'+
           '</tbody></table>' +        
         '</body></html></body></html></body></html>';      
