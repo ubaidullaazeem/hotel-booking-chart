@@ -19,12 +19,13 @@
 							<tr>
 								<th style="text-align: center" width="30%">Field</th>
 								<th style="text-align: center" width="40%">Value</th> 
+								<th style="text-align: center" width="15%">Effective Date</th> 
 								<th style="text-align: center" width="30%">Action</th>
 							</tr>
-							<tr ng-repeat = "tax in taxes" style="text-align: center">
+							<tr ng-repeat = "tax in taxes" ng-init="findTaxRateSummariesByDate(tax)" style="text-align: center">
 								<td>{{ tax.name | uppercase}}(%)</td>
 								<td>{{ tax.percentage }}</td>
-
+								<td>{{ tax.effectiveDate | date:'MMM yyyy' }}</td>
 								<td style="text-align: center;">
 								<md-button class="md-raised md-primary nonecase" style="min-width: 50px" ng-click="mShowTaxPopup($event, $index, tax)"><span class="glyphicon glyphicon-pencil"></span></md-button>
 								</td>

@@ -80,6 +80,13 @@
      /** CRUD Functionality for Tax **/
 
     $scope.mShowTaxPopup = function(ev, index = null, tax = null) {
+      var oldShow = $mdDialog.show;
+        $mdDialog.show = function(options) {
+          if (options.hasOwnProperty("skipHide")) {
+            options.multiple = options.skipHide;
+          }
+          return oldShow(options);
+        };
       $mdDialog.show({
           controller: 'TaxesController',
           templateUrl: 'modules/taxes/client/views/form-tax.client.view.html',
@@ -238,6 +245,13 @@
       hall.CGSTTax = summaries[0].CGSTTax;
       hall.SGSTTax = summaries[0].SGSTTax;
       hall.effectiveDate = summaries[0].effectiveDate;
+    };
+
+    $scope.findTaxRateSummariesByDate = function(tax) {
+      var date = new Date();
+      var summaries = CommonService.findRateSummariesByDate(tax.rateSummaries, date);
+      tax.percentage = summaries[0].percentage;
+      tax.effectiveDate = summaries[0].effectiveDate;
     };
 
   }

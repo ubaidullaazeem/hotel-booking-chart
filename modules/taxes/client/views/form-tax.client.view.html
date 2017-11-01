@@ -1,4 +1,4 @@
- <md-dialog flex="30">
+ <md-dialog flex="30" ng-init="loadInitial()">
   <form name="taxForm" autocomplete="off">
     <div class="card">
       <div class="card-header" data-background-color="{{DATA_BACKGROUND_COLOR}}">
@@ -25,11 +25,18 @@
 
               <md-input-container flex>
                 <label>Percentage</label>
-                <input  required name="percentage" ng-model="model.tax.percentage" ng-maxlength="2" ng-pattern="ui.mNumberPattern"/>
+                <input  required name="percentage" ng-model="model.percentage" ng-maxlength="2" ng-pattern="ui.mNumberPattern"/>
                 <div ng-messages="taxForm.percentage.$error">
                   <div ng-message="required">Tax percentage is required.</div>
                 </div>
-              </md-input-container>  
+              </md-input-container>
+
+              <md-input-container flex ng-show="!ui.createMode">
+                <label>Effective Date</label>
+                <div ng-click="showStartDatePicker($event)">
+                  <input class="form-control datepicker" required name="start" ng-model="model.tax.effectiveDate" onfocus="this.blur()"></input>
+                </div>
+              </md-input-container>
 
             </div>
             

@@ -58,8 +58,7 @@
       angular.forEach($scope.model.newBookings, function(newbooking) {
         eventsPush(newbooking);
       });
-      var moment = angular.element('#calendar').fullCalendar('getDate');
-      var date = new Date(moment.format());
+      var date = new Date();
       chartViewByAgenda(CALENDAR_CHANGE_VIEW[2], date);
     };
 

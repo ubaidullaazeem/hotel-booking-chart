@@ -20,14 +20,14 @@
 
           <md-input-container flex=40>
             <label>Date</label>
-            <input ng-model="mixins.eventDate | date:'dd-MMMM-yyyy'" onfocus="this.blur()" readonly/>
+            <input ng-model="mixins.eventDate" mo-date-input="dd-MMMM-yyyy" onfocus="this.blur()" readonly/>
           </md-input-container>
         </div>
 
         <div layout="column" flex>
           <md-input-container flex>
               <label>Event</label>
-              <input ng-model="mixins.selectedEventName" onfocus="this.blur()" readonly/>
+              <input style="text-transform: capitalize;" ng-model="mixins.selectedEventName" onfocus="this.blur()" readonly/>
           </md-input-container>             
         </div>
 
@@ -179,7 +179,7 @@
         <div layout="column" flex>
           <md-input-container flex>
               <label>Payment Status</label>
-               <input ng-model="mixins.mSelectedPaymentStatus.name" onfocus="this.blur()" readonly/>
+               <input style="text-transform: capitalize;" ng-model="mixins.mSelectedPaymentStatus.name" onfocus="this.blur()" readonly/>
           </md-input-container>             
         </div>         
        
@@ -219,7 +219,7 @@
     <md-dialog-actions layout="row">
       <md-button class="btn btn-next btn-fill btn-rose btn-wd" flex ng-disabled="bookingForm.$invalid" ng-click="printBooking(bookingForm)" type="submit">Delete</md-button>
       <md-button class="btn btn-next btn-fill btn-rose btn-wd" flex ng-disabled="bookingForm.$invalid" ng-click="printBooking(bookingForm)" type="submit">Print</md-button>
-      <md-button class="btn btn-next btn-fill btn-primary btn-wd" ng-disabled="bookingForm.$invalid && !mixins.mEmail" flex ng-click="sendMail(bookingForm)" ng-hide="ui.mailsending" type="submit">Email</md-button>
+      <md-button class="btn btn-next btn-fill btn-primary btn-wd" ng-disabled="bookingForm.$invalid && !mixins.mEmail.length" flex ng-click="sendMail(bookingForm)" ng-hide="ui.mailsending" type="submit">Email</md-button>
       <md-button class="btn btn-next btn-fill btn-primary btn-wd" ng-disabled="true" flex ng-click="sendMail()" ng-show="ui.mailsending" type="submit"><i class="fa fa-spinner fa-spin"></i> Sending...</md-button>
 
       <md-button ng-hide="mixins.isPastEvent" class="btn btn-next btn-fill btn-info btn-wd" ng-disabled="bookingForm.$invalid" flex ng-click="editBooking()" type="submit">Edit Booking</md-button>

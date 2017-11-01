@@ -17,10 +17,10 @@ var TaxSchema = new Schema({
     trim: true,
     lowercase: true
   },
-  percentage:{
-    type: Number,
-    required: 'Please fill tax percentage'
-  }
+  rateSummaries: [{
+    percentage: Number,
+    effectiveDate: Date
+  }],
 },
 {
     timestamps: true
