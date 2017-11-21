@@ -26,14 +26,30 @@
 				            </div>
 						</md-input-container>
 
-						<div flex></div>
 						<md-input-container flex=30>
+							<label class="my-label">Booking Managers</label>
+							<md-select 	multiple 
+										required
+										name="bookingManager"
+										ng-model="searchParams.selectedManagers"
+										ng-model-options= "{trackBy: '$value.id'}">
+								<md-optgroup label="Booking Managers">
+									<md-option ng-value="bookingManager" ng-repeat="bookingManager in model.bookingManagers">{{bookingManager.name}}</md-option>
+								</md-optgroup>
+							</md-select>
+							<div ng-messages="reports.bookingManager.$error">
+				              <div ng-message="required">Booking Managers is required.</div>
+				            </div>
+						</md-input-container>
+
+						<div flex></div>
+						<md-input-container flex=20>
 							<label class="my-label">Start Date</label>
 							<div ng-click="showStartDatePicker($event)">
 								<input class="form-control datepicker" required name="start" id="reportStartDatePicker" ng-model="model.startDate" onfocus="this.blur()"></input>
 							</div>
 						</md-input-container>
-						<md-input-container flex=30>
+						<md-input-container flex=20>
 							<label class="my-label">End Date</label>
 							<div ng-click="showEndDatePicker($event)">
 								<input class="form-control datepicker" required name="start" id="reportEndDatePicker"  ng-model="model.endDate" onfocus="this.blur()"></input>
@@ -41,7 +57,7 @@
 						</md-input-container>
 						<div flex></div>
 						<md-input-container flex=11  style="margin-top: 0px">
-							<md-button class="btn btn-info btn-sm"  ng-disabled="reports.$invalid" ng-hide="ui.searching" ng-click="searchReports()"><span class="glyphicon glyphicon-search"></span>Search</md-button>
+							<md-button class="btn btn-info btn-sm"  ng-disabled="reports.$invalid" ng-hide="ui.searching" ng-click="searchGraphicalReports()"><span class="glyphicon glyphicon-search"></span>Search</md-button>
 							<md-button class="btn btn-info btn-sm" ng-disabled="true" ng-show="ui.searching"><i class="fa fa-spinner fa-spin"></i> Searching</md-button>
 						</md-input-container>
 					</div>

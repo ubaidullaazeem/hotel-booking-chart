@@ -29,8 +29,11 @@ module.exports = function(app) {
   app.route('/api/newbookings/sendReport')
     .post(newbookings.sendReport);
 
-  app.route('/api/newbookings/searchreports')
-    .post(newbookings.searchReports);
+  app.route('/api/newbookings/searchgraphicalreports')
+    .post(newbookings.getGraphicalReports);
+
+  app.route('/api/newbookings/searchbookinglistreports')
+    .post(newbookings.getBookingListReports);
 
   app.route('/api/newbookings/picture')
     .post(newbookings.changePhotoIdPicture);

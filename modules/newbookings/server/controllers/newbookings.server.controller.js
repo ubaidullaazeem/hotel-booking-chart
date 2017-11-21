@@ -396,10 +396,9 @@ exports.search = function(req, res) {
 };
 
 /**
- * Search of Reports
+ * Search of Graphical Reports
  */
-exports.searchReports = function(req, res) {
-  var mapSelectedHallsByName = _.map(req.body.selectedHalls, '_id');
+exports.getGraphicalReports = function(req, res) {
     Newbooking.find({
       $and: [{
         mStartDateTime: {
@@ -409,14 +408,37 @@ exports.searchReports = function(req, res) {
         mEndDateTime: {
           $lte: req.body.endDate
         }
-      }]/*,
-      mSelectedHalls: {
-        $elemMatch: {
-          _id: {
-            $in: mapSelectedHallsByName
-          }
+      },{
+        "mBookingManager.id": {
+          $in: req.body.selectedManagers
         }
-      }*/
+      }]
+    }, function(err, searchResults) {
+      if (err) {
+        return res.status(400).send({
+          message: errorHandler.getErrorMessage(err)
+        });
+      } else {
+        res.jsonp(searchResults);
+      }
+
+    });
+};
+
+/**
+ * Search of Booking List Reports
+ */
+exports.getBookingListReports = function(req, res) {
+    Newbooking.find({
+      $and: [{
+        mStartDateTime: {
+          $gte: req.body.startDate
+        }
+      }, {
+        mEndDateTime: {
+          $lte: req.body.endDate
+        }
+      }]
     }, function(err, searchResults) {
       if (err) {
         return res.status(400).send({

@@ -137,7 +137,7 @@
           </md-input-container>  
         </div>
         
-        <div layout="column" flex>
+        <div layout="column" flex ng-hide="ui.viewMode && !mixins.mPhotoIdPath">
           <md-input-container flex>
             <label style="font-size: 17px;margin-bottom: 10px;"><b>Photo ID of the Person</b></label>
             <div class="form-group text-center" ng-hide="!ui.fileSelected && !mixins.mPhotoIdPath" ng-click="showLargeImage($event)">
@@ -156,7 +156,8 @@
           </md-input-container>  
         </div>
                         
-        <div layout="column" flex>
+        <!-- This field is removed in new version. So it will be visible only for the old bookings which does not have mBookingManager. -->
+        <div layout="column" flex ng-if="!ui.createMode && !mixins.mBookingManager">
           <md-input-container flex>
             <label class="my-label"><b>Manager Name</b></label>
             <input style="color: #000066; font-weight: bold;" required name="managerName" ng-model="mixins.mManagerName" ng-disabled="ui.viewMode"/>
@@ -165,6 +166,29 @@
             </div>
           </md-input-container>  
         </div>
+
+        <!-- This field is added in new version. So it will be hidden for old bookings which does not have mBookingManager. -->
+        <div layout="row" flex ng-if="!mixins.mManagerName">
+          <md-input-container flex>
+              <label class="my-label"><b>Booking Manager</b></label>
+              <md-select  required style="color: #000066; font-weight: bold;"
+                          name="bookingManager"
+                          ng-model="mixins.mBookingManager"
+                          ng-disabled="ui.viewMode || !ui.createMode"
+                          ng-model-options= "{trackBy: '$value.id'}">
+                <md-optgroup label="Booking Manager">
+                  <md-option style="color: #000066; font-weight: bold;" ng-value="bookingManager" ng-repeat="bookingManager in model.bookingManagers">{{bookingManager.name}}</md-option>
+                </md-optgroup>
+              </md-select>
+              <div ng-messages="bookingForm.bookingManager.$error" ng-show="bookingForm.bookingManager.$invalid">
+                <div ng-message="required">Booking Manager is required.</div>
+              </div>
+          </md-input-container>
+          <md-input-container flex>
+            <input style="color: #000066; font-weight: bold;" name="role" ng-model="mixins.mBookingManager.role" ng-disabled="ui.viewMode || !ui.createMode" onfocus="this.blur()" readonly/>
+          </md-input-container>
+        </div>
+
         <!-- Ubai New Code Start  -->
         <div ng-repeat="hallRateSummary in mixins.mSelectedHalls track by $index">
           <div class="card">          

@@ -16,7 +16,7 @@
 		$scope.newbookings.$promise.then(function(result) {
 			$scope.showStartDatePicker(); // First time date picker is not showing. so I am calling this function here.
 			$scope.showEndDatePicker(); // First time date picker is not showing. so I am calling this function here.
-			$scope.searchReports();
+			$scope.searchBookingListReports();
 		});
 		$scope.bookingList = [];
 
@@ -58,7 +58,7 @@
 		};
 
 
-		$scope.searchReports = function() {
+		$scope.searchBookingListReports = function() {
 			if ((Date.parse($scope.model.startDate) > Date.parse($scope.model.endDate))) {
 				$mdDialog.show($mdDialog.alert().clickOutsideToClose(true).title('End date should be after start date.').ok('OK'));
 				return false;
@@ -74,7 +74,7 @@
 				startDate: fromBrightening(),
 				endDate: toMidNight()
 			};
-			SearchBookingServices.requestSearchReports(searchParams).then(function(searchResults) {
+			SearchBookingServices.requestBookingListSearchReports(searchParams).then(function(searchResults) {
 				$scope.ui.isSearching = false;
 				//$scope.bookingList = searchResults;
 

@@ -5,9 +5,9 @@
 		.module('core')
 		.controller('ReportsController', ReportsController);
 
-	ReportsController.$inject = ['CommonService', 'NewbookingsService', 'EmailBookingServices', 'DATA_BACKGROUND_COLOR', 'hallsResolve', '$filter', '$scope', 'Notification', '$rootScope', '$mdpDatePicker', 'SearchBookingServices', '$mdDialog', 'MESSAGES', '$location', '$anchorScroll'];
+	ReportsController.$inject = ['CommonService', 'NewbookingsService', 'EmailBookingServices', 'DATA_BACKGROUND_COLOR', 'hallsResolve', '$filter', '$scope', 'Notification', '$rootScope', '$mdpDatePicker', 'SearchBookingServices', '$mdDialog', 'MESSAGES', '$location', '$anchorScroll', 'AppManagers'];
 
-	function ReportsController(CommonService, NewbookingsService, EmailBookingServices, DATA_BACKGROUND_COLOR, hallsResolve, $filter, $scope, Notification, $rootScope, $mdpDatePicker, SearchBookingServices, $mdDialog, MESSAGES, $location, $anchorScroll) {
+	function ReportsController(CommonService, NewbookingsService, EmailBookingServices, DATA_BACKGROUND_COLOR, hallsResolve, $filter, $scope, Notification, $rootScope, $mdpDatePicker, SearchBookingServices, $mdDialog, MESSAGES, $location, $anchorScroll, AppManagers) {
 
 		$scope.DATA_BACKGROUND_COLOR = DATA_BACKGROUND_COLOR;
 
@@ -21,6 +21,7 @@
 		var today = new Date();
 		$scope.model = {
 			halls: hallsResolve,
+			bookingManagers: AppManagers,
 			startDate: $filter('date')(new Date(today.getFullYear(), today.getMonth(), 1), "yyyy-MM-dd"), // Get the first day of current month
 			endDate: $filter('date')(new Date(today.getFullYear(), today.getMonth() + 1, 0), "yyyy-MM-dd"), // Get the last day of current month
 		};
@@ -32,7 +33,8 @@
 		}
 
 		$scope.searchParams = {
-			selectedHalls: []
+			selectedHalls: [],
+			selectedManagers:[]
 		};
 		
 		$scope.months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -101,9 +103,10 @@
 
 		$scope.model.halls.$promise.then(function(result) {
 			$scope.searchParams.selectedHalls = result;
+			$scope.searchParams.selectedManagers = $scope.model.bookingManagers
 			$scope.showStartDatePicker();// First time date picker is not showing. so I am calling this function here.
 			$scope.showEndDatePicker();// First time date picker is not showing. so I am calling this function here.
-			$scope.searchReports();
+			$scope.searchGraphicalReports();
 		});
 
 		$scope.showStartDatePicker = function(ev) {
@@ -137,7 +140,7 @@
 			return _.includes(pluckHalls, hall._id);
 		};
 
-		$scope.searchReports = function() {
+		$scope.searchGraphicalReports = function() {
 			if ((Date.parse($scope.model.startDate) > Date.parse($scope.model.endDate))) {
 				$mdDialog.show($mdDialog.alert().clickOutsideToClose(true).title('End date should be after start date.').ok('OK'));
 				return false;
@@ -166,10 +169,11 @@
 			$scope.ui.searching = true;
 			var searchParams = {
 				selectedHalls: $scope.searchParams.selectedHalls,
+				selectedManagers: _.map($scope.searchParams.selectedManagers, 'id'),
 				startDate: fromBrightening(),
 				endDate: toMidNight()
 			};
-			SearchBookingServices.requestSearchReports(searchParams).then(function(searchResults) {
+			SearchBookingServices.requestGraphicalSearchReports(searchParams).then(function(searchResults) {
 				$scope.ui.searching = false;
 				var startDate = new Date($scope.model.startDate);
 				var endDate = new Date($scope.model.endDate);

@@ -93,7 +93,12 @@ var NewbookingSchema = new Schema({
   mManagerName: {
     type: String,
     default: '',
-    required: 'Please enter manager name',
+    trim: true
+  },
+  mBookingManager: {
+    type: Object,
+    default: '',
+    required: 'Please select booking manager',
     trim: true
   },
   mDiscount: {

@@ -19,6 +19,7 @@
 		.constant('PAYMENT_STATUS', ['Advance Paid', 'Fully Paid'])
 		.constant('TAX_TYPES', ['CGST', 'SGST'])
 		.constant('BILL_TYPES', ['booking_form', 'receipt', 'invoice'])
+		.constant('AppManagers', [{"id":1,"name": "Justin Raja Doss.A","role": "Manager"},{"id":2,"name": "Vadivelan.T","role":"Assistant Manager"},{"id":3,"name": "Ajikumar.T","role": "Executive"}])
 		.constant('GOOGLE_CALENDAR_COLOR_IDS', {
 			'GREEN': 10,
 			"RED": 11
