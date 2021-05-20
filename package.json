@@ -54,7 +54,7 @@
     "glob": "~7.1.1",
     "grunt": "^1.0.1",
     "helmet": "~3.6.1",
-    "html-pdf": "^2.1.0",
+    "html-pdf": "^3.0.1",
     "jasmine-core": "~2.5.2",
     "lodash": "^4.17.4",
     "lusca": "~1.4.1",
