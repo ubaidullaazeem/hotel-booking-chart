@@ -77,7 +77,7 @@
     "serve-favicon": "~2.4.2",
     "socket.io": "^2.0.2",
     "stringmap": "^0.2.2",
-    "validator": "~7.0.0",
+    "validator": "~13.7.0",
     "winston": "^2.3.1",
     "wiredep": "~4.0.0"
   },
