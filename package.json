@@ -37,7 +37,7 @@
     "@ionic/cli-utils": "^1.8.1",
     "acl": "~0.4.10",
     "angular-ui-bootstrap": "^2.5.0",
-    "async": "~2.3.0",
+    "async": "~2.6.4",
     "body-parser": "~1.17.1",
     "bower": "~1.8.0",
     "chalk": "~1.1.3",
