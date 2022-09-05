@@ -24,7 +24,7 @@ Make sure you have installed all of the following prerequisites on your developm
 * Bower - You're going to use the [Bower Package Manager](http://bower.io/) to manage your front-end packages. Make sure you've installed Node.js and npm first, then install bower globally using npm:
 
 ```bash
-$ npm install -g bower
+$ npm install -g bower  
 ```
 
 ## Downloading MEAN.JS
